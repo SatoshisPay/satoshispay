@@ -1,0 +1,33 @@
+name: CI
+
+on: [push, pull_request]
+
+env:
+    CARGO_TERM_COLOR: always
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v2
+            - name: Set Node.js 18.x
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 18.x
+            - name: Install
+              uses: Borales/actions-yarn@v4.2.0
+              with:
+                  cmd: install
+            - name: Prettier
+              uses: Borales/actions-yarn@v4.2.0
+              with:
+                  cmd: prettier:check
+            - name: ESLint
+              uses: Borales/actions-yarn@v4.2.0
+              with:
+                  cmd: lint
+            - name: Test
+              uses: Borales/actions-yarn@v4.2.0
+              with:
+                  cmd: test

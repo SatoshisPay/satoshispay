@@ -1,8 +1,12 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 
 const Home = (): JSX.Element => {
-  return <View></View>;
+  return (
+    <View>
+      <Text className="text-red-500">Hello, world!</Text>
+    </View>
+  );
 };
 
 export default Home;

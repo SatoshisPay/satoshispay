@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import Page, { RootStackParamList } from './pages';
@@ -8,8 +8,9 @@ import Address, { generateNewAddress } from '../data/address';
 import Receipt from '../components/Transaction/Receipt';
 import { getBTCEURTicker } from '../api/ticker';
 import { convertEURToBTC } from '../utils/conversion';
-import { insertAddress } from '../database/database';
+import { insertAddressWithOrder } from '../database/database';
 import ButtonBar from '../components/Transaction/ButtonBar';
+import { createOrderForAddress } from '../data/order';
 
 type Props = NativeStackScreenProps<RootStackParamList, Page.TRANSACTION>;
 
@@ -23,30 +24,37 @@ const Transaction = (props: Props): JSX.Element => {
   const [btcAmount, setBtcAmount] = React.useState<Decimal>();
 
   React.useEffect(() => {
-    try {
-      // get conversion rate
-      getBTCEURTicker().then(ticker => {
+    // get conversion rate
+    getBTCEURTicker()
+      .then(ticker => {
         setBtcAmount(convertEURToBTC(ticker, eurCharge));
+      })
+      .catch(e => {
+        // TODO: handle error
+        console.error(e);
       });
-
-      const address = generateNewAddress();
-      // register address into database
-      insertAddress(address)
-        .then(() => {
-          setAddress(address);
-        })
-        .catch(e => {
-          // TODO: handle error
-          console.error(e);
-        });
-    } catch (e) {
-      // TODO: handle error
-      console.error(e);
-    }
   }, []);
+
+  React.useEffect(() => {
+    if (!btcAmount) {
+      return;
+    }
+    const address = generateNewAddress();
+    const order = createOrderForAddress(address, btcAmount, eurCharge);
+    // register address into database
+    insertAddressWithOrder(address, order)
+      .then(() => {
+        setAddress(address);
+      })
+      .catch(e => {
+        // TODO: handle error
+        console.error(e);
+      });
+  }, [btcAmount]);
 
   // Event handlers
   const onCancel = () => {
+    // TODO: ask confirmation and then cancel order
     navigation.goBack();
   };
 

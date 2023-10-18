@@ -1,17 +1,10 @@
 import Decimal from 'decimal.js';
-import Address from './address';
-
-export enum TransactionStatus {
-  PENDING = 'PENDING',
-  CONFIRMED = 'CONFIRMED',
-  CANCELLED = 'CANCELLED',
-}
+import Order from './order';
 
 export default interface Transaction {
-  id: string;
-  hash?: string;
-  address: Address;
+  hash: string;
+  order: Order;
   value: Decimal;
-  status: TransactionStatus;
   insertedAt: Date;
+  timestamp: Date;
 }

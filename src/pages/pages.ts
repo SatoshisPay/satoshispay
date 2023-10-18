@@ -1,8 +1,16 @@
+import Decimal from 'decimal.js';
+
 enum Page {
-  Home = 'Home',
+  HOME = 'Home',
   HISTORY = 'History',
   BALANCE = 'Balance',
   TRANSACTION = 'Transaction',
 }
 
 export default Page;
+
+export type RootStackParamList = {
+  Home: undefined;
+  History: undefined;
+  Transaction: { charge: string };
+};

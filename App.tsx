@@ -2,18 +2,19 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import Page from './src/pages/pages';
+import Page, { RootStackParamList } from './src/pages/pages';
 import Home from './src/pages/Home';
 import Logo from './src/components/shared/Logo';
 import HistoryButton from './src/components/Topbar/HistoryButton';
+import Transaction from './src/pages/Transaction';
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function App(): JSX.Element {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName={Page.Home}
+        initialRouteName={Page.HOME}
         screenOptions={{
           headerTitle: () => <Logo />,
           headerStyle: {
@@ -25,12 +26,13 @@ function App(): JSX.Element {
           },
         }}>
         <Stack.Screen
-          name={Page.Home}
+          name={Page.HOME}
           component={Home}
           options={{
             headerRight: () => <HistoryButton />,
           }}
         />
+        <Stack.Screen name={Page.TRANSACTION} component={Transaction} />
       </Stack.Navigator>
     </NavigationContainer>
   );

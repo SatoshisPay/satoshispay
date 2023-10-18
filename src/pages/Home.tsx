@@ -1,10 +1,21 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-const Home = (): JSX.Element => {
+import Pos from '../components/Home/Pos';
+import Page, { RootStackParamList } from './pages';
+import Decimal from 'decimal.js';
+
+type Props = NativeStackScreenProps<RootStackParamList, Page.HOME>;
+
+const Home = ({ navigation }: Props): JSX.Element => {
+  const onPosSubmit = (charge: Decimal) => {
+    navigation.navigate(Page.TRANSACTION, { charge: charge.toFixed(2) });
+  };
+
   return (
-    <View>
-      <Text className="text-red-500">Hello, world!</Text>
+    <View className="flex flex-col items-center justify-center w-full">
+      <Pos onSubmitted={onPosSubmit} />
     </View>
   );
 };

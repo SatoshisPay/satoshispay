@@ -6,6 +6,7 @@ import {
 import Address from '../data/address';
 import Transaction from '../data/transaction';
 import Decimal from 'decimal.js';
+import Order from '../data/order';
 
 const DATABASE_NAME = 'satoshispay.db';
 
@@ -19,13 +20,21 @@ const ADDRESS_PRIVATE_KEY = 'privateKey';
 const ADDRESS_BALANCE = 'balance';
 const ADDRESS_INSERTED_AT = 'insertedAt';
 
-const TRANSACTION_TABLE = 'btcTransaction';
-const TRANSACTION_ID = 'id';
+const ORDER_TABLE = 'buyOrder';
+const ORDER_ID = 'id';
+const ORDER_ADDRESS = 'address';
+const ORDER_STATUS = 'status';
+const ORDER_BTC_AMOUNT = 'btcAmount';
+const ORDER_FIAT_AMOUNT = 'fiatAmount';
+const ORDER_INSERTED_AT = 'insertedAt';
+const ORDER_UPDATED_AT = 'updatedAt';
+
+const TRANSACTION_TABLE = 'incomingTransaction';
 const TRANSACTION_HASH = 'hash';
-const TRANSACTION_ADDRESS = 'address';
+const TRANSACTION_ORDER = 'orderId';
 const TRANSACTION_VALUE = 'value';
-const TRANSACTION_STATUS = 'status';
 const TRANSACTION_INSERTED_AT = 'insertedAt';
+const TRANSACTION_TIMESTAMP = 'timestamp';
 
 const getDBConnection = async (): Promise<SQLiteDatabase> => {
   const db = await openDatabase({ name: DATABASE_NAME, location: 'default' });
@@ -53,30 +62,61 @@ const initDB = async (db: SQLiteDatabase) => {
     );
 
     tx.executeSql(
+      `CREATE TABLE IF NOT EXISTS ${ORDER_TABLE} (
+      ${ORDER_ID} TEXT PRIMARY KEY NOT NULL,
+      ${ORDER_ADDRESS} TEXT NOT NULL,
+      ${ORDER_STATUS} TEXT NOT NULL,
+      ${ORDER_BTC_AMOUNT} TEXT NOT NULL,
+      ${ORDER_FIAT_AMOUNT} TEXT NOT NULL,
+      ${ORDER_INSERTED_AT} TEXT NOT NULL,
+      ${ORDER_UPDATED_AT} TEXT NOT NULL,
+      FOREIGN KEY (${ORDER_ADDRESS}) REFERENCES ${ADDRESS_TABLE} (${ADDRESS_ADDRESS})
+    );`,
+    );
+
+    tx.executeSql(
       `CREATE TABLE IF NOT EXISTS ${TRANSACTION_TABLE} (
-      ${TRANSACTION_ID} TEXT PRIMARY KEY NOT NULL,
-      ${TRANSACTION_HASH} TEXT,
-      ${TRANSACTION_ADDRESS} TEXT NOT NULL,
+      ${TRANSACTION_HASH} TEXT PRIMARY KEY NOT NULL,
+      ${TRANSACTION_ORDER} TEXT NOT NULL,
       ${TRANSACTION_VALUE} TEXT NOT NULL,
-      ${TRANSACTION_STATUS} TEXT NOT NULL,
       ${TRANSACTION_INSERTED_AT} TEXT NOT NULL,
-      FOREIGN KEY (${TRANSACTION_ADDRESS}) REFERENCES ${ADDRESS_TABLE} (${ADDRESS_ADDRESS})
-      );`,
+      ${TRANSACTION_TIMESTAMP} TEXT NOT NULL,
+      FOREIGN KEY (${TRANSACTION_ORDER}) REFERENCES ${ORDER_TABLE} (${ORDER_ID})
+    );`,
     );
   });
 };
 
-export const insertAddress = async (address: Address) => {
+export const insertAddressWithOrder = async (
+  address: Address,
+  order: Order,
+) => {
   const db = await getDBConnection();
-  await db.executeSql(
-    `INSERT INTO ${ADDRESS_TABLE} (${ADDRESS_ADDRESS}, ${ADDRESS_PRIVATE_KEY}, ${ADDRESS_BALANCE}, ${ADDRESS_INSERTED_AT}) VALUES (?, ?, ?, ?);`,
-    [
-      address.address,
-      address.privateKey,
-      address.balance.toString(),
-      address.insertedAt.toISOString(),
-    ],
-  );
+  return await db.transaction(async tx => {
+    await tx.executeSql(
+      `INSERT INTO ${ADDRESS_TABLE} (${ADDRESS_ADDRESS}, ${ADDRESS_PRIVATE_KEY}, ${ADDRESS_BALANCE}, ${ADDRESS_INSERTED_AT}) VALUES (?, ?, ?, ?);`,
+      [
+        address.address,
+        address.privateKey,
+        address.balance.toString(),
+        address.insertedAt.toISOString(),
+      ],
+    );
+    tx.executeSql(
+      `
+      INSERT INTO ${ORDER_TABLE} (${ORDER_ID}, ${ORDER_ADDRESS}, ${ORDER_STATUS}, ${ORDER_BTC_AMOUNT}, ${ORDER_FIAT_AMOUNT}, ${ORDER_INSERTED_AT}, ${ORDER_UPDATED_AT}) VALUES (?, ?, ?, ?, ?, ?, ?);
+      `,
+      [
+        order.id,
+        order.address.address,
+        order.status,
+        order.btcAmount.toString(),
+        order.fiatAmount.toString(),
+        order.insertedAt.toISOString(),
+        order.updatedAt.toISOString(),
+      ],
+    );
+  });
 };
 
 /**
@@ -97,55 +137,36 @@ export const getBalance = async (): Promise<Decimal> => {
 };
 
 /**
- * @description update address balance and set provided transaction's status to confirmed
+ * @description update address balance and set provided orders's status. Also add all the passed transactions
  * @param address
  * @param transaction
  */
 export const updateAddressBalance = async (
   address: Address,
-  transaction: Transaction,
+  order: Order,
+  transactions: Transaction[],
 ) => {
   const db = await getDBConnection();
-  await db.transaction(async tx => {
+  return await db.transaction(async tx => {
     await tx.executeSql(
       `UPDATE ${ADDRESS_TABLE} SET ${ADDRESS_BALANCE} = ? WHERE ${ADDRESS_ADDRESS} = ?;`,
       [address.balance.toString(), address.address],
     );
     await tx.executeSql(
-      `UPDATE ${TRANSACTION_TABLE} SET ${TRANSACTION_STATUS} = ? WHERE ${TRANSACTION_HASH} = ?;`,
-      [transaction.status, transaction.hash],
+      `UPDATE ${ORDER_TABLE} SET ${ORDER_STATUS} = ? WHERE ${ORDER_ID} = ?;`,
+      [order.status, order.id],
     );
+    for (const transaction of transactions) {
+      await tx.executeSql(
+        `INSERT INTO ${TRANSACTION_TABLE} (${TRANSACTION_HASH}, ${TRANSACTION_ORDER}, ${TRANSACTION_VALUE}, ${TRANSACTION_INSERTED_AT}, ${TRANSACTION_TIMESTAMP}) VALUES (?, ?, ?, ?, ?);`,
+        [
+          transaction.hash,
+          transaction.order.id,
+          transaction.value.toString(),
+          transaction.insertedAt.toISOString(),
+          transaction.timestamp.toISOString(),
+        ],
+      );
+    }
   });
-};
-
-export const insertTransaction = async (transaction: Transaction) => {
-  const db = await getDBConnection();
-  await db.executeSql(
-    `INSERT INTO ${TRANSACTION_TABLE} (${TRANSACTION_ID}, ${TRANSACTION_ADDRESS}, ${TRANSACTION_VALUE}, ${TRANSACTION_STATUS}, ${TRANSACTION_INSERTED_AT}) VALUES (?, ?, ?, ?, ?);`,
-    [
-      transaction.id,
-      transaction.address.address,
-      transaction.value.toString(),
-      transaction.status,
-      transaction.insertedAt.toISOString(),
-    ],
-  );
-};
-
-export const updateTransactionStatusAndHash = async (
-  transaction: Transaction,
-) => {
-  const db = await getDBConnection();
-
-  if (transaction.hash) {
-    db.executeSql(
-      `UPDATE ${TRANSACTION_TABLE} SET ${TRANSACTION_HASH} = ?, ${TRANSACTION_STATUS} = ? WHERE ${TRANSACTION_ID} = ?;`,
-      [transaction.hash, transaction.status, transaction.id],
-    );
-  } else {
-    db.executeSql(
-      `UPDATE ${TRANSACTION_TABLE} SET ${TRANSACTION_STATUS} = ? WHERE ${TRANSACTION_ID} = ?;`,
-      [transaction.status, transaction.id],
-    );
-  }
 };

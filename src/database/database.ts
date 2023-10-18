@@ -19,7 +19,8 @@ const ADDRESS_PRIVATE_KEY = 'privateKey';
 const ADDRESS_BALANCE = 'balance';
 const ADDRESS_INSERTED_AT = 'insertedAt';
 
-const TRANSACTION_TABLE = 'transaction';
+const TRANSACTION_TABLE = 'btcTransaction';
+const TRANSACTION_ID = 'id';
 const TRANSACTION_HASH = 'hash';
 const TRANSACTION_ADDRESS = 'address';
 const TRANSACTION_VALUE = 'value';
@@ -41,25 +42,28 @@ const getDBConnection = async (): Promise<SQLiteDatabase> => {
  * @param db
  */
 const initDB = async (db: SQLiteDatabase) => {
-  await db.executeSql(
-    `CREATE TABLE IF NOT EXISTS ${ADDRESS_TABLE} (
+  await db.transaction(tx => {
+    tx.executeSql(
+      `CREATE TABLE IF NOT EXISTS ${ADDRESS_TABLE} (
       ${ADDRESS_ADDRESS} TEXT PRIMARY KEY NOT NULL,
       ${ADDRESS_PRIVATE_KEY} TEXT NOT NULL,
       ${ADDRESS_BALANCE} TEXT NOT NULL,
       ${ADDRESS_INSERTED_AT} TEXT NOT NULL
     );`,
-  );
+    );
 
-  await db.executeSql(
-    `CREATE TABLE IF NOT EXISTS ${TRANSACTION_TABLE} (
-      ${TRANSACTION_HASH} TEXT PRIMARY KEY NOT NULL,
+    tx.executeSql(
+      `CREATE TABLE IF NOT EXISTS ${TRANSACTION_TABLE} (
+      ${TRANSACTION_ID} TEXT PRIMARY KEY NOT NULL,
+      ${TRANSACTION_HASH} TEXT,
       ${TRANSACTION_ADDRESS} TEXT NOT NULL,
       ${TRANSACTION_VALUE} TEXT NOT NULL,
       ${TRANSACTION_STATUS} TEXT NOT NULL,
       ${TRANSACTION_INSERTED_AT} TEXT NOT NULL,
       FOREIGN KEY (${TRANSACTION_ADDRESS}) REFERENCES ${ADDRESS_TABLE} (${ADDRESS_ADDRESS})
       );`,
-  );
+    );
+  });
 };
 
 export const insertAddress = async (address: Address) => {
@@ -117,9 +121,9 @@ export const updateAddressBalance = async (
 export const insertTransaction = async (transaction: Transaction) => {
   const db = await getDBConnection();
   await db.executeSql(
-    `INSERT INTO ${TRANSACTION_TABLE} (${TRANSACTION_HASH}, ${TRANSACTION_ADDRESS}, ${TRANSACTION_VALUE}, ${TRANSACTION_STATUS}, ${TRANSACTION_INSERTED_AT}) VALUES (?, ?, ?, ?, ?);`,
+    `INSERT INTO ${TRANSACTION_TABLE} (${TRANSACTION_ID}, ${TRANSACTION_ADDRESS}, ${TRANSACTION_VALUE}, ${TRANSACTION_STATUS}, ${TRANSACTION_INSERTED_AT}) VALUES (?, ?, ?, ?, ?);`,
     [
-      transaction.hash,
+      transaction.id,
       transaction.address.address,
       transaction.value.toString(),
       transaction.status,
@@ -128,10 +132,20 @@ export const insertTransaction = async (transaction: Transaction) => {
   );
 };
 
-export const updateTransactionStatus = async (transaction: Transaction) => {
+export const updateTransactionStatusAndHash = async (
+  transaction: Transaction,
+) => {
   const db = await getDBConnection();
-  await db.executeSql(
-    `UPDATE ${TRANSACTION_TABLE} SET ${TRANSACTION_STATUS} = ? WHERE ${TRANSACTION_HASH} = ?;`,
-    [transaction.status, transaction.hash],
-  );
+
+  if (transaction.hash) {
+    db.executeSql(
+      `UPDATE ${TRANSACTION_TABLE} SET ${TRANSACTION_HASH} = ?, ${TRANSACTION_STATUS} = ? WHERE ${TRANSACTION_ID} = ?;`,
+      [transaction.hash, transaction.status, transaction.id],
+    );
+  } else {
+    db.executeSql(
+      `UPDATE ${TRANSACTION_TABLE} SET ${TRANSACTION_STATUS} = ? WHERE ${TRANSACTION_ID} = ?;`,
+      [transaction.status, transaction.id],
+    );
+  }
 };

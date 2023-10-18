@@ -8,7 +8,8 @@ export enum TransactionStatus {
 }
 
 export default interface Transaction {
-  hash: string;
+  id: string;
+  hash?: string;
   address: Address;
   value: Decimal;
   status: TransactionStatus;

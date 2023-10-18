@@ -10,6 +10,10 @@ import Transaction from './src/pages/Transaction';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
+import './global';
+
+const Stream = require('stream-browserify');
+
 function App(): JSX.Element {
   return (
     <NavigationContainer>

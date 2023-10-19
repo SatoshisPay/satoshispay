@@ -1,6 +1,6 @@
 import Decimal from 'decimal.js';
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import Balance from './Pos/Balance';
 import Digit from './Pos/Digit';
 import ActionButton from './Pos/ActionButton';
@@ -39,7 +39,9 @@ const Pos = (props: Props): JSX.Element => {
   };
 
   const onSubmit = () => {
-    if (amount.isZero()) return;
+    if (amount.isZero()) {
+      return;
+    }
 
     setAmount(new Decimal(0));
     setCursor(0);

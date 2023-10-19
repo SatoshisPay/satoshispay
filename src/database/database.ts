@@ -51,7 +51,7 @@ const getDBConnection = async (): Promise<SQLiteDatabase> => {
  * @param db
  */
 const initDB = async (db: SQLiteDatabase) => {
-  await db.transaction(tx => {
+  return await db.transaction(tx => {
     tx.executeSql(
       `CREATE TABLE IF NOT EXISTS ${ADDRESS_TABLE} (
       ${ADDRESS_ADDRESS} TEXT PRIMARY KEY NOT NULL,

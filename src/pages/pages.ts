@@ -1,5 +1,3 @@
-import Decimal from 'decimal.js';
-
 enum Page {
   HOME = 'Home',
   HISTORY = 'History',

@@ -87,13 +87,31 @@ const initDB = async (db: SQLiteDatabase) => {
   });
 };
 
+export const getAddressByAddress = async (
+  address: string,
+): Promise<Address> => {
+  const db = await getDBConnection();
+  const [result] = await db.executeSql(
+    `SELECT * FROM ${ADDRESS_TABLE} WHERE ${ADDRESS_ADDRESS} = ?;`,
+    [address],
+  );
+  const addressObj = {
+    address: result.rows.item(0).address,
+    privateKey: result.rows.item(0).privateKey,
+    balance: new Decimal(result.rows.item(0).balance),
+    insertedAt: new Date(result.rows.item(0).insertedAt),
+  };
+
+  return addressObj;
+};
+
 export const insertAddressWithOrder = async (
   address: Address,
   order: Order,
 ) => {
   const db = await getDBConnection();
-  return await db.transaction(async tx => {
-    await tx.executeSql(
+  return await db.transaction(tx => {
+    tx.executeSql(
       `INSERT INTO ${ADDRESS_TABLE} (${ADDRESS_ADDRESS}, ${ADDRESS_PRIVATE_KEY}, ${ADDRESS_BALANCE}, ${ADDRESS_INSERTED_AT}) VALUES (?, ?, ?, ?);`,
       [
         address.address,
@@ -136,6 +154,24 @@ export const getBalance = async (): Promise<Decimal> => {
   return balance;
 };
 
+export const getOrderById = async (id: string): Promise<Order> => {
+  const db = await getDBConnection();
+  const [result] = await db.executeSql(
+    `SELECT * FROM ${ORDER_TABLE} WHERE ${ORDER_ID} = ?;`,
+    [id],
+  );
+  const order = {
+    id: result.rows.item(0).id,
+    address: await getAddressByAddress(result.rows.item(0).address),
+    status: result.rows.item(0).status,
+    btcAmount: new Decimal(result.rows.item(0).btcAmount),
+    fiatAmount: new Decimal(result.rows.item(0).fiatAmount),
+    insertedAt: new Date(result.rows.item(0).insertedAt),
+    updatedAt: new Date(result.rows.item(0).updatedAt),
+  };
+  return order;
+};
+
 /**
  * @description update address balance and set provided orders's status. Also add all the passed transactions
  * @param address
@@ -147,17 +183,17 @@ export const finalizeOrder = async (
   transactions: Transaction[],
 ) => {
   const db = await getDBConnection();
-  return await db.transaction(async tx => {
-    await tx.executeSql(
+  return await db.transaction(tx => {
+    tx.executeSql(
       `UPDATE ${ADDRESS_TABLE} SET ${ADDRESS_BALANCE} = ? WHERE ${ADDRESS_ADDRESS} = ?;`,
       [address.balance.toString(), address.address],
     );
-    await tx.executeSql(
+    tx.executeSql(
       `UPDATE ${ORDER_TABLE} SET ${ORDER_STATUS} = ? WHERE ${ORDER_ID} = ?;`,
       [OrderStatus.CONFIRMED, order.id],
     );
     for (const transaction of transactions) {
-      await tx.executeSql(
+      tx.executeSql(
         `INSERT INTO ${TRANSACTION_TABLE} (${TRANSACTION_HASH}, ${TRANSACTION_ORDER}, ${TRANSACTION_VALUE}, ${TRANSACTION_INSERTED_AT}, ${TRANSACTION_TIMESTAMP}) VALUES (?, ?, ?, ?, ?);`,
         [
           transaction.hash,
@@ -173,10 +209,8 @@ export const finalizeOrder = async (
 
 export const cancelOrder = async (order: Order) => {
   const db = await getDBConnection();
-  return await db.transaction(async tx => {
-    await tx.executeSql(
-      `UPDATE ${ORDER_TABLE} SET ${ORDER_STATUS} = ? WHERE ${ORDER_ID} = ?;`,
-      [OrderStatus.CANCELLED, order.id],
-    );
-  });
+  return await db.executeSql(
+    `UPDATE ${ORDER_TABLE} SET ${ORDER_STATUS} = ? WHERE ${ORDER_ID} = ?;`,
+    [OrderStatus.CANCELLED, order.id],
+  );
 };

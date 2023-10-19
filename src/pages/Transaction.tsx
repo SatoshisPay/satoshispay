@@ -43,17 +43,21 @@ const Transaction = (props: Props): JSX.Element => {
         setError('impossibile ottenere il cambio BTC attuale');
         console.error(e);
       });
-  }, []);
+  }, [eurCharge]);
 
   React.useEffect(() => {
-    if (!btcAmount) {
+    if (!btcAmount || !eurCharge) {
       return;
     }
-    const address = generateNewAddress();
-    const order = createOrderForAddress(address, btcAmount, eurCharge);
-    setAddress(address);
-    setOrder(order);
-  }, [btcAmount]);
+    const generatedAddress = generateNewAddress();
+    const newOrder = createOrderForAddress(
+      generatedAddress,
+      btcAmount,
+      eurCharge,
+    );
+    setAddress(generatedAddress);
+    setOrder(newOrder);
+  }, [btcAmount, eurCharge]);
 
   React.useEffect(() => {
     if (order && address) {

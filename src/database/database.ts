@@ -6,7 +6,7 @@ import {
 import Address from '../data/address';
 import Transaction from '../data/transaction';
 import Decimal from 'decimal.js';
-import Order from '../data/order';
+import Order, { OrderStatus } from '../data/order';
 
 const DATABASE_NAME = 'satoshispay.db';
 
@@ -141,7 +141,7 @@ export const getBalance = async (): Promise<Decimal> => {
  * @param address
  * @param transaction
  */
-export const updateAddressBalance = async (
+export const finalizeOrder = async (
   address: Address,
   order: Order,
   transactions: Transaction[],
@@ -154,7 +154,7 @@ export const updateAddressBalance = async (
     );
     await tx.executeSql(
       `UPDATE ${ORDER_TABLE} SET ${ORDER_STATUS} = ? WHERE ${ORDER_ID} = ?;`,
-      [order.status, order.id],
+      [OrderStatus.CONFIRMED, order.id],
     );
     for (const transaction of transactions) {
       await tx.executeSql(
@@ -168,5 +168,15 @@ export const updateAddressBalance = async (
         ],
       );
     }
+  });
+};
+
+export const cancelOrder = async (order: Order) => {
+  const db = await getDBConnection();
+  return await db.transaction(async tx => {
+    await tx.executeSql(
+      `UPDATE ${ORDER_TABLE} SET ${ORDER_STATUS} = ? WHERE ${ORDER_ID} = ?;`,
+      [OrderStatus.CANCELLED, order.id],
+    );
   });
 };

@@ -14,15 +14,14 @@ import ButtonBar from '../components/Transaction/ButtonBar';
 import Order, { OrderStatus, createOrderForAddress } from '../data/order';
 import CancelModal from '../components/Transaction/CancelModal';
 import Spinner from '../components/Transaction/Spinner';
-import ErrorModal from '../components/Transaction/ErrorModal';
+import ErrorModal from '../components/shared/ErrorModal';
 
 type Props = NativeStackScreenProps<RootStackParamList, Page.TRANSACTION>;
 
-const Transaction = (props: Props): JSX.Element => {
-  const { navigation } = props;
+const Transaction = ({ route, navigation }: Props): JSX.Element => {
   const eurCharge = React.useMemo(
-    () => new Decimal(props.route.params.charge),
-    [props.route.params.charge],
+    () => new Decimal(route.params.charge),
+    [route.params.charge],
   );
   const [address, setAddress] = React.useState<Address>();
   const [order, setOrder] = React.useState<Order>();
@@ -107,9 +106,10 @@ const Transaction = (props: Props): JSX.Element => {
   };
 
   const onDone = () => {
-    if (address) {
+    if (address && order) {
       navigation.push(Page.WAIT_FOR_PAYMENT, {
         address: address.address,
+        orderId: order.id,
       });
     }
   };

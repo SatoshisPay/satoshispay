@@ -5,12 +5,15 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Page, { RootStackParamList } from './src/pages/pages';
 import Home from './src/pages/Home';
 import Logo from './src/components/shared/Logo';
-import HistoryButton from './src/components/Topbar/HistoryButton';
+import HistoryButton from './src/components/Topbar/Button';
 import Transaction from './src/pages/Transaction';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 import './global';
+import WaitForPayment from './src/pages/WaitForPayment';
+import { View } from 'react-native';
+import Button from './src/components/Topbar/Button';
 
 const Stream = require('stream-browserify');
 
@@ -19,7 +22,7 @@ function App(): JSX.Element {
     <NavigationContainer>
       <Stack.Navigator
         initialRouteName={Page.HOME}
-        screenOptions={{
+        screenOptions={props => ({
           headerTitle: () => <Logo />,
           headerStyle: {
             backgroundColor: '#F7931A',
@@ -28,20 +31,25 @@ function App(): JSX.Element {
           headerTitleStyle: {
             fontWeight: '500',
           },
-        }}>
-        <Stack.Screen
-          name={Page.HOME}
-          component={Home}
-          options={{
-            headerRight: () => <HistoryButton />,
-          }}
-        />
+          headerBackVisible: false,
+          headerRight: () => (
+            <View className="flex flex-row justify-between items-center">
+              <Button.Home {...props} />
+              <Button.History {...props} />
+              <Button.Wallet {...props} />
+            </View>
+          ),
+        })}>
+        <Stack.Screen name={Page.HOME} component={Home} />
         <Stack.Screen
           name={Page.TRANSACTION}
           component={Transaction}
-          options={{
-            headerBackVisible: false,
-          }}
+          options={{ headerBackVisible: false, headerRight: () => <></> }}
+        />
+        <Stack.Screen
+          name={Page.WAIT_FOR_PAYMENT}
+          component={WaitForPayment}
+          options={{ headerBackVisible: false }}
         />
       </Stack.Navigator>
     </NavigationContainer>

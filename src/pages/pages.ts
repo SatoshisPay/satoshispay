@@ -4,6 +4,7 @@ enum Page {
   BALANCE = 'Balance',
   TRANSACTION = 'Transaction',
   WAIT_FOR_PAYMENT = 'WaitForPayment',
+  WALLET = 'Wallet',
 }
 
 export default Page;
@@ -12,5 +13,6 @@ export type RootStackParamList = {
   Home: undefined;
   History: undefined;
   Transaction: { charge: string };
-  WaitForPayment: { address: string };
+  WaitForPayment: { address: string; orderId: string };
+  Wallet: undefined;
 };

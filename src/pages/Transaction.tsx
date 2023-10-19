@@ -1,6 +1,7 @@
 import React from 'react';
-import { View } from 'react-native';
+import { BackHandler, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useFocusEffect } from '@react-navigation/native';
 
 import Page, { RootStackParamList } from './pages';
 import Decimal from 'decimal.js';
@@ -8,9 +9,12 @@ import Address, { generateNewAddress } from '../data/address';
 import Receipt from '../components/Transaction/Receipt';
 import { getBTCEURTicker } from '../api/ticker';
 import { convertEURToBTC } from '../utils/conversion';
-import { insertAddressWithOrder } from '../database/database';
+import { cancelOrder, insertAddressWithOrder } from '../database/database';
 import ButtonBar from '../components/Transaction/ButtonBar';
-import { createOrderForAddress } from '../data/order';
+import Order, { OrderStatus, createOrderForAddress } from '../data/order';
+import CancelModal from '../components/Transaction/CancelModal';
+import Spinner from '../components/Transaction/Spinner';
+import ErrorModal from '../components/Transaction/ErrorModal';
 
 type Props = NativeStackScreenProps<RootStackParamList, Page.TRANSACTION>;
 
@@ -21,7 +25,13 @@ const Transaction = (props: Props): JSX.Element => {
     [props.route.params.charge],
   );
   const [address, setAddress] = React.useState<Address>();
+  const [order, setOrder] = React.useState<Order>();
   const [btcAmount, setBtcAmount] = React.useState<Decimal>();
+  const [transactionReady, setTransactionReady] =
+    React.useState<boolean>(false);
+  const [showCancelConfirmation, setShowCancelConfirmation] =
+    React.useState<boolean>(false);
+  const [error, setError] = React.useState<string>();
 
   React.useEffect(() => {
     // get conversion rate
@@ -30,7 +40,7 @@ const Transaction = (props: Props): JSX.Element => {
         setBtcAmount(convertEURToBTC(ticker, eurCharge));
       })
       .catch(e => {
-        // TODO: handle error
+        setError('impossibile ottenere il cambio BTC attuale');
         console.error(e);
       });
   }, []);
@@ -41,20 +51,54 @@ const Transaction = (props: Props): JSX.Element => {
     }
     const address = generateNewAddress();
     const order = createOrderForAddress(address, btcAmount, eurCharge);
-    // register address into database
-    insertAddressWithOrder(address, order)
-      .then(() => {
-        setAddress(address);
-      })
-      .catch(e => {
-        // TODO: handle error
-        console.error(e);
-      });
+    setAddress(address);
+    setOrder(order);
   }, [btcAmount]);
+
+  React.useEffect(() => {
+    if (order && address) {
+      // register address into database
+      insertAddressWithOrder(address, order)
+        .then(() => {
+          setTransactionReady(true);
+        })
+        .catch(e => {
+          setError('impossibile generare un indirizzo BTC');
+          setError(e.message);
+        });
+    }
+  }, [order, address]);
+
+  // Handle back button
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        onCancelPressed();
+        return true;
+      };
+
+      const subscription = BackHandler.addEventListener(
+        'hardwareBackPress',
+        onBackPress,
+      );
+      return () => subscription.remove();
+    }, []),
+  );
+
+  const onCancelPressed = () => {
+    setShowCancelConfirmation(true);
+  };
+
+  const onDismissModal = () => {
+    setShowCancelConfirmation(false);
+  };
 
   // Event handlers
   const onCancel = () => {
-    // TODO: ask confirmation and then cancel order
+    if (order) {
+      order.status = OrderStatus.CANCELLED;
+      cancelOrder(order);
+    }
     navigation.goBack();
   };
 
@@ -68,16 +112,23 @@ const Transaction = (props: Props): JSX.Element => {
 
   return (
     <View className="flex flex-col items-center justify-center w-full bg-brand h-full">
-      {address && btcAmount && (
+      <CancelModal
+        visible={showCancelConfirmation}
+        onCancel={onCancel}
+        onDismiss={onDismissModal}
+      />
+      {address && order && transactionReady && btcAmount && (
         <>
           <Receipt
             eurCharge={eurCharge}
             btcCharge={btcAmount}
             address={address}
           />
-          <ButtonBar onCancel={onCancel} onDone={onDone} />
+          <ButtonBar onCancel={onCancelPressed} onDone={onDone} />
         </>
       )}
+      {!transactionReady && <Spinner />}
+      {error && <ErrorModal error={error} onClick={onCancel} />}
     </View>
   );
 };

@@ -36,7 +36,13 @@ function App(): JSX.Element {
             headerRight: () => <HistoryButton />,
           }}
         />
-        <Stack.Screen name={Page.TRANSACTION} component={Transaction} />
+        <Stack.Screen
+          name={Page.TRANSACTION}
+          component={Transaction}
+          options={{
+            headerBackVisible: false,
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

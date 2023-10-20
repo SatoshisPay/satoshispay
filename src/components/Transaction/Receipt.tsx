@@ -19,7 +19,7 @@ const Receipt = (props: Props) => (
       color="#202020"
       backgroundColor="#ffffff"
     />
-    <Text className="text-brandAlt w-full px-4 text-sm text-center">
+    <Text className="text-brandAlt w-full px-4 text-sm text-center pt-2">
       {props.address.address}
     </Text>
     <View className="flex flex-row items-center justify-center w-fit">

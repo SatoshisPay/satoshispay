@@ -49,14 +49,15 @@ const Transaction = ({ route, navigation }: Props): JSX.Element => {
     if (!satsAmount || !eurCharge) {
       return;
     }
-    const generatedAddress = generateNewAddress();
-    const newOrder = createOrderForAddress(
-      generatedAddress,
-      satsAmount,
-      eurCharge,
-    );
-    setAddress(generatedAddress);
-    setOrder(newOrder);
+    generateNewAddress().then(generatedAddress => {
+      const newOrder = createOrderForAddress(
+        generatedAddress,
+        satsAmount,
+        eurCharge,
+      );
+      setAddress(generatedAddress);
+      setOrder(newOrder);
+    });
   }, [satsAmount, eurCharge]);
 
   React.useEffect(() => {

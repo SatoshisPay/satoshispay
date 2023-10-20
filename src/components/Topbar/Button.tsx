@@ -24,7 +24,7 @@ const Wallet = ({ navigation }: Props) => (
   <TouchableOpacity
     className="mx-2"
     onPress={() => {
-      navigation.navigate(Page.HISTORY);
+      navigation.navigate(Page.WALLET);
     }}>
     <CreditCard fill="#ffffff" color="#F7931A" />
   </TouchableOpacity>

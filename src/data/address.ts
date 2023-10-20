@@ -1,7 +1,13 @@
 import Decimal from 'decimal.js';
 import ECPairFactory from 'ecpair';
 import * as tinySecp256k1 from '@bitcoinerlab/secp256k1';
+import * as bip39 from 'bip39';
+import BIP32Factory from 'bip32';
 import * as bitcoin from 'bitcoinjs-lib';
+
+const ECPair = ECPairFactory(tinySecp256k1);
+const bip32 = BIP32Factory(tinySecp256k1);
+const getRandomValues = global.crypto.getRandomValues;
 
 export default interface Address {
   address: string;
@@ -11,19 +17,28 @@ export default interface Address {
 }
 
 export const generateNewAddress = (): Address => {
-  const ECPair = ECPairFactory(tinySecp256k1);
-  const keypair = ECPair.makeRandom();
-  const { address } = bitcoin.payments.p2pkh({
-    pubkey: keypair.publicKey,
+  const randomBytes = new Uint8Array(16);
+  const entropy = getRandomValues(randomBytes);
+  const mnemonic = bip39.entropyToMnemonic(Buffer.from(entropy));
+
+  const seed = bip39.mnemonicToSeedSync(mnemonic);
+  const network = bitcoin.networks.bitcoin;
+
+  const root = bip32.fromSeed(seed, network);
+  const node = root.derivePath("m/44'/0'/0'/0/0");
+  const keyPair = ECPair.fromWIF(node.toWIF(), network);
+  const { address } = bitcoin.payments.p2wpkh({
+    pubkey: keyPair.publicKey,
+    network,
   });
 
-  if (!address || !keypair.privateKey) {
+  if (!address || !keyPair.privateKey) {
     throw new Error('failed to generate address');
   }
 
   return {
     address,
-    privateKey: keypair.privateKey.toString('hex'),
+    privateKey: keyPair.privateKey.toString('hex'),
     balance: new Decimal(0),
     insertedAt: new Date(),
   };

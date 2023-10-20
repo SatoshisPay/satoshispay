@@ -8,6 +8,7 @@ module.exports = {
       {
         aliases: {
           stream: 'readable-stream',
+          crypto: 'react-native-get-random-values',
         },
       },
     ],

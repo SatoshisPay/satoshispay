@@ -14,6 +14,7 @@ import './global';
 import WaitForPayment from './src/pages/WaitForPayment';
 import { View } from 'react-native';
 import Button from './src/components/Topbar/Button';
+import History from './src/pages/History';
 
 const Stream = require('stream-browserify');
 
@@ -41,6 +42,7 @@ function App(): JSX.Element {
           ),
         })}>
         <Stack.Screen name={Page.HOME} component={Home} />
+        <Stack.Screen name={Page.HISTORY} component={History} />
         <Stack.Screen
           name={Page.TRANSACTION}
           component={Transaction}

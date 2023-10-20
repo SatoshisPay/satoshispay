@@ -1,5 +1,5 @@
 import React from 'react';
-import { BackHandler, View } from 'react-native';
+import { BackHandler } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -15,6 +15,7 @@ import Order, { OrderStatus, createOrderForAddress } from '../data/order';
 import CancelModal from '../components/Transaction/CancelModal';
 import Spinner from '../components/Transaction/Spinner';
 import ErrorModal from '../components/shared/ErrorModal';
+import Activity from '../components/reusable/Activity';
 
 type Props = NativeStackScreenProps<RootStackParamList, Page.TRANSACTION>;
 
@@ -115,7 +116,7 @@ const Transaction = ({ route, navigation }: Props): JSX.Element => {
   };
 
   return (
-    <View className="flex flex-col items-center justify-center w-full bg-brand h-full">
+    <Activity.BrandPage>
       <CancelModal
         visible={showCancelConfirmation}
         onCancel={onCancel}
@@ -133,7 +134,7 @@ const Transaction = ({ route, navigation }: Props): JSX.Element => {
       )}
       {!transactionReady && <Spinner />}
       {error && <ErrorModal error={error} onClick={onCancel} />}
-    </View>
+    </Activity.BrandPage>
   );
 };
 

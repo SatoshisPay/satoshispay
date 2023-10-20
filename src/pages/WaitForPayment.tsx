@@ -1,5 +1,5 @@
 import React from 'react';
-import { BackHandler, View } from 'react-native';
+import { BackHandler } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -15,6 +15,7 @@ import Spinner from '../components/WaitForPayment/Spinner';
 import Transaction from '../data/transaction';
 import Order from '../data/order';
 import Receipt from '../components/WaitForPayment/Receipt';
+import Activity from '../components/reusable/Activity';
 
 type Props = NativeStackScreenProps<RootStackParamList, Page.WAIT_FOR_PAYMENT>;
 
@@ -118,10 +119,10 @@ const WaitForPayment = ({ route, navigation }: Props) => {
   );
 
   return (
-    <View className="flex flex-col items-center justify-center w-full bg-brand h-full">
+    <Activity.BrandPage>
       {orderStatus}
       {error && <ErrorModal error={error} onClick={onErrorDismiss} />}
-    </View>
+    </Activity.BrandPage>
   );
 };
 

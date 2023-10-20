@@ -172,6 +172,40 @@ export const getOrderById = async (id: string): Promise<Order> => {
   return order;
 };
 
+export const getOrdersByDate = async (
+  limit: number,
+  offset: number,
+): Promise<Order[]> => {
+  const db = await getDBConnection();
+  const [result] = await db.executeSql(
+    `SELECT * FROM ${ORDER_TABLE} ORDER BY ${ORDER_UPDATED_AT} DESC LIMIT ? OFFSET ?;`,
+    [limit, offset],
+  );
+  const orders: Order[] = [];
+  for (let i = 0; i < result.rows.length; i++) {
+    const order = {
+      id: result.rows.item(i).id,
+      address: await getAddressByAddress(result.rows.item(i).address),
+      status: result.rows.item(i).status,
+      satsAmount: new Decimal(result.rows.item(i).satsAmount),
+      fiatAmount: new Decimal(result.rows.item(i).fiatAmount),
+      insertedAt: new Date(result.rows.item(i).insertedAt),
+      updatedAt: new Date(result.rows.item(i).updatedAt),
+    };
+    orders.push(order);
+  }
+
+  return orders;
+};
+
+export const getOrdersCount = async (): Promise<number> => {
+  const db = await getDBConnection();
+  const [result] = await db.executeSql(
+    `SELECT COUNT(*) AS count FROM ${ORDER_TABLE};`,
+  );
+  return result.rows.item(0).count;
+};
+
 /**
  * @description update address balance and set provided orders's status. Also add all the passed transactions
  * @param address

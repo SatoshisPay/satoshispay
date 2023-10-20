@@ -13,7 +13,7 @@ export default interface Order {
   id: string;
   address: Address;
   status: OrderStatus;
-  btcAmount: Decimal;
+  satsAmount: Decimal;
   fiatAmount: Decimal;
   insertedAt: Date;
   updatedAt: Date;
@@ -21,13 +21,13 @@ export default interface Order {
 
 export const createOrderForAddress = (
   address: Address,
-  btcAmount: Decimal,
+  satsAmount: Decimal,
   fiatAmount: Decimal,
 ): Order => ({
   id: uuid.v4().toString(),
   address,
   status: OrderStatus.PENDING,
-  btcAmount,
+  satsAmount,
   fiatAmount,
   insertedAt: new Date(),
   updatedAt: new Date(),

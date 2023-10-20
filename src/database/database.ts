@@ -24,7 +24,7 @@ const ORDER_TABLE = 'buyOrder';
 const ORDER_ID = 'id';
 const ORDER_ADDRESS = 'address';
 const ORDER_STATUS = 'status';
-const ORDER_BTC_AMOUNT = 'btcAmount';
+const ORDER_SATS_AMOUNT = 'satsAmount';
 const ORDER_FIAT_AMOUNT = 'fiatAmount';
 const ORDER_INSERTED_AT = 'insertedAt';
 const ORDER_UPDATED_AT = 'updatedAt';
@@ -66,7 +66,7 @@ const initDB = async (db: SQLiteDatabase) => {
       ${ORDER_ID} TEXT PRIMARY KEY NOT NULL,
       ${ORDER_ADDRESS} TEXT NOT NULL,
       ${ORDER_STATUS} TEXT NOT NULL,
-      ${ORDER_BTC_AMOUNT} TEXT NOT NULL,
+      ${ORDER_SATS_AMOUNT} TEXT NOT NULL,
       ${ORDER_FIAT_AMOUNT} TEXT NOT NULL,
       ${ORDER_INSERTED_AT} TEXT NOT NULL,
       ${ORDER_UPDATED_AT} TEXT NOT NULL,
@@ -122,13 +122,13 @@ export const insertAddressWithOrder = async (
     );
     tx.executeSql(
       `
-      INSERT INTO ${ORDER_TABLE} (${ORDER_ID}, ${ORDER_ADDRESS}, ${ORDER_STATUS}, ${ORDER_BTC_AMOUNT}, ${ORDER_FIAT_AMOUNT}, ${ORDER_INSERTED_AT}, ${ORDER_UPDATED_AT}) VALUES (?, ?, ?, ?, ?, ?, ?);
+      INSERT INTO ${ORDER_TABLE} (${ORDER_ID}, ${ORDER_ADDRESS}, ${ORDER_STATUS}, ${ORDER_SATS_AMOUNT}, ${ORDER_FIAT_AMOUNT}, ${ORDER_INSERTED_AT}, ${ORDER_UPDATED_AT}) VALUES (?, ?, ?, ?, ?, ?, ?);
       `,
       [
         order.id,
         order.address.address,
         order.status,
-        order.btcAmount.toString(),
+        order.satsAmount.toString(),
         order.fiatAmount.toString(),
         order.insertedAt.toISOString(),
         order.updatedAt.toISOString(),
@@ -164,7 +164,7 @@ export const getOrderById = async (id: string): Promise<Order> => {
     id: result.rows.item(0).id,
     address: await getAddressByAddress(result.rows.item(0).address),
     status: result.rows.item(0).status,
-    btcAmount: new Decimal(result.rows.item(0).btcAmount),
+    satsAmount: new Decimal(result.rows.item(0).satsAmount),
     fiatAmount: new Decimal(result.rows.item(0).fiatAmount),
     insertedAt: new Date(result.rows.item(0).insertedAt),
     updatedAt: new Date(result.rows.item(0).updatedAt),

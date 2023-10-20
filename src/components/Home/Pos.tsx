@@ -50,7 +50,7 @@ const Pos = (props: Props): JSX.Element => {
   };
 
   return (
-    <View className="flex flex-col items-center justify-center w-full bg-slate-100">
+    <View className="flex flex-col items-center justify-center w-full h-full bg-slate-100">
       <View className="flex items-center justify-center">
         <Balance balance={amount} />
       </View>

@@ -6127,6 +6127,11 @@ react-native-uuid@^2.0.1:
   resolved "https://registry.yarnpkg.com/react-native-uuid/-/react-native-uuid-2.0.1.tgz#ed4e2dfb1683eddb66967eb5dca140dfe1abddb9"
   integrity sha512-cptnoIbL53GTCrWlb/+jrDC6tvb7ypIyzbXNJcpR3Vab0mkeaaVd5qnB3f0whXYzS+SMoSQLcUUB0gEWqkPC0g==
 
+react-native-vision-camera@^3.5.1:
+  version "3.5.1"
+  resolved "https://registry.yarnpkg.com/react-native-vision-camera/-/react-native-vision-camera-3.5.1.tgz#64e8328ee712eb7f473ca58031427ddf3f10769c"
+  integrity sha512-F5MBqYooyHJwY9NDSznMKlU6HvMYbKzF0J68SdZz2Jw1TOXRMnN4RlRZ2QvC+NZXWwwvCYTuJy+fBMvW3ZHybg==
+
 react-native@0.72.6:
   version "0.72.6"
   resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.72.6.tgz#9f8d090694907e2f83af22e115cc0e4a3d5fa626"

@@ -1,10 +1,10 @@
 import React from 'react';
-import { View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import Pos from '../components/Home/Pos';
 import Page, { RootStackParamList } from './pages';
 import Decimal from 'decimal.js';
+import Activity from '../components/reusable/Activity';
 
 type Props = NativeStackScreenProps<RootStackParamList, Page.HOME>;
 
@@ -14,9 +14,9 @@ const Home = ({ navigation }: Props): JSX.Element => {
   };
 
   return (
-    <View className="flex flex-col items-center justify-center w-full">
+    <Activity.Page>
       <Pos onSubmitted={onPosSubmit} />
-    </View>
+    </Activity.Page>
   );
 };
 

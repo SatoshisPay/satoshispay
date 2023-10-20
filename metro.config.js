@@ -10,6 +10,7 @@ const config = {
   resolver: {
     extraNodeModules: {
       stream: require.resolve('stream-browserify'),
+      crypto: require.resolve('react-native-get-random-values'),
     },
   },
 };

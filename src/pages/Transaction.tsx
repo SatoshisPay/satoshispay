@@ -8,7 +8,7 @@ import Decimal from 'decimal.js';
 import Address, { generateNewAddress } from '../data/address';
 import Receipt from '../components/Transaction/Receipt';
 import { getBTCEURTicker } from '../api/ticker';
-import { convertEURToBTC } from '../utils/conversion';
+import { convertEURToSats } from '../utils/conversion';
 import { cancelOrder, insertAddressWithOrder } from '../database/database';
 import ButtonBar from '../components/Transaction/ButtonBar';
 import Order, { OrderStatus, createOrderForAddress } from '../data/order';
@@ -25,7 +25,7 @@ const Transaction = ({ route, navigation }: Props): JSX.Element => {
   );
   const [address, setAddress] = React.useState<Address>();
   const [order, setOrder] = React.useState<Order>();
-  const [btcAmount, setBtcAmount] = React.useState<Decimal>();
+  const [satsAmount, setSatsAmount] = React.useState<Decimal>();
   const [transactionReady, setTransactionReady] =
     React.useState<boolean>(false);
   const [showCancelConfirmation, setShowCancelConfirmation] =
@@ -36,7 +36,7 @@ const Transaction = ({ route, navigation }: Props): JSX.Element => {
     // get conversion rate
     getBTCEURTicker()
       .then(ticker => {
-        setBtcAmount(convertEURToBTC(ticker, eurCharge));
+        setSatsAmount(convertEURToSats(ticker, eurCharge));
       })
       .catch(e => {
         setError('impossibile ottenere il cambio BTC attuale');
@@ -45,18 +45,18 @@ const Transaction = ({ route, navigation }: Props): JSX.Element => {
   }, [eurCharge]);
 
   React.useEffect(() => {
-    if (!btcAmount || !eurCharge) {
+    if (!satsAmount || !eurCharge) {
       return;
     }
     const generatedAddress = generateNewAddress();
     const newOrder = createOrderForAddress(
       generatedAddress,
-      btcAmount,
+      satsAmount,
       eurCharge,
     );
     setAddress(generatedAddress);
     setOrder(newOrder);
-  }, [btcAmount, eurCharge]);
+  }, [satsAmount, eurCharge]);
 
   React.useEffect(() => {
     if (order && address) {
@@ -121,11 +121,11 @@ const Transaction = ({ route, navigation }: Props): JSX.Element => {
         onCancel={onCancel}
         onDismiss={onDismissModal}
       />
-      {address && order && transactionReady && btcAmount && (
+      {address && order && transactionReady && satsAmount && (
         <>
           <Receipt
             eurCharge={eurCharge}
-            btcCharge={btcAmount}
+            satsCharge={satsAmount}
             address={address}
           />
           <ButtonBar onCancel={onCancelPressed} onDone={onDone} />

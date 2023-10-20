@@ -50,14 +50,14 @@ const Orders = () => {
       )}
       <View className="flex flex-col justify-between">
         <OrderList orders={orders} />
-        {ordersCount && (
+        {ordersCount ? (
           <PageSelector
             onChange={setPage}
             page={page}
             min={minPage}
             max={maxPage}
           />
-        )}
+        ) : null}
       </View>
     </View>
   );

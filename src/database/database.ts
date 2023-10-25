@@ -16,6 +16,7 @@ let databaseInitialized = false;
 
 const ADDRESS_TABLE = 'address';
 const ADDRESS_ADDRESS = 'address';
+const ADDRESS_MNEMONIC = 'mnemonic';
 const ADDRESS_PRIVATE_KEY = 'privateKey';
 const ADDRESS_BALANCE = 'balance';
 const ADDRESS_INSERTED_AT = 'insertedAt';
@@ -56,6 +57,7 @@ const initDB = async (db: SQLiteDatabase) => {
       `CREATE TABLE IF NOT EXISTS ${ADDRESS_TABLE} (
       ${ADDRESS_ADDRESS} TEXT PRIMARY KEY NOT NULL,
       ${ADDRESS_PRIVATE_KEY} TEXT NOT NULL,
+      ${ADDRESS_MNEMONIC} TEXT NOT NULL,
       ${ADDRESS_BALANCE} TEXT NOT NULL,
       ${ADDRESS_INSERTED_AT} TEXT NOT NULL
     );`,
@@ -97,6 +99,7 @@ export const getAddressByAddress = async (
   );
   const addressObj = {
     address: result.rows.item(0).address,
+    mnemonic: result.rows.item(0).mnemonic,
     privateKey: result.rows.item(0).privateKey,
     balance: new Decimal(result.rows.item(0).balance),
     insertedAt: new Date(result.rows.item(0).insertedAt),
@@ -112,9 +115,10 @@ export const insertAddressWithOrder = async (
   const db = await getDBConnection();
   return await db.transaction(tx => {
     tx.executeSql(
-      `INSERT INTO ${ADDRESS_TABLE} (${ADDRESS_ADDRESS}, ${ADDRESS_PRIVATE_KEY}, ${ADDRESS_BALANCE}, ${ADDRESS_INSERTED_AT}) VALUES (?, ?, ?, ?);`,
+      `INSERT INTO ${ADDRESS_TABLE} (${ADDRESS_ADDRESS}, ${ADDRESS_MNEMONIC}, ${ADDRESS_PRIVATE_KEY}, ${ADDRESS_BALANCE}, ${ADDRESS_INSERTED_AT}) VALUES (?, ?, ?, ?, ?);`,
       [
         address.address,
+        address.mnemonic,
         address.privateKey,
         address.balance.toString(),
         address.insertedAt.toISOString(),

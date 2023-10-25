@@ -16,6 +16,8 @@ import CancelModal from '../components/Transaction/CancelModal';
 import Spinner from '../components/Transaction/Spinner';
 import ErrorModal from '../components/shared/ErrorModal';
 import Activity from '../components/reusable/Activity';
+import { LnInvoice } from '@breeztech/react-native-breez-sdk';
+import { breezCreateInvoice, breezDisconnect } from '../api/breez';
 
 type Props = NativeStackScreenProps<RootStackParamList, Page.TRANSACTION>;
 
@@ -27,6 +29,7 @@ const Transaction = ({ route, navigation }: Props): JSX.Element => {
   const [address, setAddress] = React.useState<Address>();
   const [order, setOrder] = React.useState<Order>();
   const [satsAmount, setSatsAmount] = React.useState<Decimal>();
+  const [lnInvoice, setLnInvoice] = React.useState<LnInvoice>();
   const [transactionReady, setTransactionReady] =
     React.useState<boolean>(false);
   const [showCancelConfirmation, setShowCancelConfirmation] =
@@ -74,6 +77,19 @@ const Transaction = ({ route, navigation }: Props): JSX.Element => {
     }
   }, [order, address]);
 
+  React.useEffect(() => {
+    if (transactionReady && address && order) {
+      breezCreateInvoice(order.satsAmount)
+        .then(invoice => {
+          setLnInvoice(invoice);
+        })
+        .catch(e => {
+          setError('impossibile generare un invoice LN');
+          setError(e.message);
+        });
+    }
+  }, [transactionReady, address, order]);
+
   // Handle back button
   useFocusEffect(
     React.useCallback(() => {
@@ -104,6 +120,11 @@ const Transaction = ({ route, navigation }: Props): JSX.Element => {
       order.status = OrderStatus.CANCELLED;
       cancelOrder(order);
     }
+    if (lnInvoice) {
+      breezDisconnect().then(() => {
+        setLnInvoice(undefined);
+      });
+    }
     navigation.goBack();
   };
 
@@ -123,17 +144,17 @@ const Transaction = ({ route, navigation }: Props): JSX.Element => {
         onCancel={onCancel}
         onDismiss={onDismissModal}
       />
-      {address && order && transactionReady && satsAmount && (
+      {address && order && lnInvoice && satsAmount && (
         <>
           <Receipt
             eurCharge={eurCharge}
             satsCharge={satsAmount}
-            address={address}
+            address={lnInvoice.bolt11}
           />
           <ButtonBar onCancel={onCancelPressed} onDone={onDone} />
         </>
       )}
-      {!transactionReady && <Spinner />}
+      {!lnInvoice && <Spinner />}
       {error && <ErrorModal error={error} onClick={onCancel} />}
     </Activity.BrandPage>
   );

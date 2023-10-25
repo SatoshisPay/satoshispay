@@ -6,22 +6,19 @@ import Address from '../../data/address';
 import Decimal from 'decimal.js';
 
 interface Props {
-  address: Address;
+  address: string;
   satsCharge: Decimal;
   eurCharge: Decimal;
 }
 
 const Receipt = (props: Props) => (
-  <View className="flex flex-col items-center justify-center bg-white px-2 py-8 rounded-xl">
+  <View className="flex flex-col items-center justify-center bg-white px-8 py-8 rounded-xl">
     <QRCode
-      value={props.address.address}
+      value={props.address}
       size={256}
       color="#202020"
       backgroundColor="#ffffff"
     />
-    <Text className="text-brandAlt w-full px-4 text-sm text-center pt-2">
-      {props.address.address}
-    </Text>
     <View className="flex flex-row items-center justify-center w-fit">
       <Text className="text-brandAlt text-2xl text-center py-4">
         {props.satsCharge.toNumber().toLocaleString(undefined, {

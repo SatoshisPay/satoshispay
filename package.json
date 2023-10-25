@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@bitcoinerlab/secp256k1": "^1.0.5",
+    "@breeztech/react-native-breez-sdk": "^0.2.7",
     "@craftzdog/react-native-buffer": "^6.0.5",
     "@react-navigation/native": "^6.1.8",
     "@react-navigation/native-stack": "^6.9.14",

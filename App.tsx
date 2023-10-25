@@ -4,18 +4,17 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import Page, { RootStackParamList } from './src/pages/pages';
 import Home from './src/pages/Home';
-import Logo from './src/components/shared/Logo';
-import HistoryButton from './src/components/Topbar/Button';
+import Logo from './src/components/Topbar/Logo';
 import Transaction from './src/pages/Transaction';
-
-const Stack = createNativeStackNavigator<RootStackParamList>();
-
-import './global';
 import WaitForPayment from './src/pages/WaitForPayment';
 import { View } from 'react-native';
 import Button from './src/components/Topbar/Button';
 import History from './src/pages/History';
 import Wallet from './src/pages/Wallet';
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
+
+import './global';
 
 const Stream = require('stream-browserify');
 

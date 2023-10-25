@@ -9,6 +9,7 @@ import Decimal from 'decimal.js';
 import ErrorModal from '../components/shared/ErrorModal';
 import { getBalance } from '../database/database';
 import WithdrawalForm from '../components/Wallet/WithdrawalForm';
+import { breezGetBalance } from '../api/breez';
 
 type Props = NativeStackScreenProps<RootStackParamList, Page.WALLET>;
 
@@ -18,8 +19,10 @@ const Wallet = ({}: Props) => {
 
   React.useEffect(() => {
     // TODO: fetch pending orders from API
-    getBalance()
-      .then(setSatsBalance)
+    breezGetBalance()
+      .then(balance => {
+        setSatsBalance(balance.lnBalance);
+      })
       .catch(e => {
         setError(e.message);
       });

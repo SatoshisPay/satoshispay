@@ -16,6 +16,7 @@ import Transaction from '../data/transaction';
 import Order from '../data/order';
 import Receipt from '../components/WaitForPayment/Receipt';
 import Activity from '../components/reusable/Activity';
+import { breezGetBalance } from '../api/breez';
 
 type Props = NativeStackScreenProps<RootStackParamList, Page.WAIT_FOR_PAYMENT>;
 
@@ -80,7 +81,15 @@ const WaitForPayment = ({ route, navigation }: Props) => {
   }, []);
 
   const onWorkerTick = () => {
-    // TODO: wait for transaction
+    const worker = setInterval(() => {
+      breezGetBalance().then(balance => {
+        if (order && balance.lnBalance >= order.satsAmount) {
+          onTransactionFullfilled([]);
+        }
+      });
+    }, 1000);
+
+    setWaitForTransactionWorker(worker);
   };
 
   const onGoHomeClicked = () => {
@@ -90,6 +99,7 @@ const WaitForPayment = ({ route, navigation }: Props) => {
 
   const onTransactionFullfilled = (transactions: Transaction[]) => {
     if (address && order) {
+      address.balance.add(order.satsAmount);
       finalizeOrder(address, order, transactions)
         .then(() => {
           setOrderFullfilled(true);

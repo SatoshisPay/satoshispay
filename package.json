@@ -29,6 +29,7 @@
     "react-native": "0.72.6",
     "react-native-crypto-js": "^1.0.0",
     "react-native-feather": "^1.1.2",
+    "react-native-fs": "^2.20.0",
     "react-native-get-random-values": "^1.9.0",
     "react-native-keychain": "^8.1.2",
     "react-native-qrcode-svg": "^6.2.0",

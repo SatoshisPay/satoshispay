@@ -41,7 +41,14 @@ const OrderItem = ({ order }: Props) => {
   return (
     <View className="flex flex-cols justify-between border-b border-gray-300 shadow-lg py-4 w-full">
       <View className="flex flex-row justify-between items-center w-full px-2">
-        <Text className="text-brandAlt text-xs">{order.address.address}</Text>
+        {order.address && (
+          <Text className="text-brandAlt text-xs">{order.address.address}</Text>
+        )}
+        {order.bolt11 && (
+          <Text className="text-brandAlt text-xs">
+            {order.bolt11.substring(0, 32)}
+          </Text>
+        )}
         <Text
           className={`${
             order.fiatAmount.isPositive() ? 'text-green-700' : 'text-red-500'

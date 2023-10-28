@@ -9,14 +9,31 @@ import {
   disconnect,
   receivePayment,
   LnInvoice,
+  listPayments,
+  PaymentTypeFilter,
+  Payment,
+  BreezEventVariant,
 } from '@breeztech/react-native-breez-sdk';
 import * as bip39 from 'bip39';
 import Decimal from 'decimal.js';
 import RNFS from 'react-native-fs';
 import { getLnNodeMnemonic } from '../database/keystore';
+import { finalizeOrder, getOrderByBolt11 } from '../database/database';
+import { OrderStatus } from '../data/order';
 
 const onBreezEvent = (event: BreezEvent) => {
   console.log(`received event ${event.type}`);
+  // Handle invoice paid
+  if (event.type === BreezEventVariant.INVOICE_PAID) {
+    getOrderByBolt11(event.details.bolt11).then(order => {
+      if (order) {
+        order.status = OrderStatus.CONFIRMED;
+        finalizeOrder(undefined, order, []).then(() => {
+          console.log(`order ${order.id} confirmed`);
+        });
+      }
+    });
+  }
 };
 
 export const breezConnect = async () => {
@@ -26,7 +43,7 @@ export const breezConnect = async () => {
   for (const byte of seed) {
     seedNumeric.push(byte);
   }
-  const inviteCode = '6CY8-FEYC';
+  const inviteCode = 'L6EE-Y5L9';
   const apiKey =
     '39bca1bf047e0cac054859ac66cd511dfe5bca5cd8b571975c965963254ba69f';
 
@@ -68,6 +85,14 @@ export const breezGetBalance = async (): Promise<Balance> => {
     lnBalance: new Decimal(lnBalance).div(1000).round(),
     onChainBalance: new Decimal(onChainBalance).div(1000).round(),
   };
+};
+
+export const breezListPayments = async (): Promise<Payment[]> => {
+  const payments = await listPayments({
+    filter: PaymentTypeFilter.RECEIVED,
+  });
+
+  return payments;
 };
 
 export const breezCreateInvoice = async (

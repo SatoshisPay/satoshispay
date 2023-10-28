@@ -12,7 +12,7 @@ export default Page;
 export type RootStackParamList = {
   Home: undefined;
   History: undefined;
-  Transaction: { charge: string };
-  WaitForPayment: { address: string; orderId: string };
+  Transaction: { charge: string; orderType: string };
+  WaitForPayment: { orderId: string };
   Wallet: undefined;
 };

@@ -9,7 +9,7 @@ import Decimal from 'decimal.js';
 import ErrorModal from '../components/shared/ErrorModal';
 import { getBalance } from '../database/database';
 import WithdrawalForm from '../components/Wallet/WithdrawalForm';
-import { breezGetBalance } from '../api/breez';
+import { breezGetBalance, breezListPayments } from '../api/breez';
 
 type Props = NativeStackScreenProps<RootStackParamList, Page.WALLET>;
 

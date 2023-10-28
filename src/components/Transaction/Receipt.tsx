@@ -2,7 +2,6 @@ import React from 'react';
 import QRCode from 'react-native-qrcode-svg';
 import { Text, View } from 'react-native';
 
-import Address from '../../data/address';
 import Decimal from 'decimal.js';
 
 interface Props {

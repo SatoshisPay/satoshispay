@@ -16,18 +16,22 @@ import {
   useCameraPermission,
   useCodeScanner,
 } from 'react-native-vision-camera';
+import { breezWithdrawSats } from '../../api/breez';
+import WaitForWithdraw from './WaitForWithdraw';
 
 interface Props {
   satsBalance: Decimal;
   setError: (error: string) => void;
+  onWithdraw: () => void;
 }
 
-const WithdrawalForm = ({ satsBalance, setError }: Props) => {
+const WithdrawalForm = ({ satsBalance, setError, onWithdraw }: Props) => {
   const [address, setAddress] = React.useState<string>('');
   const [amount, setAmount] = React.useState<string>('');
   const [formError, setFormError] = React.useState<string>();
   const { hasPermission, requestPermission } = useCameraPermission();
   const [activeCamera, setActiveCamera] = React.useState<boolean>(false);
+  const [inProgress, setInProgress] = React.useState(false);
 
   const cameraDevice = useCameraDevice('back');
 
@@ -55,7 +59,7 @@ const WithdrawalForm = ({ satsBalance, setError }: Props) => {
     onCodeScanned: onQrScanned,
   });
 
-  const onWithdraw = () => {
+  const onWithdrawCb = () => {
     let amountNumber;
     try {
       amountNumber = new Decimal(amount);
@@ -72,8 +76,28 @@ const WithdrawalForm = ({ satsBalance, setError }: Props) => {
     if (!address.match(/^(bc1|[13])[a-zA-HJ-NP-Z0-9]{25,39}$/)) {
       setFormError('Indirizzo non valido');
     }
-    // TODO: withdraw
+    setInProgress(true);
+    breezWithdrawSats(amountNumber, address)
+      .then(() => {
+        onWithdraw();
+        setInProgress(false);
+      })
+      .catch(e => {
+        console.error(e);
+        setError(e.message);
+        setInProgress(false);
+      });
   };
+
+  const buttonDisabled = inProgress || !address || !amount;
+
+  if (inProgress) {
+    return (
+      <View className="flex flex-col items-center justify-center mx-auto w-full">
+        <WaitForWithdraw />
+      </View>
+    );
+  }
 
   return (
     <View className="flex flex-col items-center justify-center mx-auto w-full">
@@ -111,8 +135,11 @@ const WithdrawalForm = ({ satsBalance, setError }: Props) => {
       <View className="flex flex-col justify-center items-center">
         {formError && <Text className="text-red-500">{formError}</Text>}
         <TouchableOpacity
-          className="bg-brand flex-row items-center justify-center rounded-lg p-4 mt-4 shadow-lg border border-gray-300"
-          onPress={onWithdraw}>
+          className={`${
+            buttonDisabled ? 'bg-brandAlt' : 'bg-brand'
+          } flex-row items-center justify-center rounded-lg p-4 mt-4 shadow-lg border border-gray-300`}
+          onPress={onWithdrawCb}
+          disabled={buttonDisabled}>
           <Text className="text-white text-2xl">Preleva</Text>
           <ArrowRight className=" text-white" width={24} height={24} />
         </TouchableOpacity>

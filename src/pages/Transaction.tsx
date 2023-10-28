@@ -37,8 +37,7 @@ const Transaction = ({ route, navigation }: Props): JSX.Element => {
   const [address, setAddress] = React.useState<Address | undefined>();
   const [order, setOrder] = React.useState<Order>();
   const [satsAmount, setSatsAmount] = React.useState<Decimal>();
-  const [transactionReady, setTransactionReady] =
-    React.useState<boolean>(false);
+  const [transactionAddress, setTransactionAddress] = React.useState<string>();
   const [showCancelConfirmation, setShowCancelConfirmation] =
     React.useState<boolean>(false);
   const [error, setError] = React.useState<string>();
@@ -72,8 +71,9 @@ const Transaction = ({ route, navigation }: Props): JSX.Element => {
     } else {
       breezCreateInvoice(satsAmount)
         .then(invoice => {
+          setTransactionAddress(invoice.bolt11);
           setOrder(
-            createOrderForLnInvoice(invoice.bolt11, satsAmount, eurCharge),
+            createOrderForLnInvoice(invoice.paymentHash, satsAmount, eurCharge),
           );
         })
         .catch(e => {
@@ -84,7 +84,7 @@ const Transaction = ({ route, navigation }: Props): JSX.Element => {
 
     /*
      */
-  }, [satsAmount, eurCharge]);
+  }, [satsAmount, eurCharge, route.params.orderType]);
 
   React.useEffect(() => {
     if (order) {
@@ -92,24 +92,20 @@ const Transaction = ({ route, navigation }: Props): JSX.Element => {
       if (route.params.orderType === OrderType.BTC && address) {
         insertAddressWithOrder(address, order)
           .then(() => {
-            setTransactionReady(true);
+            setTransactionAddress(address.address);
           })
           .catch(e => {
             setError('impossibile generare un indirizzo BTC');
             setError(e.message);
           });
       } else {
-        insertLnOrder(order)
-          .then(() => {
-            setTransactionReady(true);
-          })
-          .catch(e => {
-            setError('impossibile generare una invoice LN');
-            setError(e.message);
-          });
+        insertLnOrder(order).catch(e => {
+          setError('impossibile generare una invoice LN');
+          setError(e.message);
+        });
       }
     }
-  }, [order, address]);
+  }, [order, address, route.params.orderType]);
 
   // Handle back button
   useFocusEffect(
@@ -159,17 +155,17 @@ const Transaction = ({ route, navigation }: Props): JSX.Element => {
         onCancel={onCancel}
         onDismiss={onDismissModal}
       />
-      {order && transactionReady && satsAmount && (
+      {order && transactionAddress && satsAmount && (
         <>
           <Receipt
             eurCharge={eurCharge}
             satsCharge={satsAmount}
-            address={order.bolt11 ? order.bolt11 : order.address!.address}
+            address={transactionAddress}
           />
           <ButtonBar onCancel={onCancelPressed} onDone={onDone} />
         </>
       )}
-      {!transactionReady && <Spinner />}
+      {(!transactionAddress || !order) && <Spinner />}
       {error && <ErrorModal error={error} onClick={onCancel} />}
     </Activity.BrandPage>
   );

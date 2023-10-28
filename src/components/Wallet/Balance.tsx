@@ -22,7 +22,7 @@ const Balance = ({ satsBalance, setError }: Props) => {
       .catch(e => {
         setError(e.message);
       });
-  }, [satsBalance]);
+  }, [satsBalance, setError]);
 
   return (
     <View className="flex flex-col items-center justify-center mx-auto p-8 mt-8 w-full">

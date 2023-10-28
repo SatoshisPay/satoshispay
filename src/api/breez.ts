@@ -13,19 +13,24 @@ import {
   PaymentTypeFilter,
   Payment,
   BreezEventVariant,
+  fetchReverseSwapFees,
+  sendOnchain,
+  recommendedFees,
+  RecommendedFees,
+  PaymentDetailsVariant,
 } from '@breeztech/react-native-breez-sdk';
 import * as bip39 from 'bip39';
 import Decimal from 'decimal.js';
 import RNFS from 'react-native-fs';
 import { getLnNodeMnemonic } from '../database/keystore';
-import { finalizeOrder, getOrderByBolt11 } from '../database/database';
-import { OrderStatus } from '../data/order';
+import { finalizeOrder, getOrderByPaymentHash } from '../database/database';
+import Order, { OrderStatus } from '../data/order';
 
 const onBreezEvent = (event: BreezEvent) => {
   console.log(`received event ${event.type}`);
   // Handle invoice paid
   if (event.type === BreezEventVariant.INVOICE_PAID) {
-    getOrderByBolt11(event.details.bolt11).then(order => {
+    getOrderByPaymentHash(event.details.paymentHash).then(order => {
       if (order) {
         order.status = OrderStatus.CONFIRMED;
         finalizeOrder(undefined, order, []).then(() => {
@@ -104,4 +109,42 @@ export const breezCreateInvoice = async (
   });
 
   return invoice.lnInvoice;
+};
+
+export const breezWithdrawSats = async (
+  amount: Decimal,
+  address: string,
+): Promise<string> => {
+  const fees = await fetchReverseSwapFees({ sendAmountSat: amount.toNumber() });
+  console.log('got fees', fees.feesHash, fees.max, fees.min);
+  const response = await sendOnchain({
+    amountSat: amount.toNumber(),
+    onchainRecipientAddress: address,
+    pairHash: fees.feesHash,
+    satPerVbyte: fees.min / 224,
+  });
+  return response.reverseSwapInfo.id;
+};
+
+export const breezGetWithdrawFee = async (): Promise<RecommendedFees> => {
+  return await recommendedFees();
+};
+
+export const breezProcessPendingOrders = async (
+  orders: Order[],
+): Promise<Order[]> => {
+  const payments = await breezListPayments();
+  for (const order of orders) {
+    if (order.status === OrderStatus.PENDING) {
+      const payment = payments.find(
+        p =>
+          p.details.type === PaymentDetailsVariant.LN &&
+          p.details.data.paymentHash === order.paymentHash,
+      );
+      if (payment) {
+        order.status = OrderStatus.CONFIRMED;
+      }
+    }
+  }
+  return orders;
 };

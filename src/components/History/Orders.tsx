@@ -6,6 +6,7 @@ import { getOrdersByDate, getOrdersCount } from '../../database/database';
 import ErrorModal from '../shared/ErrorModal';
 import OrderList from './OrderList';
 import PageSelector from './PageSelector';
+import { breezProcessPendingOrders } from '../../api/breez';
 
 const MAX_ORDERS_PER_PAGE = 5;
 
@@ -23,19 +24,26 @@ const Orders = () => {
       });
   }, []);
 
-  React.useEffect(() => {
-    loadTransactions();
-  }, [ordersCount, page]);
-
   const loadTransactions = () => {
     getOrdersByDate(MAX_ORDERS_PER_PAGE, (page - 1) * MAX_ORDERS_PER_PAGE)
-      .then(orders => {
-        setOrders(orders);
+      .then(ordersByDate => {
+        // fetch pending orders
+        breezProcessPendingOrders(ordersByDate)
+          .then(processedOrders => {
+            setOrders(processedOrders);
+          })
+          .catch(err => {
+            setError(err.message);
+          });
       })
       .catch(err => {
         setError(err.message);
       });
   };
+
+  React.useEffect(() => {
+    loadTransactions();
+  }, [ordersCount, page, loadTransactions]);
 
   const minPage = Math.max(1, page - 2);
   const maxPage = Math.min(

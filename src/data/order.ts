@@ -18,7 +18,7 @@ export default interface Order {
   id: string;
   orderType: OrderType;
   address?: Address;
-  bolt11?: string;
+  paymentHash?: string;
   status: OrderStatus;
   satsAmount: Decimal;
   fiatAmount: Decimal;
@@ -42,13 +42,13 @@ export const createOrderForAddress = (
 });
 
 export const createOrderForLnInvoice = (
-  bolt11: string,
+  paymentHash: string,
   satsAmount: Decimal,
   fiatAmount: Decimal,
 ): Order => ({
   id: uuid.v4().toString(),
   orderType: OrderType.LN,
-  bolt11,
+  paymentHash,
   status: OrderStatus.PENDING,
   satsAmount,
   fiatAmount,

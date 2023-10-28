@@ -9,9 +9,16 @@ export enum OrderStatus {
   CANCELLED = 'CANCELLED',
 }
 
+export enum OrderType {
+  BTC = 'BTC',
+  LN = 'LN',
+}
+
 export default interface Order {
   id: string;
-  address: Address;
+  orderType: OrderType;
+  address?: Address;
+  bolt11?: string;
   status: OrderStatus;
   satsAmount: Decimal;
   fiatAmount: Decimal;
@@ -25,7 +32,23 @@ export const createOrderForAddress = (
   fiatAmount: Decimal,
 ): Order => ({
   id: uuid.v4().toString(),
+  orderType: OrderType.BTC,
   address,
+  status: OrderStatus.PENDING,
+  satsAmount,
+  fiatAmount,
+  insertedAt: new Date(),
+  updatedAt: new Date(),
+});
+
+export const createOrderForLnInvoice = (
+  bolt11: string,
+  satsAmount: Decimal,
+  fiatAmount: Decimal,
+): Order => ({
+  id: uuid.v4().toString(),
+  orderType: OrderType.LN,
+  bolt11,
   status: OrderStatus.PENDING,
   satsAmount,
   fiatAmount,

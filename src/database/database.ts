@@ -6,7 +6,7 @@ import {
 import Address from '../data/address';
 import Transaction from '../data/transaction';
 import Decimal from 'decimal.js';
-import Order, { OrderStatus } from '../data/order';
+import Order, { OrderStatus, OrderType } from '../data/order';
 
 const DATABASE_NAME = 'satoshispay.db';
 
@@ -23,7 +23,9 @@ const ADDRESS_INSERTED_AT = 'insertedAt';
 
 const ORDER_TABLE = 'buyOrder';
 const ORDER_ID = 'id';
+const ORDER_ORDER_TYPE = 'orderType';
 const ORDER_ADDRESS = 'address';
+const ORDER_BOLT11 = 'bolt11';
 const ORDER_STATUS = 'status';
 const ORDER_SATS_AMOUNT = 'satsAmount';
 const ORDER_FIAT_AMOUNT = 'fiatAmount';
@@ -66,7 +68,9 @@ const initDB = async (db: SQLiteDatabase) => {
     tx.executeSql(
       `CREATE TABLE IF NOT EXISTS ${ORDER_TABLE} (
       ${ORDER_ID} TEXT PRIMARY KEY NOT NULL,
-      ${ORDER_ADDRESS} TEXT NOT NULL,
+      ${ORDER_ORDER_TYPE} TEXT NOT NULL,
+      ${ORDER_ADDRESS} TEXT,
+      ${ORDER_BOLT11} TEXT,
       ${ORDER_STATUS} TEXT NOT NULL,
       ${ORDER_SATS_AMOUNT} TEXT NOT NULL,
       ${ORDER_FIAT_AMOUNT} TEXT NOT NULL,
@@ -114,6 +118,11 @@ export const insertAddressWithOrder = async (
 ) => {
   const db = await getDBConnection();
   return await db.transaction(tx => {
+    if (order.address === undefined || order.orderType !== OrderType.BTC) {
+      throw new Error(
+        'Address must be defined for order and the type must be BTC',
+      );
+    }
     tx.executeSql(
       `INSERT INTO ${ADDRESS_TABLE} (${ADDRESS_ADDRESS}, ${ADDRESS_MNEMONIC}, ${ADDRESS_PRIVATE_KEY}, ${ADDRESS_BALANCE}, ${ADDRESS_INSERTED_AT}) VALUES (?, ?, ?, ?, ?);`,
       [
@@ -126,10 +135,11 @@ export const insertAddressWithOrder = async (
     );
     tx.executeSql(
       `
-      INSERT INTO ${ORDER_TABLE} (${ORDER_ID}, ${ORDER_ADDRESS}, ${ORDER_STATUS}, ${ORDER_SATS_AMOUNT}, ${ORDER_FIAT_AMOUNT}, ${ORDER_INSERTED_AT}, ${ORDER_UPDATED_AT}) VALUES (?, ?, ?, ?, ?, ?, ?);
+      INSERT INTO ${ORDER_TABLE} (${ORDER_ID}, ${ORDER_ORDER_TYPE}, ${ORDER_ADDRESS}, ${ORDER_STATUS}, ${ORDER_SATS_AMOUNT}, ${ORDER_FIAT_AMOUNT}, ${ORDER_INSERTED_AT}, ${ORDER_UPDATED_AT}) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
       `,
       [
         order.id,
+        order.orderType,
         order.address.address,
         order.status,
         order.satsAmount.toString(),
@@ -139,6 +149,25 @@ export const insertAddressWithOrder = async (
       ],
     );
   });
+};
+
+export const insertLnOrder = async (order: Order) => {
+  const db = await getDBConnection();
+  return await db.executeSql(
+    `
+    INSERT INTO ${ORDER_TABLE} (${ORDER_ID}, ${ORDER_ORDER_TYPE}, ${ORDER_BOLT11}, ${ORDER_STATUS}, ${ORDER_SATS_AMOUNT}, ${ORDER_FIAT_AMOUNT}, ${ORDER_INSERTED_AT}, ${ORDER_UPDATED_AT}) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+    `,
+    [
+      order.id,
+      order.orderType,
+      order.bolt11,
+      order.status,
+      order.satsAmount.toString(),
+      order.fiatAmount.toString(),
+      order.insertedAt.toISOString(),
+      order.updatedAt.toISOString(),
+    ],
+  );
 };
 
 /**
@@ -164,9 +193,18 @@ export const getOrderById = async (id: string): Promise<Order> => {
     `SELECT * FROM ${ORDER_TABLE} WHERE ${ORDER_ID} = ?;`,
     [id],
   );
-  const order = {
+  // get address if btc
+  const orderType = result.rows.item(0).orderType;
+  let address = undefined;
+  if (orderType === OrderType.BTC) {
+    address = await getAddressByAddress(result.rows.item(0).address);
+  }
+
+  const order: Order = {
     id: result.rows.item(0).id,
-    address: await getAddressByAddress(result.rows.item(0).address),
+    orderType,
+    address,
+    bolt11: result.rows.item(0).bolt11,
     status: result.rows.item(0).status,
     satsAmount: new Decimal(result.rows.item(0).satsAmount),
     fiatAmount: new Decimal(result.rows.item(0).fiatAmount),
@@ -187,9 +225,18 @@ export const getOrdersByDate = async (
   );
   const orders: Order[] = [];
   for (let i = 0; i < result.rows.length; i++) {
-    const order = {
-      id: result.rows.item(i).id,
-      address: await getAddressByAddress(result.rows.item(i).address),
+    // get address if btc
+    const orderType = result.rows.item(0).orderType;
+    let address = undefined;
+    if (orderType === OrderType.BTC) {
+      address = await getAddressByAddress(result.rows.item(0).address);
+    }
+
+    const order: Order = {
+      id: result.rows.item(0).id,
+      orderType,
+      address,
+      bolt11: result.rows.item(0).bolt11,
       status: result.rows.item(i).status,
       satsAmount: new Decimal(result.rows.item(i).satsAmount),
       fiatAmount: new Decimal(result.rows.item(i).fiatAmount),
@@ -216,16 +263,18 @@ export const getOrdersCount = async (): Promise<number> => {
  * @param transaction
  */
 export const finalizeOrder = async (
-  address: Address,
+  address: Address | undefined,
   order: Order,
   transactions: Transaction[],
 ) => {
   const db = await getDBConnection();
   return await db.transaction(tx => {
-    tx.executeSql(
-      `UPDATE ${ADDRESS_TABLE} SET ${ADDRESS_BALANCE} = ? WHERE ${ADDRESS_ADDRESS} = ?;`,
-      [address.balance.toString(), address.address],
-    );
+    if (address) {
+      tx.executeSql(
+        `UPDATE ${ADDRESS_TABLE} SET ${ADDRESS_BALANCE} = ? WHERE ${ADDRESS_ADDRESS} = ?;`,
+        [address.balance.toString(), address.address],
+      );
+    }
     tx.executeSql(
       `UPDATE ${ORDER_TABLE} SET ${ORDER_STATUS} = ? WHERE ${ORDER_ID} = ?;`,
       [OrderStatus.CONFIRMED, order.id],
@@ -243,6 +292,41 @@ export const finalizeOrder = async (
       );
     }
   });
+};
+
+export const getOrderByBolt11 = async (
+  bolt11: string,
+): Promise<Order | undefined> => {
+  const db = await getDBConnection();
+
+  const [result] = await db.executeSql(
+    `SELECT * FROM ${ORDER_TABLE} WHERE ${ORDER_BOLT11} = ?;`,
+    [bolt11],
+  );
+
+  if (result.rows.length === 0) {
+    return undefined;
+  }
+
+  // get address if btc
+  const orderType = result.rows.item(0).orderType;
+  let address = undefined;
+  if (orderType === OrderType.BTC) {
+    address = await getAddressByAddress(result.rows.item(0).address);
+  }
+
+  const order: Order = {
+    id: result.rows.item(0).id,
+    orderType,
+    address,
+    bolt11: result.rows.item(0).bolt11,
+    status: result.rows.item(0).status,
+    satsAmount: new Decimal(result.rows.item(0).satsAmount),
+    fiatAmount: new Decimal(result.rows.item(0).fiatAmount),
+    insertedAt: new Date(result.rows.item(0).insertedAt),
+    updatedAt: new Date(result.rows.item(0).updatedAt),
+  };
+  return order;
 };
 
 export const cancelOrder = async (order: Order) => {

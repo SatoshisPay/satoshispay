@@ -4,39 +4,24 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useFocusEffect } from '@react-navigation/native';
 
 import Page, { RootStackParamList } from './pages';
-import Address from '../data/address';
-import {
-  finalizeOrder,
-  getAddressByAddress,
-  getOrderById,
-} from '../database/database';
+import { finalizeOrder, getOrderById } from '../database/database';
 import ErrorModal from '../components/shared/ErrorModal';
 import Spinner from '../components/WaitForPayment/Spinner';
 import Transaction from '../data/transaction';
-import Order from '../data/order';
+import Order, { OrderStatus, OrderType } from '../data/order';
 import Receipt from '../components/WaitForPayment/Receipt';
 import Activity from '../components/reusable/Activity';
-import { breezGetBalance } from '../api/breez';
+import { breezGetBalance, breezListPayments } from '../api/breez';
+import { PaymentDetailsVariant } from '@breeztech/react-native-breez-sdk';
 
 type Props = NativeStackScreenProps<RootStackParamList, Page.WAIT_FOR_PAYMENT>;
 
 const WaitForPayment = ({ route, navigation }: Props) => {
-  const [address, setAddress] = React.useState<Address>();
   const [order, setOrder] = React.useState<Order>();
   const [error, setError] = React.useState<string>();
   const [orderFullfilled, setOrderFullfilled] = React.useState(false);
   const [waitForTransactionWorker, setWaitForTransactionWorker] =
     React.useState<NodeJS.Timeout>();
-
-  React.useEffect(() => {
-    getAddressByAddress(route.params.address)
-      .then(address => {
-        setAddress(address);
-      })
-      .catch(e => {
-        setError(e.message);
-      });
-  }, [route.params.address]);
 
   React.useEffect(() => {
     getOrderById(route.params.orderId)
@@ -66,12 +51,12 @@ const WaitForPayment = ({ route, navigation }: Props) => {
   );
 
   React.useEffect(() => {
-    if (address && order) {
+    if (order) {
       const worker = setInterval(onWorkerTick, 5000);
 
       setWaitForTransactionWorker(worker);
     }
-  }, [address, order]);
+  }, [order]);
 
   // on umount clear the worker
   React.useEffect(() => {
@@ -82,11 +67,33 @@ const WaitForPayment = ({ route, navigation }: Props) => {
 
   const onWorkerTick = () => {
     const worker = setInterval(() => {
-      breezGetBalance().then(balance => {
-        if (order && balance.lnBalance >= order.satsAmount) {
-          onTransactionFullfilled([]);
-        }
-      });
+      if (order && order.orderType === OrderType.LN && order.bolt11) {
+        getOrderById(order.id).then(order => {
+          if (order.status !== OrderStatus.PENDING) {
+            breezListPayments()
+              .then(payments => {
+                const payment = payments.find(
+                  p =>
+                    p.details.type === PaymentDetailsVariant.LN &&
+                    p.details.data.bolt11 === order.bolt11,
+                );
+                if (payment) {
+                  onTransactionFullfilled([]);
+                  cancelWorker();
+                }
+              })
+              .catch(e => {
+                console.error(e);
+                setError("impossibile controllare le transazioni per l'ordine");
+              });
+          } else {
+            setOrderFullfilled(true);
+            cancelWorker();
+          }
+        });
+      } else {
+        // TODO: HANDLE BTC
+      }
     }, 1000);
 
     setWaitForTransactionWorker(worker);
@@ -98,9 +105,12 @@ const WaitForPayment = ({ route, navigation }: Props) => {
   };
 
   const onTransactionFullfilled = (transactions: Transaction[]) => {
-    if (address && order) {
-      address.balance.add(order.satsAmount);
-      finalizeOrder(address, order, transactions)
+    if (order) {
+      if (order.address) {
+        order.address.balance.add(order.satsAmount);
+      }
+
+      finalizeOrder(order.address, order, transactions)
         .then(() => {
           setOrderFullfilled(true);
         })

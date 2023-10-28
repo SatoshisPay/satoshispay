@@ -7,23 +7,34 @@ import Decimal from 'decimal.js';
 import Activity from '../components/reusable/Activity';
 import { breezConnect } from '../api/breez';
 import ErrorModal from '../components/shared/ErrorModal';
+import { OrderType } from '../data/order';
+import WaitForPos from '../components/Home/WaitForPos';
 
 type Props = NativeStackScreenProps<RootStackParamList, Page.HOME>;
 
 const Home = ({ navigation }: Props): JSX.Element => {
   const onPosSubmit = (charge: Decimal) => {
-    navigation.navigate(Page.TRANSACTION, { charge: charge.toFixed(2) });
+    navigation.navigate(Page.TRANSACTION, {
+      charge: charge.toFixed(2),
+      orderType: OrderType.LN,
+    });
   };
+  const [posReady, setPosReady] = React.useState<boolean>(false);
   const [error, setError] = React.useState<string>();
 
   React.useEffect(() => {
     breezConnect()
       .then(() => {
         console.log('connected to breez');
+        setPosReady(true);
       })
       .catch(e => {
-        console.error(e.message);
-        setError('failed to connect to breez');
+        if (e.message.includes('already initialized')) {
+          setPosReady(true);
+        } else {
+          console.error(e.message);
+          setError('failed to connect to breez');
+        }
       });
   }, []);
 
@@ -32,7 +43,7 @@ const Home = ({ navigation }: Props): JSX.Element => {
       {error && (
         <ErrorModal error={error} onClick={() => setError(undefined)} />
       )}
-      <Pos onSubmitted={onPosSubmit} />
+      {posReady ? <Pos onSubmitted={onPosSubmit} /> : <WaitForPos />}
     </Activity.Page>
   );
 };

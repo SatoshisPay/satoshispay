@@ -44,9 +44,9 @@ const OrderItem = ({ order }: Props) => {
         {order.address && (
           <Text className="text-brandAlt text-xs">{order.address.address}</Text>
         )}
-        {order.bolt11 && (
+        {order.paymentHash && (
           <Text className="text-brandAlt text-xs">
-            {order.bolt11.substring(0, 32)}
+            {order.paymentHash.substring(0, 32)}
           </Text>
         )}
         <Text

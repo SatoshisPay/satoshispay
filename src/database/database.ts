@@ -25,7 +25,7 @@ const ORDER_TABLE = 'buyOrder';
 const ORDER_ID = 'id';
 const ORDER_ORDER_TYPE = 'orderType';
 const ORDER_ADDRESS = 'address';
-const ORDER_BOLT11 = 'bolt11';
+const ORDER_PAYMENT_HASH = 'paymentHash';
 const ORDER_STATUS = 'status';
 const ORDER_SATS_AMOUNT = 'satsAmount';
 const ORDER_FIAT_AMOUNT = 'fiatAmount';
@@ -55,6 +55,11 @@ const getDBConnection = async (): Promise<SQLiteDatabase> => {
  */
 const initDB = async (db: SQLiteDatabase) => {
   return await db.transaction(tx => {
+    /* //FIXME: very dangerous; for tests only, use migrations otherwise
+    tx.executeSql(`DROP TABLE ${ADDRESS_TABLE};`);
+    tx.executeSql(`DROP TABLE ${ORDER_TABLE};`);
+    tx.executeSql(`DROP TABLE ${TRANSACTION_TABLE};`);
+    */
     tx.executeSql(
       `CREATE TABLE IF NOT EXISTS ${ADDRESS_TABLE} (
       ${ADDRESS_ADDRESS} TEXT PRIMARY KEY NOT NULL,
@@ -70,7 +75,7 @@ const initDB = async (db: SQLiteDatabase) => {
       ${ORDER_ID} TEXT PRIMARY KEY NOT NULL,
       ${ORDER_ORDER_TYPE} TEXT NOT NULL,
       ${ORDER_ADDRESS} TEXT,
-      ${ORDER_BOLT11} TEXT,
+      ${ORDER_PAYMENT_HASH} TEXT,
       ${ORDER_STATUS} TEXT NOT NULL,
       ${ORDER_SATS_AMOUNT} TEXT NOT NULL,
       ${ORDER_FIAT_AMOUNT} TEXT NOT NULL,
@@ -155,12 +160,12 @@ export const insertLnOrder = async (order: Order) => {
   const db = await getDBConnection();
   return await db.executeSql(
     `
-    INSERT INTO ${ORDER_TABLE} (${ORDER_ID}, ${ORDER_ORDER_TYPE}, ${ORDER_BOLT11}, ${ORDER_STATUS}, ${ORDER_SATS_AMOUNT}, ${ORDER_FIAT_AMOUNT}, ${ORDER_INSERTED_AT}, ${ORDER_UPDATED_AT}) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+    INSERT INTO ${ORDER_TABLE} (${ORDER_ID}, ${ORDER_ORDER_TYPE}, ${ORDER_PAYMENT_HASH}, ${ORDER_STATUS}, ${ORDER_SATS_AMOUNT}, ${ORDER_FIAT_AMOUNT}, ${ORDER_INSERTED_AT}, ${ORDER_UPDATED_AT}) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
     `,
     [
       order.id,
       order.orderType,
-      order.bolt11,
+      order.paymentHash,
       order.status,
       order.satsAmount.toString(),
       order.fiatAmount.toString(),
@@ -195,7 +200,7 @@ export const getOrderById = async (id: string): Promise<Order> => {
   );
   // get address if btc
   const orderType = result.rows.item(0).orderType;
-  let address = undefined;
+  let address;
   if (orderType === OrderType.BTC) {
     address = await getAddressByAddress(result.rows.item(0).address);
   }
@@ -204,7 +209,7 @@ export const getOrderById = async (id: string): Promise<Order> => {
     id: result.rows.item(0).id,
     orderType,
     address,
-    bolt11: result.rows.item(0).bolt11,
+    paymentHash: result.rows.item(0).paymentHash,
     status: result.rows.item(0).status,
     satsAmount: new Decimal(result.rows.item(0).satsAmount),
     fiatAmount: new Decimal(result.rows.item(0).fiatAmount),
@@ -227,7 +232,7 @@ export const getOrdersByDate = async (
   for (let i = 0; i < result.rows.length; i++) {
     // get address if btc
     const orderType = result.rows.item(0).orderType;
-    let address = undefined;
+    let address;
     if (orderType === OrderType.BTC) {
       address = await getAddressByAddress(result.rows.item(0).address);
     }
@@ -236,7 +241,7 @@ export const getOrdersByDate = async (
       id: result.rows.item(0).id,
       orderType,
       address,
-      bolt11: result.rows.item(0).bolt11,
+      paymentHash: result.rows.item(0).paymentHash,
       status: result.rows.item(i).status,
       satsAmount: new Decimal(result.rows.item(i).satsAmount),
       fiatAmount: new Decimal(result.rows.item(i).fiatAmount),
@@ -294,14 +299,14 @@ export const finalizeOrder = async (
   });
 };
 
-export const getOrderByBolt11 = async (
-  bolt11: string,
+export const getOrderByPaymentHash = async (
+  paymentHash: string,
 ): Promise<Order | undefined> => {
   const db = await getDBConnection();
 
   const [result] = await db.executeSql(
-    `SELECT * FROM ${ORDER_TABLE} WHERE ${ORDER_BOLT11} = ?;`,
-    [bolt11],
+    `SELECT * FROM ${ORDER_TABLE} WHERE ${ORDER_PAYMENT_HASH} = ?;`,
+    [paymentHash],
   );
 
   if (result.rows.length === 0) {
@@ -310,7 +315,7 @@ export const getOrderByBolt11 = async (
 
   // get address if btc
   const orderType = result.rows.item(0).orderType;
-  let address = undefined;
+  let address;
   if (orderType === OrderType.BTC) {
     address = await getAddressByAddress(result.rows.item(0).address);
   }
@@ -319,7 +324,7 @@ export const getOrderByBolt11 = async (
     id: result.rows.item(0).id,
     orderType,
     address,
-    bolt11: result.rows.item(0).bolt11,
+    paymentHash: result.rows.item(0).paymentHash,
     status: result.rows.item(0).status,
     satsAmount: new Decimal(result.rows.item(0).satsAmount),
     fiatAmount: new Decimal(result.rows.item(0).fiatAmount),

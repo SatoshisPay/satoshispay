@@ -11,7 +11,7 @@ import Transaction from '../data/transaction';
 import Order, { OrderStatus, OrderType } from '../data/order';
 import Receipt from '../components/WaitForPayment/Receipt';
 import Activity from '../components/reusable/Activity';
-import { breezGetBalance, breezListPayments } from '../api/breez';
+import { breezListPayments } from '../api/breez';
 import { PaymentDetailsVariant } from '@breeztech/react-native-breez-sdk';
 
 type Props = NativeStackScreenProps<RootStackParamList, Page.WAIT_FOR_PAYMENT>;
@@ -25,8 +25,8 @@ const WaitForPayment = ({ route, navigation }: Props) => {
 
   React.useEffect(() => {
     getOrderById(route.params.orderId)
-      .then(order => {
-        setOrder(order);
+      .then(orderById => {
+        setOrder(orderById);
       })
       .catch(e => {
         setError(`could not find order: ${e.message}`);
@@ -67,15 +67,15 @@ const WaitForPayment = ({ route, navigation }: Props) => {
 
   const onWorkerTick = () => {
     const worker = setInterval(() => {
-      if (order && order.orderType === OrderType.LN && order.bolt11) {
-        getOrderById(order.id).then(order => {
-          if (order.status !== OrderStatus.PENDING) {
+      if (order && order.orderType === OrderType.LN && order.paymentHash) {
+        getOrderById(order.id).then(orderById => {
+          if (orderById.status === OrderStatus.PENDING) {
             breezListPayments()
               .then(payments => {
                 const payment = payments.find(
                   p =>
                     p.details.type === PaymentDetailsVariant.LN &&
-                    p.details.data.bolt11 === order.bolt11,
+                    p.details.data.paymentHash === orderById.paymentHash,
                 );
                 if (payment) {
                   onTransactionFullfilled([]);

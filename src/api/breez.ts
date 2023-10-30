@@ -130,9 +130,10 @@ export const breezGetWithdrawFee = async (): Promise<RecommendedFees> => {
   return await recommendedFees();
 };
 
-export const breezProcessPendingOrders = async (
+export const breezCheckPaymentForPendingTransactions = async (
   orders: Order[],
 ): Promise<Order[]> => {
+  const confirmedOrders = [];
   const payments = await breezListPayments();
   for (const order of orders) {
     if (order.status === OrderStatus.PENDING) {
@@ -143,8 +144,9 @@ export const breezProcessPendingOrders = async (
       );
       if (payment) {
         order.status = OrderStatus.CONFIRMED;
+        confirmedOrders.push(order);
       }
     }
   }
-  return orders;
+  return confirmedOrders;
 };

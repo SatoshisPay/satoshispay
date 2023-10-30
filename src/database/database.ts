@@ -262,6 +262,38 @@ export const getOrdersCount = async (): Promise<number> => {
   return result.rows.item(0).count;
 };
 
+export const getPendingOrders = async (): Promise<Order[]> => {
+  const db = await getDBConnection();
+  const [result] = await db.executeSql(
+    `SELECT * FROM ${ORDER_TABLE} WHERE ${ORDER_STATUS} = ?;`,
+    [OrderStatus.PENDING],
+  );
+  const orders: Order[] = [];
+  for (let i = 0; i < result.rows.length; i++) {
+    // get address if btc
+    const orderType = result.rows.item(0).orderType;
+    let address;
+    if (orderType === OrderType.BTC) {
+      address = await getAddressByAddress(result.rows.item(0).address);
+    }
+
+    const order: Order = {
+      id: result.rows.item(0).id,
+      orderType,
+      address,
+      paymentHash: result.rows.item(0).paymentHash,
+      status: result.rows.item(i).status,
+      satsAmount: new Decimal(result.rows.item(i).satsAmount),
+      fiatAmount: new Decimal(result.rows.item(i).fiatAmount),
+      insertedAt: new Date(result.rows.item(i).insertedAt),
+      updatedAt: new Date(result.rows.item(i).updatedAt),
+    };
+    orders.push(order);
+  }
+
+  return orders;
+};
+
 /**
  * @description update address balance and set provided orders's status. Also add all the passed transactions
  * @param address

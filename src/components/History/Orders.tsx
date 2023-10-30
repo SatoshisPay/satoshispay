@@ -6,35 +6,44 @@ import { getOrdersByDate, getOrdersCount } from '../../database/database';
 import ErrorModal from '../shared/ErrorModal';
 import OrderList from './OrderList';
 import PageSelector from './PageSelector';
-import { breezProcessPendingOrders } from '../../api/breez';
+import processPendingOrders from '../../task/collectHistory';
 
 const MAX_ORDERS_PER_PAGE = 5;
 
 const Orders = () => {
+  const [pendingOrdersProcessed, setPendingOrdersProcessed] =
+    React.useState<boolean>(false);
   const [orders, setOrders] = React.useState<Order[]>([]);
   const [ordersCount, setOrdersCount] = React.useState<number>();
   const [page, setPage] = React.useState(1);
   const [error, setError] = React.useState<string>();
 
   React.useEffect(() => {
-    getOrdersCount()
-      .then(setOrdersCount)
-      .catch(err => {
-        setError(err.message);
-      });
+    if (!pendingOrdersProcessed) {
+      processPendingOrders()
+        .then(() => {
+          setPendingOrdersProcessed(true);
+        })
+        .catch(err => {
+          setError(`Impossibile processare gli ordini vecchi: ${err.message}`);
+        });
+    }
   }, []);
+
+  React.useEffect(() => {
+    if (pendingOrdersProcessed) {
+      getOrdersCount()
+        .then(setOrdersCount)
+        .catch(err => {
+          setError(err.message);
+        });
+    }
+  }, [pendingOrdersProcessed]);
 
   const loadTransactions = () => {
     getOrdersByDate(MAX_ORDERS_PER_PAGE, (page - 1) * MAX_ORDERS_PER_PAGE)
       .then(ordersByDate => {
-        // fetch pending orders
-        breezProcessPendingOrders(ordersByDate)
-          .then(processedOrders => {
-            setOrders(processedOrders);
-          })
-          .catch(err => {
-            setError(err.message);
-          });
+        setOrders(ordersByDate);
       })
       .catch(err => {
         setError(err.message);

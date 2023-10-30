@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, Text } from 'react-native';
+import { Check, Clock, X } from 'react-native-feather';
 
 import Order, { OrderStatus } from '../../data/order';
-import { Check, Clock, X } from 'react-native-feather';
 
 interface Props {
   order: Order;

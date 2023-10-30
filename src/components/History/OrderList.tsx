@@ -13,6 +13,7 @@ const OrderList = ({ orders }: Props) => (
     <FlatList
       data={orders}
       renderItem={({ item }) => <OrderItem order={item} />}
+      keyExtractor={(item, index) => `${item.id}-${index}`}
     />
   </View>
 );

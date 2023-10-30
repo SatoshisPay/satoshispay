@@ -26,7 +26,7 @@ interface Props {
 }
 
 const WithdrawalForm = ({ satsBalance, setError, onWithdraw }: Props) => {
-  const [address, setAddress] = React.useState<string>('');
+  const [address, setAddress] = React.useState<string>(''); //bc1qvlmykjn7htz0vuprmjrlkwtv9m9pan6kylsr8w
   const [amount, setAmount] = React.useState<string>('');
   const [formError, setFormError] = React.useState<string>();
   const { hasPermission, requestPermission } = useCameraPermission();
@@ -81,6 +81,8 @@ const WithdrawalForm = ({ satsBalance, setError, onWithdraw }: Props) => {
       .then(() => {
         onWithdraw();
         setInProgress(false);
+        setAddress('');
+        setAmount('');
       })
       .catch(e => {
         console.error(e);

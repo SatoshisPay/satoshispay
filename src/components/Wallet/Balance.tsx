@@ -15,13 +15,15 @@ const Balance = ({ satsBalance, setError }: Props) => {
 
   React.useEffect(() => {
     // get fiat balance
-    getBTCEURTicker()
-      .then(ticker => {
-        setFiatBalance(convertSatsToEUR(ticker, satsBalance));
-      })
-      .catch(e => {
-        setError(e.message);
-      });
+    if (satsBalance) {
+      getBTCEURTicker()
+        .then(ticker => {
+          setFiatBalance(convertSatsToEUR(ticker, satsBalance));
+        })
+        .catch(e => {
+          setError(e.message);
+        });
+    }
   }, [satsBalance, setError]);
 
   return (

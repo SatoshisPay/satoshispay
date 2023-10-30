@@ -9,6 +9,7 @@ import ErrorModal from '../components/shared/ErrorModal';
 import WithdrawalForm from '../components/Wallet/WithdrawalForm';
 import { breezGetBalance } from '../api/breez';
 import SuccessModal from '../components/shared/SuccessModal';
+import PendingWithdrawals from '../components/Wallet/PendingWithdrawals';
 
 type Props = NativeStackScreenProps<RootStackParamList, Page.WALLET>;
 
@@ -53,6 +54,7 @@ const Wallet = ({}: Props) => {
         satsBalance={satsBalance}
         setError={setError}
       />
+      <PendingWithdrawals setError={setError} />
     </Activity.ListPage>
   );
 };

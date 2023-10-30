@@ -18,6 +18,8 @@ import {
   recommendedFees,
   RecommendedFees,
   PaymentDetailsVariant,
+  inProgressReverseSwaps,
+  ReverseSwapInfo,
 } from '@breeztech/react-native-breez-sdk';
 import * as bip39 from 'bip39';
 import Decimal from 'decimal.js';
@@ -128,6 +130,12 @@ export const breezWithdrawSats = async (
 
 export const breezGetWithdrawFee = async (): Promise<RecommendedFees> => {
   return await recommendedFees();
+};
+
+export const breezGetPendingWithdrawals = async (): Promise<
+  ReverseSwapInfo[]
+> => {
+  return await inProgressReverseSwaps();
 };
 
 export const breezCheckPaymentForPendingTransactions = async (

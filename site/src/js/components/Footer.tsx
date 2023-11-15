@@ -1,9 +1,6 @@
 import * as React from 'react';
 import Container from './reusable/Container';
-import Image from 'next/image';
 
-import GooglePlayBadge from '@/src/assets/images/it_badge_web_generic.webp';
-import AppStoreBadge from '@/src/assets/images/appstore.webp';
 import AppBadge from './reusable/AppBadge';
 
 const Footer = () => {

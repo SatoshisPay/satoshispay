@@ -3,14 +3,11 @@ import * as React from 'react';
 import Screenshot1 from '@/src/assets/images/app-screen-home.webp';
 import Screenshot2 from '@/src/assets/images/app-screen-tx.webp';
 import Screenshot3 from '@/src/assets/images/app-screen-wallet.webp';
-import GooglePlayBadge from '@/src/assets/images/it_badge_web_generic.webp';
-import AppStoreBadge from '@/src/assets/images/appstore.webp';
 
 import Container from '../../reusable/Container';
 import Heading from '../../reusable/Heading';
 import Device from '../../reusable/Device';
 import Paragraph from '../../reusable/Paragraph';
-import Image from 'next/image';
 import AppBadge from '../../reusable/AppBadge';
 
 const App = () => (

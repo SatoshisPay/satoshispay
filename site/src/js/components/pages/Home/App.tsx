@@ -11,6 +11,7 @@ import Heading from '../../reusable/Heading';
 import Device from '../../reusable/Device';
 import Paragraph from '../../reusable/Paragraph';
 import Image from 'next/image';
+import AppBadge from '../../reusable/AppBadge';
 
 const App = () => (
   <Container.FlexCols className="items-center justify-center w-full gap-8">
@@ -68,24 +69,10 @@ const App = () => (
       <span className="block text-brandAlt font-bold text-xl">
         Entra a far parte della rivoluzione ORA!
       </span>
-      <Container.FlexResponsiveRow className="justify-center items-center gap-8">
-        <a className="block hover:underline text-xl" href="" target="_blank">
-          <Image
-            src={GooglePlayBadge}
-            alt="google play badge"
-            width={200}
-            height={100}
-          />
-        </a>
-        <a className="block hover:underline text-xl" href="" target="_blank">
-          <Image
-            src={AppStoreBadge}
-            alt="appstore badge"
-            width={200}
-            height={100}
-          />
-        </a>
-      </Container.FlexResponsiveRow>
+      <span className="block text-text text-lg">
+        Disponibile prossimamente su Android e iOS
+      </span>
+      <AppBadge containerClassName="flex flex-row sm:flex-col gap-4 items-center" />
     </Container.FlexCols>
   </Container.FlexCols>
 );

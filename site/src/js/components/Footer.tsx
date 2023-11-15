@@ -4,6 +4,7 @@ import Image from 'next/image';
 
 import GooglePlayBadge from '@/src/assets/images/it_badge_web_generic.webp';
 import AppStoreBadge from '@/src/assets/images/appstore.webp';
+import AppBadge from './reusable/AppBadge';
 
 const Footer = () => {
   const year = new Date().getFullYear();
@@ -29,26 +30,11 @@ const Footer = () => {
             Github
           </a>
         </Container.FlexCols>
-        <Container.FlexCols className="gap-2">
+        <Container.FlexCols className="gap-2 hidden">
           <div>
             <span className="text-2xl block pb-4">Download</span>
           </div>
-          <a className="block hover:underline text-xl" href="" target="_blank">
-            <Image
-              src={GooglePlayBadge}
-              alt="google play badge"
-              width="200"
-              height="100"
-            />
-          </a>
-          <a className="block hover:underline text-xl" href="" target="_blank">
-            <Image
-              src={AppStoreBadge}
-              alt="appstore badge"
-              width="200"
-              height="100"
-            />
-          </a>
+          <AppBadge containerClassName="flex flex-col gap-2 items-center" />
         </Container.FlexCols>
         <Container.FlexCols className="gap-2">
           <div>
@@ -85,10 +71,6 @@ const Footer = () => {
         </Container.FlexCols>
       </Container.FlexResponsiveRow>
       <Container.FlexCols className="justify-center items-center gap-2">
-        <span className="block text-text">P.IVA IT03104140300</span>
-        <span className="block text-text text-sm">
-          Via Antonio Marangoni 33, 33100, Udine (UD)
-        </span>
         <span className="block text-text text-xs">
           Google Play e il logo di Google Play sono marchi di Google LLC.
         </span>

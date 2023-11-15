@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['./**/*.{html,tsx,jsx,ts,js}'],
+  content: ['./src/**/*.{js,ts,jsx,tsx,mdx}', './app/**/*.{js,ts,jsx,tsx,mdx}'],
   theme: {
     screens: {
       sm: { max: '640px' },
@@ -11,12 +11,13 @@ module.exports = {
     },
     extend: {
       backgroundImage: {
-        'footer-texture': 'url("assets/images/footer-background.webp")',
+        'footer-texture': 'url("/img/footer-background.webp")',
       },
 
       colors: {
         brand: '#F7931A',
         brandAlt: '#4D4D4D',
+        brandLight: '#F9F9F9',
         text: 'rgb(107 114 128)',
       },
       fontSize: {

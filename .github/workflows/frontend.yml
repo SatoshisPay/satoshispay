@@ -1,0 +1,36 @@
+name: Frontend
+
+on: [push, pull_request]
+
+env:
+    CARGO_TERM_COLOR: always
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: site
+
+        steps:
+            - uses: actions/checkout@v2
+            - name: Set Node.js 16.x
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 18.x
+            - name: Install
+              uses: Borales/actions-yarn@v4.2.0
+              with:
+                  cmd: install
+            - name: Prettier
+              uses: Borales/actions-yarn@v4.2.0
+              with:
+                  cmd: prettier:check
+            - name: ESLint
+              uses: Borales/actions-yarn@v4.2.0
+              with:
+                  cmd: lint
+            - name: Build
+              uses: Borales/actions-yarn@v4.2.0
+              with:
+                  cmd: build

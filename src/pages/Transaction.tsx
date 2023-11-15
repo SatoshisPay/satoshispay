@@ -1,5 +1,5 @@
 import React from 'react';
-import { BackHandler } from 'react-native';
+import { BackHandler, Text } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -22,10 +22,10 @@ import Order, {
   createOrderForLnInvoice,
 } from '../data/order';
 import CancelModal from '../components/Transaction/CancelModal';
-import Spinner from '../components/Transaction/Spinner';
 import ErrorModal from '../components/shared/ErrorModal';
 import Activity from '../components/reusable/Activity';
 import { breezCreateInvoice } from '../api/breez';
+import Spinner from '../components/reusable/Spinner';
 
 type Props = NativeStackScreenProps<RootStackParamList, Page.TRANSACTION>;
 
@@ -165,7 +165,13 @@ const Transaction = ({ route, navigation }: Props): JSX.Element => {
           <ButtonBar onCancel={onCancelPressed} onDone={onDone} />
         </>
       )}
-      {(!transactionAddress || !order) && <Spinner />}
+      {(!transactionAddress || !order) && (
+        <Spinner>
+          <Text className="text-brandAlt w-full px-4 text-2xl text-center">
+            Sto preparando l'ordine...
+          </Text>
+        </Spinner>
+      )}
       {error && <ErrorModal error={error} onClick={onCancel} />}
     </Activity.BrandPage>
   );

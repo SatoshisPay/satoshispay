@@ -12,15 +12,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang={'it'}>
-      <Script
-        async
-        src="https://analytics.veeso.dev/script.js"
-        data-website-id="b4343ca0-5b4d-425b-984a-3aad3b411a02"
-      />
       <body>
         <Topbar />
         <main>{children}</main>
         <Footer />
+        <Script
+          async
+          src="https://analytics.veeso.dev/script.js"
+          data-website-id="b4343ca0-5b4d-425b-984a-3aad3b411a02"
+        />
       </body>
     </html>
   );

@@ -2,6 +2,8 @@ module.exports = {
   root: true,
   extends: '@react-native',
   rules: {
-    semi: [2, 'always'],
+    semi: 'off',
+    'react-hooks/exhaustive-deps': 'off',
+    'react/no-unstable-nested-components': 'off',
   },
 };

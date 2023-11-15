@@ -8,7 +8,8 @@ import Activity from '../components/reusable/Activity';
 import { breezConnect } from '../api/breez';
 import ErrorModal from '../components/shared/ErrorModal';
 import { OrderType } from '../data/order';
-import WaitForPos from '../components/Home/WaitForPos';
+import Spinner from '../components/reusable/Spinner';
+import { Text } from 'react-native';
 
 type Props = NativeStackScreenProps<RootStackParamList, Page.HOME>;
 
@@ -43,7 +44,15 @@ const Home = ({ navigation }: Props): JSX.Element => {
       {error && (
         <ErrorModal error={error} onClick={() => setError(undefined)} />
       )}
-      {posReady ? <Pos onSubmitted={onPosSubmit} /> : <WaitForPos />}
+      {posReady ? (
+        <Pos onSubmitted={onPosSubmit} />
+      ) : (
+        <Spinner>
+          <Text className="text-brandAlt w-full px-4 text-2xl text-center">
+            Connessione a Lightning{'\n'}Network in corso...
+          </Text>
+        </Spinner>
+      )}
     </Activity.Page>
   );
 };

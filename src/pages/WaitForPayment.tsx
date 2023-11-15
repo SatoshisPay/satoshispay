@@ -1,18 +1,18 @@
 import React from 'react';
-import { BackHandler } from 'react-native';
+import { BackHandler, Text } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useFocusEffect } from '@react-navigation/native';
 
 import Page, { RootStackParamList } from './pages';
 import { finalizeOrder, getOrderById } from '../database/database';
 import ErrorModal from '../components/shared/ErrorModal';
-import Spinner from '../components/WaitForPayment/Spinner';
 import Transaction from '../data/transaction';
 import Order, { OrderStatus, OrderType } from '../data/order';
 import Receipt from '../components/WaitForPayment/Receipt';
 import Activity from '../components/reusable/Activity';
 import { breezListPayments } from '../api/breez';
 import { PaymentDetailsVariant } from '@breeztech/react-native-breez-sdk';
+import Spinner from '../components/reusable/Spinner';
 
 type Props = NativeStackScreenProps<RootStackParamList, Page.WAIT_FOR_PAYMENT>;
 
@@ -135,7 +135,15 @@ const WaitForPayment = ({ route, navigation }: Props) => {
   const orderStatus = orderFullfilled ? (
     <Receipt onGoHomeClicked={onGoHomeClicked} />
   ) : (
-    <Spinner />
+    <Spinner>
+      <Text className="text-brandAlt w-full px-4 text-2xl text-center">
+        Attendi mentre la{'\n'}transazione viene elaborata...
+      </Text>
+      <Text className="text-brandAlt w-full px-4 text-sm text-center mt-8">
+        Puoi tornare alla home se vuoi,{'\n'}la transazione verrà registrata in
+        background
+      </Text>
+    </Spinner>
   );
 
   return (

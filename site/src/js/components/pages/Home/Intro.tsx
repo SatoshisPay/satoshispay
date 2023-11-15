@@ -62,15 +62,15 @@ const Intro = () => (
             espandersi a livello internazionale senza preoccuparsi di
             conversioni complesse o costi eccessivi. La natura decentralizzata
             di Bitcoin rende le transazioni più efficienti, fornendo agli
-            imprenditori l'opportunità di creare connessioni commerciali in
+            imprenditori l&apos;opportunità di creare connessioni commerciali in
             tutto il mondo.
           </Paragraph.Center>
         </Card>
         <Card title={'Innovazione e Futuro Finanziario Equo'}>
           <Paragraph.Center>
             La scelta di adottare Bitcoin non è solo un passo verso
-            l'innovazione, ma anche un impegno per un futuro finanziario più
-            equo ed efficiente. Eliminando gli intermediari tradizionali,
+            l&apos;innovazione, ma anche un impegno per un futuro finanziario
+            più equo ed efficiente. Eliminando gli intermediari tradizionali,
             Bitcoin offre una soluzione peer-to-peer che mette il controllo
             direttamente nelle mani degli utenti.
           </Paragraph.Center>

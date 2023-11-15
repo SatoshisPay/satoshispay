@@ -16,7 +16,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 import './global';
 
-const Stream = require('stream-browserify');
+require('stream-browserify');
 
 function App(): JSX.Element {
   return (

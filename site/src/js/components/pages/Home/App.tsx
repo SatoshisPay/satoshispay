@@ -22,13 +22,13 @@ const App = () => (
         </Container.FlexCols>
         <Container.Container className="flex-1">
           <Heading.H3 className="!text-xl">
-            Seleziona l'importo in euro, ricevi in <strong>Bitcoin</strong>
+            Seleziona l&apos;importo in euro, ricevi in <strong>Bitcoin</strong>
           </Heading.H3>
           <Paragraph.Leading>
-            Con Satoshispay puoi selezionare l'importo in euro da ricevere e
-            ricevere il pagamento in Bitcoin tramite la tecnologia di Lightning
-            Network. Il cambio viene fatto con il tasso di mercato in tempo
-            reale.
+            Con Satoshispay puoi selezionare l&apos;importo in euro da ricevere
+            e ricevere il pagamento in Bitcoin tramite la tecnologia di
+            Lightning Network. Il cambio viene fatto con il tasso di mercato in
+            tempo reale.
           </Paragraph.Leading>
         </Container.Container>
       </Container.FlexRow>
@@ -41,10 +41,10 @@ const App = () => (
             Mostra il QR e ricevi i <strong>Bitcoin</strong> in pochi secondi
           </Heading.H3>
           <Paragraph.Leading>
-            Una volta confermato l'importo, l'app genererà un QR code che il
-            cliente potrà scannerizzare con il suo wallet Bitcoin preferito. In
-            pochi secondi riceverai i Bitcoin sul tuo wallet. In pochi secondi
-            riceverai i Bitcoin sul tuo wallet.
+            Una volta confermato l&apos;importo, l&apos;app genererà un QR code
+            che il cliente potrà scannerizzare con il suo wallet Bitcoin
+            preferito. In pochi secondi riceverai i Bitcoin sul tuo wallet. In
+            pochi secondi riceverai i Bitcoin sul tuo wallet.
           </Paragraph.Leading>
         </Container.Container>
       </Container.Flex>

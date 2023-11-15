@@ -5,6 +5,7 @@
     "node": true
   },
   "parser": "@typescript-eslint/parser",
+  "root": true,
   "parserOptions": {
     "project": "tsconfig.json",
     "sourceType": "module",

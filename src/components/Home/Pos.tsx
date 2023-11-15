@@ -20,6 +20,12 @@ const Pos = (props: Props): JSX.Element => {
     setCursor(cursor + 1);
   };
 
+  const onDoubleZeroClicked = () => {
+    const newAmount = amount.mul(100).plus(0 / 100);
+    setAmount(newAmount);
+    setCursor(cursor + 2);
+  };
+
   const onCancel = () => {
     setAmount(new Decimal(0));
     setCursor(0);
@@ -80,6 +86,7 @@ const Pos = (props: Props): JSX.Element => {
       </View>
       <View className="flex flex-row items-center justify-center">
         <Digit value={0} onDigitClicked={onDigitClicked} />
+        <Digit value={0} text="00" onDigitClicked={onDoubleZeroClicked} />
       </View>
     </View>
   );

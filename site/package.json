@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 3020",
     "lint": "next lint",
     "prettier": "prettier --config .prettierrc --write src/",
     "prettier:check": "prettier --config .prettierrc --check src/"

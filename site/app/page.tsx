@@ -1,6 +1,7 @@
 import * as React from 'react';
-
+import Script from 'next/script';
 import type { Metadata } from 'next';
+
 import Page from '@/src/js/components/reusable/Page';
 import Intro from '@/src/js/components/pages/Home/Intro';
 import App from '@/src/js/components/pages/Home/App';
@@ -27,15 +28,22 @@ export const metadata: Metadata = {
 
 const Home = () => {
   return (
-    <Page.BlankPage>
-      <Page.Body>
-        <Container.FlexCols className="gap-8">
-          <Intro />
-          <App />
-          <ChiSiamo />
-        </Container.FlexCols>
-      </Page.Body>
-    </Page.BlankPage>
+    <>
+      <Script
+        async
+        src="https://analytics.veeso.dev/script.js"
+        data-website-id="b4343ca0-5b4d-425b-984a-3aad3b411a02"
+      />
+      <Page.BlankPage>
+        <Page.Body>
+          <Container.FlexCols className="gap-8">
+            <Intro />
+            <App />
+            <ChiSiamo />
+          </Container.FlexCols>
+        </Page.Body>
+      </Page.BlankPage>
+    </>
   );
 };
 

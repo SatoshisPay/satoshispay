@@ -9,7 +9,7 @@ import { breezConnect } from '../api/breez';
 import ErrorModal from '../components/shared/ErrorModal';
 import { OrderType } from '../data/order';
 import Spinner from '../components/reusable/Spinner';
-import { Text } from 'react-native';
+import { Text, View } from 'react-native';
 
 type Props = NativeStackScreenProps<RootStackParamList, Page.HOME>;
 
@@ -47,11 +47,13 @@ const Home = ({ navigation }: Props): JSX.Element => {
       {posReady ? (
         <Pos onSubmitted={onPosSubmit} />
       ) : (
-        <Spinner>
-          <Text className="text-brandAlt w-full px-4 text-2xl text-center">
-            Connessione a Lightning{'\n'}Network in corso...
-          </Text>
-        </Spinner>
+        <View className="flex flex-col items-center justify-center h-full w-full">
+          <Spinner>
+            <Text className="text-brandAlt w-full px-4 text-2xl text-center">
+              Connessione a Lightning{'\n'}Network in corso...
+            </Text>
+          </Spinner>
+        </View>
       )}
     </Activity.Page>
   );

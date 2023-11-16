@@ -17,17 +17,26 @@ import {
   useCodeScanner,
 } from 'react-native-vision-camera';
 import { breezWithdrawSats } from '../../api/breez';
-import WaitForWithdraw from './WaitForWithdraw';
+import { convertEURToSats, convertSatsToEUR } from '../../utils/conversion';
+import Spinner from '../reusable/Spinner';
+import { isBtcAddress } from '../../utils/parser';
 
 interface Props {
+  eurTicker?: Decimal;
   satsBalance: Decimal;
   setError: (error: string) => void;
   onWithdraw: () => void;
 }
 
-const WithdrawalForm = ({ satsBalance, setError, onWithdraw }: Props) => {
+const WithdrawalForm = ({
+  eurTicker,
+  satsBalance,
+  setError,
+  onWithdraw,
+}: Props) => {
   const [address, setAddress] = React.useState<string>(''); //bc1qvlmykjn7htz0vuprmjrlkwtv9m9pan6kylsr8w
-  const [amount, setAmount] = React.useState<string>('');
+  const [satsAmount, setSatsAmount] = React.useState<string>('');
+  const [euroAmount, setEuroAmount] = React.useState<string>('');
   const [formError, setFormError] = React.useState<string>();
   const { hasPermission, requestPermission } = useCameraPermission();
   const [activeCamera, setActiveCamera] = React.useState<boolean>(false);
@@ -62,7 +71,7 @@ const WithdrawalForm = ({ satsBalance, setError, onWithdraw }: Props) => {
   const onWithdrawCb = () => {
     let amountNumber;
     try {
-      amountNumber = new Decimal(amount);
+      amountNumber = new Decimal(satsAmount);
     } catch (e) {
       setFormError('Importo non valido');
       return;
@@ -73,7 +82,7 @@ const WithdrawalForm = ({ satsBalance, setError, onWithdraw }: Props) => {
     if (amountNumber.greaterThan(satsBalance)) {
       setFormError('Non hai abbastanza satoshi');
     }
-    if (!address.match(/^(bc1|[13])[a-zA-HJ-NP-Z0-9]{25,39}$/)) {
+    if (!isBtcAddress(address)) {
       setFormError('Indirizzo non valido');
     }
     setInProgress(true);
@@ -82,7 +91,7 @@ const WithdrawalForm = ({ satsBalance, setError, onWithdraw }: Props) => {
         onWithdraw();
         setInProgress(false);
         setAddress('');
-        setAmount('');
+        setSatsAmount('');
       })
       .catch(e => {
         console.error(e);
@@ -91,12 +100,51 @@ const WithdrawalForm = ({ satsBalance, setError, onWithdraw }: Props) => {
       });
   };
 
-  const buttonDisabled = inProgress || !address || !amount;
+  const onSatsAmountChanged = (amount: string) => {
+    setSatsAmount(amount);
+    try {
+      const amountNumber = new Decimal(amount);
+      if (eurTicker) {
+        setEuroAmount(convertSatsToEUR(eurTicker, amountNumber).toFixed(2));
+      }
+    } catch (e) {
+      return;
+    }
+  };
+
+  const onEurAmountChanged = (amount: string) => {
+    setEuroAmount(amount);
+    try {
+      const amountNumber = new Decimal(amount);
+      if (eurTicker) {
+        setSatsAmount(convertEURToSats(eurTicker, amountNumber).toFixed(0));
+      }
+    } catch (e) {
+      return;
+    }
+  };
+
+  React.useEffect(() => {
+    if (eurTicker) {
+      try {
+        const amountNumber = new Decimal(satsAmount);
+        if (eurTicker) {
+          setEuroAmount(convertSatsToEUR(eurTicker, amountNumber).toFixed(2));
+        }
+      } catch (e) {}
+    }
+  }, [eurTicker]);
+
+  const buttonDisabled = inProgress || !address || !satsAmount;
 
   if (inProgress) {
     return (
       <View className="flex flex-col items-center justify-center mx-auto w-full">
-        <WaitForWithdraw />
+        <Spinner>
+          <Text className="text-brandAlt w-full px-4 text-2xl text-center">
+            Prelievo in corso{'\n'}Attendere, prego...
+          </Text>
+        </Spinner>
       </View>
     );
   }
@@ -129,8 +177,17 @@ const WithdrawalForm = ({ satsBalance, setError, onWithdraw }: Props) => {
         <TextInput
           className="text-text text-sm rounded-lg focus:ring-brand focus:border-brand p-4 focus-visible:outline-none w-4/6"
           placeholder="Importo in Satoshi"
-          onChangeText={setAmount}
-          defaultValue={amount}
+          onChangeText={onSatsAmountChanged}
+          defaultValue={satsAmount}
+          inputMode="numeric"
+        />
+      </View>
+      <View className="mt-4 pr-20 flex flex-row items-center justify-center bg-gray-50 border border-gray-300 h-min">
+        <TextInput
+          className="text-text text-sm rounded-lg focus:ring-brand focus:border-brand p-4 focus-visible:outline-none w-4/6"
+          placeholder="Importo in Euro"
+          onChangeText={onEurAmountChanged}
+          defaultValue={euroAmount}
           inputMode="numeric"
         />
       </View>

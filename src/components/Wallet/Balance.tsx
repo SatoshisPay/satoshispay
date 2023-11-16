@@ -2,32 +2,20 @@ import Decimal from 'decimal.js';
 import React from 'react';
 import { View, Text } from 'react-native';
 
-import { getBTCEURTicker } from '../../api/ticker';
 import { convertSatsToEUR } from '../../utils/conversion';
 
 interface Props {
+  eurTicker?: Decimal;
   satsBalance: Decimal;
-  setError: (error: string) => void;
 }
 
-const Balance = ({ satsBalance, setError }: Props) => {
-  const [fiatBalance, setFiatBalance] = React.useState(new Decimal(0));
-
-  React.useEffect(() => {
-    // get fiat balance
-    if (satsBalance) {
-      getBTCEURTicker()
-        .then(ticker => {
-          setFiatBalance(convertSatsToEUR(ticker, satsBalance));
-        })
-        .catch(e => {
-          setError(e.message);
-        });
-    }
-  }, [satsBalance, setError]);
+const Balance = ({ satsBalance, eurTicker }: Props) => {
+  const fiatBalance = eurTicker
+    ? convertSatsToEUR(eurTicker, satsBalance)
+    : null;
 
   return (
-    <View className="flex flex-col items-center justify-center mx-auto p-8 mt-8 w-full">
+    <View className="flex flex-col items-center justify-center mx-auto p-5 w-full">
       <Text className="text-3xl text-brandAlt">Bilancio attuale</Text>
       <Text className="text-2xl text-brandAlt">
         {satsBalance.toNumber().toLocaleString(undefined, {
@@ -37,7 +25,11 @@ const Balance = ({ satsBalance, setError }: Props) => {
         })}{' '}
         丰
       </Text>
-      <Text className="text-xl text-brandAlt">{fiatBalance.toFixed(2)} €</Text>
+      {fiatBalance ? (
+        <Text className="text-xl text-brandAlt">
+          {fiatBalance.toFixed(2)} €
+        </Text>
+      ) : null}
     </View>
   );
 };

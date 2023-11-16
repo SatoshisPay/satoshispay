@@ -38,6 +38,14 @@ SatoshisPay is powered by these awesome projects:
 - [React-qr-code](https://github.com/rosskhanas/react-qr-code)
 - [React-native-vision-camera](https://github.com/mrousavy/react-native-vision-camera)
 
+## Gallery
+
+![app-screen-home](assets/app-screen-home.webp)
+
+![app-screen-tx](assets/app-screen-tx.webp)
+
+![app-screen-wallet](assets/app-screen-wallet.webp)
+
 ## License
 
 Licensed under [Apache License, Version 2.0](/LICENSE).

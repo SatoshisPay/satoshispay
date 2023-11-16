@@ -1,8 +1,10 @@
 import React from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 import { getLnNodeMnemonic } from '../../database/keystore';
 import MnemonicRow from './WalletBackup/MnemonicRow';
+import Clipboard from '@react-native-clipboard/clipboard';
+import { Copy } from 'react-native-feather';
 
 interface Props {
   setError: (error: string) => void;
@@ -10,6 +12,10 @@ interface Props {
 
 const WalletBackup = ({ setError }: Props) => {
   const [mnemonic, setMnemonic] = React.useState<string[]>();
+
+  const onCopyWords = () => {
+    Clipboard.setString(mnemonic?.join(' ') || '');
+  };
 
   React.useEffect(() => {
     if (!mnemonic) {
@@ -68,6 +74,14 @@ const WalletBackup = ({ setError }: Props) => {
           mnemonic1={mnemonic ? mnemonic[10] : ''}
           mnemonic2={mnemonic ? mnemonic[11] : ''}
         />
+        <View className="flex items-center justify-center">
+          <TouchableOpacity
+            className={`bg-white flex-row items-center justify-center rounded-lg p-4 mt-4 shadow-lg border border-gray-300`}
+            onPress={onCopyWords}>
+            <Copy className=" text-brandAlt mr-4" width={24} height={24} />
+            <Text className="text-brandAlt text-2xl">Copia</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </ScrollView>
   );

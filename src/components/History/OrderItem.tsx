@@ -21,7 +21,7 @@ const getOrderStatus = (status: OrderStatus) => {
       return (
         <View className="flex flex-row items-center justify-center">
           <Check width={24} height={24} className="text-green-700" />
-          <Text> Completato</Text>
+          <Text> Completata</Text>
         </View>
       );
     case OrderStatus.CANCELLED:
@@ -29,7 +29,7 @@ const getOrderStatus = (status: OrderStatus) => {
       return (
         <View className="flex flex-row items-center justify-center">
           <X width={24} height={24} className="text-red-700" />
-          <Text> Cancellato</Text>
+          <Text> Cancellata</Text>
         </View>
       );
   }

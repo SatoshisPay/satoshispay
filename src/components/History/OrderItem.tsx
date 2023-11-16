@@ -51,7 +51,7 @@ const OrderItem = ({ order }: Props) => {
         )}
         <Text
           className={`${
-            order.fiatAmount.isPositive() ? 'text-green-700' : 'text-red-500'
+            order.status === OrderStatus.CONFIRMED ? 'text-green-700' : ''
           }  text-lg`}>
           {order.fiatAmount.toFixed(2)} €
         </Text>
@@ -63,7 +63,7 @@ const OrderItem = ({ order }: Props) => {
         </Text>
         <Text
           className={`${
-            order.satsAmount.isPositive() ? 'text-green-700' : 'text-red-500'
+            order.status === OrderStatus.CONFIRMED ? 'text-green-700' : ''
           }  text-md`}>
           {order.satsAmount.toNumber().toLocaleString(undefined, {
             minimumFractionDigits: 0,

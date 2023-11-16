@@ -1,10 +1,14 @@
 import Decimal from 'decimal.js';
 import React from 'react';
-import { View } from 'react-native';
+import { Text, View } from 'react-native';
 import Balance from './Pos/Balance';
 import Digit from './Pos/Digit';
 import ActionButton from './Pos/ActionButton';
 import { ArrowLeft, Check, X } from 'react-native-feather';
+import { breezGetBalance } from '../../api/breez';
+import { getBTCEURTicker } from '../../api/ticker';
+import { convertEURToSats } from '../../utils/conversion';
+import Alerts from '../reusable/Alerts';
 
 interface Props {
   onSubmitted: (amount: Decimal) => void;
@@ -13,6 +17,10 @@ interface Props {
 const Pos = (props: Props): JSX.Element => {
   const [amount, setAmount] = React.useState(new Decimal(0));
   const [cursor, setCursor] = React.useState(0);
+  const [lnBalance, setLnBalance] = React.useState<Decimal>();
+  const [eurTicker, setEurTicker] = React.useState<Decimal>();
+  const [satsAmount, setSatsAmount] = React.useState<Decimal>();
+  const [showAlert, setShowAlert] = React.useState<boolean>(false);
 
   const onDigitClicked = (digit: number) => {
     const newAmount = amount.mul(10).plus(digit / 100);
@@ -55,8 +63,56 @@ const Pos = (props: Props): JSX.Element => {
     props.onSubmitted(amount);
   };
 
+  React.useEffect(() => {
+    if (amount && eurTicker) {
+      setSatsAmount(convertEURToSats(eurTicker, amount));
+    }
+  }, [amount, eurTicker]);
+
+  React.useEffect(() => {
+    if (satsAmount && lnBalance) {
+      setShowAlert(satsAmount.greaterThan(lnBalance));
+    }
+  }, [satsAmount, lnBalance]);
+
+  React.useEffect(() => {
+    if (!lnBalance) {
+      breezGetBalance()
+        .then(balance => {
+          setLnBalance(balance.lnBalance);
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    }
+
+    if (!eurTicker) {
+      getBTCEURTicker()
+        .then(ticker => {
+          setEurTicker(ticker);
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    }
+  }, []);
+
   return (
     <View className="flex flex-col items-center justify-center w-full h-full bg-slate-100">
+      {showAlert && satsAmount ? (
+        <Alerts.Warning>
+          <Text className="overflow-auto">
+            Non hai abbastanza liquidità nel wallet.
+          </Text>
+          <Text className="overflow-auto">
+            Questa transazione sarà soggetta a commissioni.
+          </Text>
+          <Text className="overflow-auto">
+            Se vuoi evitare di pagare commissioni,{'\n'} deposita almeno{' '}
+            {satsAmount.toFixed(2)} Sats.
+          </Text>
+        </Alerts.Warning>
+      ) : null}
       <View className="flex items-center justify-center">
         <Balance balance={amount} />
       </View>

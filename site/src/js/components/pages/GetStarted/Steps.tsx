@@ -38,8 +38,8 @@ const Steps = () => (
       <Step number={2} title={"Avvia l'app e deposita Bitcoin"}>
         <>
           <Alerts.Info>
-            Questo passo non è obbligatorio, ma permette di evitare il pagamento
-            di commissioni nell&apos;utilizzo di Satoshispay.
+            Questo passo non è obbligatorio, ma permette di evitare di incorrere
+            nel pagamento di commissioni.
           </Alerts.Info>
           <Container.Flex className="flex-row sm:flex-col-reverse  items-center">
             <Container.Container className="flex-1">

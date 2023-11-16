@@ -3,7 +3,7 @@ import {
   ReverseSwapStatus,
 } from '@breeztech/react-native-breez-sdk';
 import React from 'react';
-import { View, Text, FlatList } from 'react-native';
+import { View, Text } from 'react-native';
 import { breezGetPendingWithdrawals } from '../../api/breez';
 import WithdrawalItem from './PendingWithdrawals/WithdrawalItem';
 import {
@@ -115,11 +115,11 @@ const WithdrawalHistory = ({ setError }: Props) => {
   return (
     <View className="flex flex-col mx-auto w-full py-4 px-2">
       <Text className="text-2xl text-center">Storico prelievi</Text>
-      <FlatList
-        data={withdrawals}
-        renderItem={({ item }) => <WithdrawalItem withdrawal={item} />}
-        keyExtractor={(item, index) => `${item.id}-${index}`}
-      />
+      <View>
+        {withdrawals.map(withdrawal => (
+          <WithdrawalItem key={withdrawal.id} withdrawal={withdrawal} />
+        ))}
+      </View>
       <PageSelector
         onChange={setPage}
         page={page}

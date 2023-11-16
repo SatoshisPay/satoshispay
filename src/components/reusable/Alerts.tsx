@@ -6,11 +6,11 @@ import { View } from 'react-native';
 const Danger = (props: React.HTMLProps<HTMLDivElement>) => (
   <View
     className={`${props.className} p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 shadow-lg`}>
-    <View className="flex flex-row items-center gap-8">
+    <View className="flex flex-row items-center w-full">
       <View>
-        <X width={32} height={32} />
+        <X width={32} height={32} className="text-red-800" />
       </View>
-      <View>{props.children}</View>
+      <View className="w-11/12">{props.children}</View>
     </View>
   </View>
 );

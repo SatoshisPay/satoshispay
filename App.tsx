@@ -15,6 +15,7 @@ import Wallet from './src/pages/Wallet';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 import './global';
+import Settings from './src/pages/Settings';
 
 require('stream-browserify');
 
@@ -38,12 +39,14 @@ function App(): JSX.Element {
               <Button.Home {...props} />
               <Button.History {...props} />
               <Button.Wallet {...props} />
+              <Button.Settings {...props} />
             </View>
           ),
         })}>
         <Stack.Screen name={Page.HOME} component={Home} />
         <Stack.Screen name={Page.HISTORY} component={History} />
         <Stack.Screen name={Page.WALLET} component={Wallet} />
+        <Stack.Screen name={Page.SETTINGS} component={Settings} />
         <Stack.Screen
           name={Page.TRANSACTION}
           component={Transaction}

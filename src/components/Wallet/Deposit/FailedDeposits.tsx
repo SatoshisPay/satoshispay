@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  FlatList,
   TextInput,
   Modal,
   StyleSheet,
@@ -122,11 +121,11 @@ const FailedDeposits = ({ setError }: Props) => {
         </Modal>
       )}
       <Text className="text-xl">Depositi falliti</Text>
-      <FlatList
-        data={failedDeposits}
-        renderItem={({ item }) => <FailedDepositItem swap={item} />}
-        keyExtractor={(item, index) => `${item.paymentHash}-${index}`}
-      />
+      <View>
+        {failedDeposits.map((deposit, i) => (
+          <FailedDepositItem key={i} swap={deposit} />
+        ))}
+      </View>
       <Text className="text-lg">
         Imposta un indirizzo BTC sul quale effettuare il rimborso
       </Text>

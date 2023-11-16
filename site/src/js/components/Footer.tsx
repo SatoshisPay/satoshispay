@@ -3,6 +3,9 @@ import Container from './reusable/Container';
 
 import AppBadge from './reusable/AppBadge';
 
+import BreezLogo from '@/src/assets/images/breez.svg';
+import Image from 'next/image';
+
 const Footer = () => {
   const year = new Date().getFullYear();
   return (
@@ -13,14 +16,14 @@ const Footer = () => {
             <span className="text-2xl block pb-4">Sito</span>
           </div>
           <a
-            className="block hover:underline text-xl"
+            className="block hover:underline text-lg"
             href="https://bitcoinmonfalcone.it"
             target="_blank"
           >
             Bitcoin Monfalcone
           </a>
           <a
-            className="block hover:underline text-xl"
+            className="block hover:underline text-lg"
             href="https://github.com/veeso-dev/satoshispay"
             target="_blank"
           >
@@ -38,33 +41,39 @@ const Footer = () => {
             <span className="text-2xl block pb-4">Contatti</span>
           </div>
           <a
-            className="block hover:underline text-xl"
+            className="block hover:underline text-lg"
             href="mailto:info@bitcoinmonfalcone.it"
             target="_blank"
           >
             info@bitcoinmonfalcone.it
           </a>
           <a
-            className="block hover:underline text-xl"
+            className="block hover:underline text-lg"
             href="https://www.instagram.com/bitcoin.monfalcone/"
             target="_blank"
           >
             Instagram
           </a>
           <a
-            className="block hover:underline text-xl"
+            className="block hover:underline text-lg"
             href="https://www.tiktok.com/@bitcoinmonfalcone/"
             target="_blank"
           >
             TikTok
           </a>
           <a
-            className="block hover:underline text-xl"
+            className="block hover:underline text-lg"
             href="https://t.me/BitcoinMonfalcone"
             target="_blank"
           >
             Telegram
           </a>
+          <Container.Container className="py-4">
+            <a href="https://breez.technology" target="_blank">
+              <span className="text-white block text-xl">Powered by Breez</span>
+              <Image src={BreezLogo} alt="breez sdk" width={128} height={64} />
+            </a>
+          </Container.Container>
         </Container.FlexCols>
       </Container.FlexResponsiveRow>
       <Container.FlexCols className="justify-center items-center gap-2">

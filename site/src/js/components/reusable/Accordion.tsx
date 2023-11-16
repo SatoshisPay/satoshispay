@@ -35,7 +35,7 @@ const Accordion = ({ className, rowClassName, children, title }: Props) => {
       </Container.FlexRow>
       <Container.Container
         className={`w-full overflow-hidden transition-[max-height] duration-500 ease-in ${
-          isOpen ? `max-h-[50vh] !overflow-auto` : 'max-h-0'
+          isOpen ? `max-h-[100vh] !overflow-auto` : 'max-h-0'
         }`}
       >
         {children}

@@ -51,7 +51,11 @@ export const getLnNodeMnemonic = async (): Promise<string> => {
   ];
   const mnemonic = bip39.entropyToMnemonic(Buffer.from(entropy));
 
-  await Keychain.setGenericPassword(MNEMONIC, mnemonic, { service: MNEMONIC });
+  await setLnNodeMnemonic(mnemonic);
 
   return mnemonic;
+};
+
+export const setLnNodeMnemonic = async (mnemonic: string) => {
+  await Keychain.setGenericPassword(MNEMONIC, mnemonic, { service: MNEMONIC });
 };

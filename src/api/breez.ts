@@ -82,6 +82,11 @@ export const breezDisconnect = async () => {
   return await disconnect();
 };
 
+export const breezRestart = async () => {
+  await breezDisconnect();
+  return await breezConnect();
+};
+
 export interface Balance {
   lnBalance: Decimal;
   onChainBalance: Decimal;

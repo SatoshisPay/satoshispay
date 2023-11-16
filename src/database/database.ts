@@ -425,7 +425,9 @@ export const getWithdrawalsByDate = async (
       id: result.rows.item(i).id,
       recipient: result.rows.item(i).recipient,
       fiatAmount: new Decimal(result.rows.item(i).fiatAmount),
-      satsAmount: new Decimal(result.rows.item(i).satsAmount),
+      satsAmount: new Decimal(
+        result.rows.item(i).satsAmount || result.rows.item(i).satAmount,
+      ),
       status: result.rows.item(i).status,
       insertedAt: new Date(result.rows.item(i).insertedAt),
     };

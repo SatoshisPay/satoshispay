@@ -1,7 +1,12 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
-import { Clock, Home, CreditCard } from 'react-native-feather';
+import {
+  Clock,
+  Home,
+  CreditCard,
+  Settings as SettingsIcon,
+} from 'react-native-feather';
 
 import Page, { RootStackParamList } from '../../pages/pages';
 
@@ -16,7 +21,7 @@ const History = ({ navigation }: Props) => (
     onPress={() => {
       navigation.navigate(Page.HISTORY);
     }}>
-    <Clock fill="#ffffff" color="#F7931A" />
+    <Clock color="white" width={32} height={32} />
   </TouchableOpacity>
 );
 
@@ -26,7 +31,17 @@ const Wallet = ({ navigation }: Props) => (
     onPress={() => {
       navigation.navigate(Page.WALLET);
     }}>
-    <CreditCard fill="#ffffff" color="#F7931A" />
+    <CreditCard color="white" width={32} height={32} />
+  </TouchableOpacity>
+);
+
+const Settings = ({ navigation }: Props) => (
+  <TouchableOpacity
+    className="mx-2"
+    onPress={() => {
+      navigation.navigate(Page.SETTINGS);
+    }}>
+    <SettingsIcon color="white" width={32} height={32} />
   </TouchableOpacity>
 );
 
@@ -36,12 +51,13 @@ const HomeBtn = ({ navigation }: Props) => (
     onPress={() => {
       navigation.navigate(Page.HOME);
     }}>
-    <Home fill="#ffffff" color="#F7931A" />
+    <Home color="white" width={32} height={32} />
   </TouchableOpacity>
 );
 
 export default {
   History,
   Home: HomeBtn,
+  Settings,
   Wallet,
 };

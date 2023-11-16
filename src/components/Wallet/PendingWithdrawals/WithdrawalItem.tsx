@@ -1,62 +1,58 @@
-import {
-  ReverseSwapInfo,
-  ReverseSwapStatus,
-} from '@breeztech/react-native-breez-sdk';
 import React from 'react';
 import { View, Text } from 'react-native';
-import { Clock } from 'react-native-feather';
+import { Check, Clock, X } from 'react-native-feather';
+import Withdrawal, { WithdrawalStatus } from '../../../data/withdrawal';
 
 interface Props {
-  swap: ReverseSwapInfo;
+  withdrawal: Withdrawal;
 }
 
-const statusToStr = (status: ReverseSwapStatus) => {
+const getWithdrawalStatus = (status: WithdrawalStatus) => {
   switch (status) {
-    case ReverseSwapStatus.IN_PROGRESS:
-      return 'In attesa';
-
-    case ReverseSwapStatus.CANCELLED:
-      return 'Cancellato';
-
-    case ReverseSwapStatus.COMPLETED_CONFIRMED:
-      return 'Confermato';
-
-    case ReverseSwapStatus.INITIAL:
-      return 'Inizializzazione';
-
-    case ReverseSwapStatus.COMPLETED_SEEN:
-      return 'Completato';
-
+    case WithdrawalStatus.IN_PROGRESS:
+      return (
+        <View className="flex flex-row items-center justify-center">
+          <Clock width={24} height={24} className="text-brand" />
+          <Text> In attesa</Text>
+        </View>
+      );
+    case WithdrawalStatus.COMPLETED:
+      return (
+        <View className="flex flex-row items-center justify-center">
+          <Check width={24} height={24} className="text-green-700" />
+          <Text> Completata</Text>
+        </View>
+      );
+    case WithdrawalStatus.CANCELLED:
     default:
-      return status;
+      return (
+        <View className="flex flex-row items-center justify-center">
+          <X width={24} height={24} className="text-red-700" />
+          <Text> Cancellata</Text>
+        </View>
+      );
   }
 };
 
-const WithdrawalItem = ({ swap }: Props) => (
+const WithdrawalItem = ({ withdrawal }: Props) => (
   <View className="flex flex-cols justify-between border-b border-gray-300 shadow-lg py-4 w-full px-2">
     <View className="flex flex-row justify-between items-center w-full px-2">
-      <Text className="text-brandAlt text-xs">Swap ID: {swap.id}</Text>
-      <Text className="text-brandAlt text-xs">
-        {swap.onchainAmountSat} Sats
+      <Text className="text-brandAlt text-xs">Swap ID: {withdrawal.id}</Text>
+    </View>
+    <View className="flex flex-row justify-between items-center w-full px-2">
+      <Text className="text-brandAlt text-md">
+        {withdrawal.insertedAt.toLocaleDateString(['it'])}{' '}
+        {withdrawal.insertedAt.toLocaleTimeString(['it'])}
+      </Text>
+      <Text className="text-brandAlt text-md">
+        {withdrawal.satsAmount.toFixed(0)} Sats
       </Text>
     </View>
     <View className="flex flex-row justify-between items-center w-full px-2">
-      {swap.lockupTxid && (
-        <Text className="text-brandAlt text-xs">
-          Lockup TX id: {swap.lockupTxid}
-        </Text>
-      )}
-    </View>
-    <View className="flex flex-row justify-between items-center w-full px-2">
-      {swap.claimTxid && (
-        <Text className="text-brandAlt text-xs">
-          Claim TX id: {swap.claimTxid}
-        </Text>
-      )}
-      <View className="flex flex-row items-center justify-center">
-        <Clock width={24} height={24} className="text-brand mr-2" />
-        <Text>{statusToStr(swap.status)}</Text>
-      </View>
+      {getWithdrawalStatus(withdrawal.status)}
+      <Text className="text-brandAlt text-xs">
+        {withdrawal.fiatAmount.toFixed(2)} €
+      </Text>
     </View>
   </View>
 );

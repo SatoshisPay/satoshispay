@@ -20,6 +20,8 @@ import { breezWithdrawSats } from '../../api/breez';
 import { convertEURToSats, convertSatsToEUR } from '../../utils/conversion';
 import Spinner from '../reusable/Spinner';
 import { isBtcAddress } from '../../utils/parser';
+import { insertWithdrawal } from '../../database/database';
+import { WithdrawalStatus } from '../../data/withdrawal';
 
 interface Props {
   eurTicker?: Decimal;
@@ -69,7 +71,7 @@ const WithdrawalForm = ({
   });
 
   const onWithdrawCb = () => {
-    let amountNumber;
+    let amountNumber: Decimal;
     try {
       amountNumber = new Decimal(satsAmount);
     } catch (e) {
@@ -86,12 +88,31 @@ const WithdrawalForm = ({
       setFormError('Indirizzo non valido');
     }
     setInProgress(true);
+    const fiatAmount = eurTicker
+      ? convertSatsToEUR(eurTicker, amountNumber)
+      : new Decimal(0);
+
     breezWithdrawSats(amountNumber, address)
-      .then(() => {
+      .then(id => {
         onWithdraw();
         setInProgress(false);
         setAddress('');
         setSatsAmount('');
+        insertWithdrawal({
+          id,
+          recipient: address,
+          fiatAmount,
+          satsAmount: amountNumber,
+          status: WithdrawalStatus.IN_PROGRESS,
+          insertedAt: new Date(),
+        })
+          .then(() => {
+            console.log('Withdrawal inserted');
+          })
+          .catch(e => {
+            console.error(e);
+            setError('Impossibile inserire il prelievo nel database');
+          });
       })
       .catch(e => {
         console.error(e);

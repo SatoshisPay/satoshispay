@@ -20,6 +20,10 @@ import {
   PaymentDetailsVariant,
   inProgressReverseSwaps,
   ReverseSwapInfo,
+  receiveOnchain,
+  listRefundables,
+  SwapInfo,
+  refund,
 } from '@breeztech/react-native-breez-sdk';
 import * as bip39 from 'bip39';
 import Decimal from 'decimal.js';
@@ -157,4 +161,26 @@ export const breezCheckPaymentForPendingTransactions = async (
     }
   }
   return confirmedOrders;
+};
+
+export const breezGetDepositAddress = async (): Promise<string> => {
+  const swapInfo = await receiveOnchain({});
+  return swapInfo.bitcoinAddress;
+};
+
+export const breezGetFailedDeposits = async (): Promise<SwapInfo[]> => {
+  return await listRefundables();
+};
+
+export const breezRefundDeposit = async (
+  address: string,
+  swap: SwapInfo,
+): Promise<string> => {
+  const result = await refund({
+    swapAddress: swap.bitcoinAddress,
+    toAddress: address,
+    satPerVbyte: 5,
+  });
+
+  return result.refundTxId;
 };

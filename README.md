@@ -15,13 +15,28 @@ SatoshisPay is an Android/iOS application meant to be used by Italian sellers to
 
 The app supports the following features:
 
+- Deposit from BTC address to your Lightning Network wallet
 - Insert a FIAT import and generate a LN invoice to accept the payment
-- Withdraw the LN balance on your BTC address
 - View the transactions history
+- Withdraw the LN balance on your BTC address
 
 ## The Lightning Node
 
 Currently SatoshisPay is connected to the Lightning Network thanks to the node powered by [Breez](https://breez.technology/).
+
+## Powered By
+
+Satoshispay relies on [Breez](https://breez.technology/) to allow Lightning Network payments.
+
+![breez-logo](assets/breez.png)
+
+SatoshisPay is powered by these awesome projects:
+
+- [BitcoinJs](https://github.com/bitcoinjs/bitcoinjs-lib)
+- [Nativewind](https://github.com/marklawlor/nativewind)
+- [React-native-keychain](https://github.com/oblador/react-native-keychain)
+- [React-qr-code](https://github.com/rosskhanas/react-qr-code)
+- [React-native-vision-camera](https://github.com/mrousavy/react-native-vision-camera)
 
 ## License
 

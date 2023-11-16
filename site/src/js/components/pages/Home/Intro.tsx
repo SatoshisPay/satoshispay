@@ -31,9 +31,9 @@ const Intro = () => (
             </Paragraph.Center>
             <Paragraph.Center className="text-xs text-text">
               *Solo nel caso il ricevente non abbia nel portafoglio una quantità
-              di bitcoin uguale o maggiore all'importo, è prevista una
-              commissione del 0.4% sull'importo ricevuto, con un minimo di 2500
-              sats,
+              di bitcoin uguale o maggiore all&apos;importo, è prevista una
+              commissione del 0.4% sull&apos;importo ricevuto, con un minimo di
+              2500 sats,
             </Paragraph.Center>
           </>
         </Card>

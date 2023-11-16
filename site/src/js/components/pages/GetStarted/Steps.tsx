@@ -67,7 +67,6 @@ const Steps = () => (
                     Copia l&apos;indirizzo mostrato cliccando su{' '}
                     <Icon.Copy className="inline" size={24} /> oppure
                     scannerizza il codice QR visualizzato con la fotocamera.
-                    <Icon.Copy className="inline" size={24} />
                   </Paragraph.Leading>
                 </List.Item>
                 <List.Item>
@@ -104,14 +103,14 @@ const Steps = () => (
                     fine?
                   </Heading.H4>
                   <Paragraph.Default>
-                    No, dal momento che noi ci appoggiamo a un nodo fornita da{' '}
+                    No, dal momento che noi ci appoggiamo a un nodo fornito da{' '}
                     <Link.Paragraph
                       href={'https://breez.technology'}
                       target="_blank"
                     >
                       Breez
-                    </Link.Paragraph>{' '}
-                    sarà Breez stesso a fare da intermediario e fornire la
+                    </Link.Paragraph>
+                    , sarà Breez stesso a fare da intermediario e fornire la
                     liquidità necessaria per effettuare la transazione.
                     Tuttavia, poiché Breez ha dovuto pagare una commissione per
                     fornire la liquidità, Breez addebiterà al ricevente della
@@ -266,7 +265,9 @@ const Steps = () => (
     </Container.FlexCols>
     <Hr />
     <Container.FlexCols className="items-center justify-center">
-      <Heading.H2>Domande, dubbi, perplessità?</Heading.H2>
+      <Heading.H2 className="!text-center">
+        Domande, dubbi, perplessità?
+      </Heading.H2>
       <Paragraph.Center>
         Consula la nostra pagina <strong>&quot;Domande Frequenti&quot;</strong>{' '}
         e cerca una risposta alle tue domande.

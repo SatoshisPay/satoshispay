@@ -1,4 +1,6 @@
 export enum Route {
+  FAQ = 'faq',
+  GET_STARTED = 'get-started',
   HOME = 'home',
 }
 

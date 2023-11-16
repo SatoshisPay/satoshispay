@@ -5,7 +5,7 @@ const H1 = (props: React.HTMLProps<HTMLHeadingElement>) => (
     itemProp={props.itemProp}
     itemScope={props.itemScope}
     itemType={props.itemType}
-    className={`${props.className} py-4 text-3xl text-center text-brandAlt tracking-wide font-bold`}
+    className={`${props.className} py-4 text-2xl text-center text-brandAlt tracking-wide font-bold`}
     onClick={props.onClick}
   >
     {props.children}
@@ -17,7 +17,7 @@ const H1L = (props: React.HTMLProps<HTMLHeadingElement>) => (
     itemProp={props.itemProp}
     itemScope={props.itemScope}
     itemType={props.itemType}
-    className={`${props.className} py-4 text-3xl text-left text-brandAlt tracking-wide font-bold`}
+    className={`${props.className} py-4 text-2xl text-left text-brandAlt tracking-wide font-bold`}
     onClick={props.onClick}
   >
     {props.children}

@@ -7,6 +7,8 @@ import Card from './Intro/Card';
 import Image from 'next/image';
 
 import BitcoinImg from '@/src/assets/images/bitcoin.webp';
+import Link from '../../reusable/Link';
+import { Route } from '@/src/js/utils/routes';
 
 const Intro = () => (
   <Container.FlexCols className="gap-8">
@@ -45,6 +47,11 @@ const Intro = () => (
           </Paragraph.Center>
         </Card>
       </Container.Container>
+      <Container.FlexCols className="items-center justify-center mt-4">
+        <Link.Button href={Route.url(Route.GET_STARTED)}>
+          Comincia subito
+        </Link.Button>
+      </Container.FlexCols>
     </Container.FlexCols>
     <Container.FlexCols className="gap-4">
       <Container.FlexRow className="items-center justify-center gap-4">

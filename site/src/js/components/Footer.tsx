@@ -5,6 +5,8 @@ import AppBadge from './reusable/AppBadge';
 
 import BreezLogo from '@/src/assets/images/breez.svg';
 import Image from 'next/image';
+import Link from './reusable/Link';
+import { Route } from '../utils/routes';
 
 const Footer = () => {
   const year = new Date().getFullYear();
@@ -15,20 +17,20 @@ const Footer = () => {
           <div>
             <span className="text-2xl block pb-4">Sito</span>
           </div>
-          <a
-            className="block hover:underline text-lg"
-            href="https://bitcoinmonfalcone.it"
-            target="_blank"
-          >
+          <Link.Default href={Route.HOME}>Home</Link.Default>
+          <Link.Default href={Route.GET_STARTED}>
+            Inizia ad usare SatoshisPay
+          </Link.Default>
+          <Link.Default href={Route.FAQ}>Domande Frequenti</Link.Default>
+          <Link.Default href="https://bitcoinmonfalcone.it" target="_blank">
             Bitcoin Monfalcone
-          </a>
-          <a
-            className="block hover:underline text-lg"
+          </Link.Default>
+          <Link.Default
             href="https://github.com/veeso-dev/satoshispay"
             target="_blank"
           >
             Github
-          </a>
+          </Link.Default>
         </Container.FlexCols>
         <Container.FlexCols className="gap-2 hidden">
           <div>
@@ -40,39 +42,29 @@ const Footer = () => {
           <div>
             <span className="text-2xl block pb-4">Contatti</span>
           </div>
-          <a
-            className="block hover:underline text-lg"
-            href="mailto:info@bitcoinmonfalcone.it"
-            target="_blank"
-          >
+          <Link.Default href="mailto:info@bitcoinmonfalcone.it" target="_blank">
             info@bitcoinmonfalcone.it
-          </a>
-          <a
-            className="block hover:underline text-lg"
+          </Link.Default>
+          <Link.Default
             href="https://www.instagram.com/bitcoin.monfalcone/"
             target="_blank"
           >
             Instagram
-          </a>
-          <a
-            className="block hover:underline text-lg"
+          </Link.Default>
+          <Link.Default
             href="https://www.tiktok.com/@bitcoinmonfalcone/"
             target="_blank"
           >
             TikTok
-          </a>
-          <a
-            className="block hover:underline text-lg"
-            href="https://t.me/BitcoinMonfalcone"
-            target="_blank"
-          >
+          </Link.Default>
+          <Link.Default href="https://t.me/BitcoinMonfalcone" target="_blank">
             Telegram
-          </a>
+          </Link.Default>
           <Container.Container className="py-4">
-            <a href="https://breez.technology" target="_blank">
+            <Link.Default href="https://breez.technology" target="_blank">
               <span className="text-white block text-xl">Powered by Breez</span>
               <Image src={BreezLogo} alt="breez sdk" width={128} height={64} />
-            </a>
+            </Link.Default>
           </Container.Container>
         </Container.FlexCols>
       </Container.FlexResponsiveRow>

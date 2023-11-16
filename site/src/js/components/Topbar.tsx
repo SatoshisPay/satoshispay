@@ -12,6 +12,10 @@ export const MENU_ENTRIES = [
     route: Route.HOME,
   },
   {
+    name: 'Inizia da qui',
+    route: Route.GET_STARTED,
+  },
+  {
     name: 'Bitcoin Monfalcone',
     url: 'https://bitcoinmonfalcone.it',
   },

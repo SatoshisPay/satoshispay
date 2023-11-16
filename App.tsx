@@ -7,7 +7,7 @@ import Home from './src/pages/Home';
 import Logo from './src/components/Topbar/Logo';
 import Transaction from './src/pages/Transaction';
 import WaitForPayment from './src/pages/WaitForPayment';
-import { View } from 'react-native';
+import { StatusBar, View } from 'react-native';
 import Button from './src/components/Topbar/Button';
 import History from './src/pages/History';
 import Wallet from './src/pages/Wallet';
@@ -20,6 +20,11 @@ import Settings from './src/pages/Settings';
 require('stream-browserify');
 
 function App(): JSX.Element {
+  React.useEffect(() => {
+    StatusBar.setBackgroundColor('#F7931A');
+    StatusBar.setBarStyle('light-content');
+  }, []);
+
   return (
     <NavigationContainer>
       <Stack.Navigator

@@ -19,9 +19,9 @@ const RestoreWallet = ({ setError, setSuccess }: Props) => {
     [...Array(12)].map(() => ''),
   );
 
-  const onMnemonicWordChanged = (index: number, word: string) => {
+  const onMnemonicWordChanged = (number: number, word: string) => {
     const newMnemonic = [...mnemonic];
-    newMnemonic[index] = word;
+    newMnemonic[number - 1] = word;
     setMnemonic(newMnemonic);
   };
 

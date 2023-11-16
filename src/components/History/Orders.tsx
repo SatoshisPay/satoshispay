@@ -57,7 +57,7 @@ const Orders = () => {
   const minPage = Math.max(1, page - 2);
   const maxPage = Math.min(
     Math.max(4, page + 2),
-    ordersCount ? ordersCount / MAX_ORDERS_PER_PAGE + 1 : 0,
+    ordersCount ? Math.ceil(ordersCount / MAX_ORDERS_PER_PAGE) : 0,
   );
 
   return (

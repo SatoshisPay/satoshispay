@@ -9,10 +9,10 @@ import ErrorModal from '../components/shared/ErrorModal';
 import WithdrawalForm from '../components/Wallet/WithdrawalForm';
 import { breezGetBalance } from '../api/breez';
 import SuccessModal from '../components/shared/SuccessModal';
-import PendingWithdrawals from '../components/Wallet/PendingWithdrawals';
+import WithdrawalHistory from '../components/Wallet/WithdrawalHistory';
 import ViewSwitch from '../components/reusable/ViewSwitch';
 import { getBTCEURTicker } from '../api/ticker';
-import { View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import DepositForm from '../components/Wallet/DepositForm';
 
 type Props = NativeStackScreenProps<RootStackParamList, Page.WALLET>;
@@ -72,31 +72,33 @@ const Wallet = ({}: Props) => {
           onClick={() => setSuccess(false)}
         />
       )}
-      <Balance satsBalance={satsBalance} eurTicker={eurTicker} />
-      <View className="pb-4">
-        <ViewSwitch
-          onChange={onWalletModeChange}
-          selected={walletMode}
-          tabs={[
-            { title: 'Prelievo', value: WalletMode.WITHDRAW },
-            { title: 'Deposito', value: WalletMode.DEPOSIT },
-          ]}
-        />
-      </View>
-      {walletMode === WalletMode.WITHDRAW ? (
-        <>
-          <WithdrawalForm
-            onWithdraw={onWithdraw}
-            satsBalance={satsBalance}
-            setError={setError}
-            eurTicker={eurTicker}
+      <ScrollView>
+        <Balance satsBalance={satsBalance} eurTicker={eurTicker} />
+        <View className="pb-4">
+          <ViewSwitch
+            onChange={onWalletModeChange}
+            selected={walletMode}
+            tabs={[
+              { title: 'Prelievo', value: WalletMode.WITHDRAW },
+              { title: 'Deposito', value: WalletMode.DEPOSIT },
+            ]}
           />
-          <PendingWithdrawals setError={setError} />
-        </>
-      ) : null}
-      {walletMode === WalletMode.DEPOSIT ? (
-        <DepositForm setError={setError} />
-      ) : null}
+        </View>
+        {walletMode === WalletMode.WITHDRAW ? (
+          <>
+            <WithdrawalForm
+              onWithdraw={onWithdraw}
+              satsBalance={satsBalance}
+              setError={setError}
+              eurTicker={eurTicker}
+            />
+            <WithdrawalHistory setError={setError} />
+          </>
+        ) : null}
+        {walletMode === WalletMode.DEPOSIT ? (
+          <DepositForm setError={setError} />
+        ) : null}
+      </ScrollView>
     </Activity.ListPage>
   );
 };

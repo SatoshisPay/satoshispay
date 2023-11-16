@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import { Copy } from 'react-native-feather';
 import Clipboard from '@react-native-clipboard/clipboard';
@@ -46,34 +46,32 @@ const DepositForm = ({ setError }: Props) => {
   }
 
   return (
-    <ScrollView>
-      <View className="flex flex-col items-center justify-center mx-auto w-min">
-        <Text className="text-3xl text-brandAlt pb-4">Deposito</Text>
-        <Text className="text-xl text-brandAlt pb-4">
-          Invia i tuoi BTC a questo indirizzo
-        </Text>
-        <QRCode
-          value={btcAddress}
-          size={256}
-          color="#202020"
-          backgroundColor="#ffffff"
-        />
-        <View className="flex flex-row items-center mt-2">
-          <View className="mr-4">
-            <Text className="text-xs pt-2">{btcAddress.substring(0, 30)}</Text>
-            <Text className="text-xs">{btcAddress.substring(30)}</Text>
-          </View>
-          <View>
-            <TouchableOpacity
-              className="bg-white p-4 border border-gray-300 rounded-xl"
-              onPress={copyAddress}>
-              <Copy className="h-[24px] w-[24px] text-brandAlt" />
-            </TouchableOpacity>
-          </View>
+    <View className="flex flex-col items-center justify-center mx-auto w-min">
+      <Text className="text-3xl text-brandAlt pb-4">Deposito</Text>
+      <Text className="text-xl text-brandAlt pb-4">
+        Invia i tuoi BTC a questo indirizzo
+      </Text>
+      <QRCode
+        value={btcAddress}
+        size={256}
+        color="#202020"
+        backgroundColor="#ffffff"
+      />
+      <View className="flex flex-row items-center mt-2">
+        <View className="mr-4">
+          <Text className="text-xs pt-2">{btcAddress.substring(0, 30)}</Text>
+          <Text className="text-xs">{btcAddress.substring(30)}</Text>
+        </View>
+        <View>
+          <TouchableOpacity
+            className="bg-white p-4 border border-gray-300 rounded-xl"
+            onPress={copyAddress}>
+            <Copy className="h-[24px] w-[24px] text-brandAlt" />
+          </TouchableOpacity>
         </View>
       </View>
       <FailedDeposits setError={setError} />
-    </ScrollView>
+    </View>
   );
 };
 

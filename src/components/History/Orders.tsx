@@ -5,7 +5,7 @@ import Order from '../../data/order';
 import { getOrdersByDate, getOrdersCount } from '../../database/database';
 import ErrorModal from '../shared/ErrorModal';
 import OrderList from './OrderList';
-import PageSelector from './PageSelector';
+import PageSelector from '../reusable/PageSelector';
 import processPendingOrders from '../../task/collectHistory';
 
 const MAX_ORDERS_PER_PAGE = 5;

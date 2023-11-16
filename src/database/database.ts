@@ -7,6 +7,7 @@ import Address from '../data/address';
 import Transaction from '../data/transaction';
 import Decimal from 'decimal.js';
 import Order, { OrderStatus, OrderType } from '../data/order';
+import Withdrawal from '../data/withdrawal';
 
 const DATABASE_NAME = 'satoshispay.db';
 
@@ -39,6 +40,14 @@ const TRANSACTION_VALUE = 'value';
 const TRANSACTION_INSERTED_AT = 'insertedAt';
 const TRANSACTION_TIMESTAMP = 'timestamp';
 
+const WITHDRAWAL_TABLE = 'withdrawal';
+const WITHDRAWAL_ID = 'id';
+const WITHDRAWAL_RECIPIENT = 'recipient';
+const WITHDRAWAL_FIAT_AMOUNT = 'fiatAmount';
+const WITHDRAWAL_SATS_AMOUNT = 'satsAmount';
+const WITHDRAWAL_STATUS = 'status';
+const WITHDRAWAL_INSERTED_AT = 'insertedAt';
+
 const getDBConnection = async (): Promise<SQLiteDatabase> => {
   const db = await openDatabase({ name: DATABASE_NAME, location: 'default' });
   if (!databaseInitialized) {
@@ -59,6 +68,7 @@ const initDB = async (db: SQLiteDatabase) => {
     tx.executeSql(`DROP TABLE ${ADDRESS_TABLE};`);
     tx.executeSql(`DROP TABLE ${ORDER_TABLE};`);
     tx.executeSql(`DROP TABLE ${TRANSACTION_TABLE};`);
+    tx.executeSql(`DROP TABLE ${WITHDRAWAL_TABLE};`);
     */
     tx.executeSql(
       `CREATE TABLE IF NOT EXISTS ${ADDRESS_TABLE} (
@@ -94,6 +104,17 @@ const initDB = async (db: SQLiteDatabase) => {
       ${TRANSACTION_TIMESTAMP} TEXT NOT NULL,
       FOREIGN KEY (${TRANSACTION_ORDER}) REFERENCES ${ORDER_TABLE} (${ORDER_ID})
     );`,
+    );
+
+    tx.executeSql(
+      `CREATE TABLE IF NOT EXISTS ${WITHDRAWAL_TABLE} (
+        ${WITHDRAWAL_ID} TEXT PRIMARY KEY NOT NULL,
+        ${WITHDRAWAL_RECIPIENT} TEXT NOT NULL,
+        ${WITHDRAWAL_FIAT_AMOUNT} TEXT NOT NULL,
+        ${WITHDRAWAL_SATS_AMOUNT} TEXT NOT NULL,
+        ${WITHDRAWAL_STATUS} TEXT NOT NULL,
+        ${WITHDRAWAL_INSERTED_AT} TEXT NOT NULL
+        );`,
     );
   });
 };
@@ -372,4 +393,60 @@ export const cancelOrder = async (order: Order) => {
     `UPDATE ${ORDER_TABLE} SET ${ORDER_STATUS} = ? WHERE ${ORDER_ID} = ?;`,
     [OrderStatus.CANCELLED, order.id],
   );
+};
+
+export const insertWithdrawal = async (withdrawal: Withdrawal) => {
+  const db = await getDBConnection();
+  return await db.executeSql(
+    `INSERT INTO ${WITHDRAWAL_TABLE} (${WITHDRAWAL_ID}, ${WITHDRAWAL_RECIPIENT}, ${WITHDRAWAL_FIAT_AMOUNT}, ${WITHDRAWAL_SATS_AMOUNT}, ${WITHDRAWAL_STATUS}, ${WITHDRAWAL_INSERTED_AT}) VALUES (?, ?, ?, ?, ?, ?);`,
+    [
+      withdrawal.id,
+      withdrawal.recipient,
+      withdrawal.fiatAmount.toString(),
+      withdrawal.satsAmount.toString(),
+      withdrawal.status,
+      withdrawal.insertedAt.toISOString(),
+    ],
+  );
+};
+
+export const getWithdrawalsByDate = async (
+  limit: number,
+  offset: number,
+): Promise<Withdrawal[]> => {
+  const db = await getDBConnection();
+  const [result] = await db.executeSql(
+    `SELECT * FROM ${WITHDRAWAL_TABLE} ORDER BY ${WITHDRAWAL_INSERTED_AT} DESC LIMIT ? OFFSET ?;`,
+    [limit, offset],
+  );
+  const withdrawals: Withdrawal[] = [];
+  for (let i = 0; i < result.rows.length; i++) {
+    const withdrawal: Withdrawal = {
+      id: result.rows.item(i).id,
+      recipient: result.rows.item(i).recipient,
+      fiatAmount: new Decimal(result.rows.item(i).fiatAmount),
+      satsAmount: new Decimal(result.rows.item(i).satsAmount),
+      status: result.rows.item(i).status,
+      insertedAt: new Date(result.rows.item(i).insertedAt),
+    };
+    withdrawals.push(withdrawal);
+  }
+
+  return withdrawals;
+};
+
+export const updateWithdrawalStatus = async (withdrawal: Withdrawal) => {
+  const db = await getDBConnection();
+  return await db.executeSql(
+    `UPDATE ${WITHDRAWAL_TABLE} SET ${WITHDRAWAL_STATUS} = ? WHERE ${WITHDRAWAL_ID} = ?;`,
+    [withdrawal.status, withdrawal.id],
+  );
+};
+
+export const getWithdrawalsCount = async (): Promise<number> => {
+  const db = await getDBConnection();
+  const [result] = await db.executeSql(
+    `SELECT COUNT(*) AS count FROM ${WITHDRAWAL_TABLE};`,
+  );
+  return result.rows.item(0).count;
 };

@@ -44,6 +44,11 @@ const AppInfo = () => (
         onPress={() => Linking.openURL('mailto:info@bitcoinmonfalcone.it')}>
         info@bitcoinmonfalcone.it
       </Text>
+      <Text
+        className="text-lg text-brand underline"
+        onPress={() => Linking.openURL('https://satoshispay.app/support')}>
+        Sito web
+      </Text>
     </View>
   </View>
 );

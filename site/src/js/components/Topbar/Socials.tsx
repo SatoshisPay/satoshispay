@@ -25,7 +25,11 @@ const Socials = () => (
     <a className="block" href="https://t.me/BitcoinMonfalcone" target="_blank">
       <Telegram fill="#ffffff" width={24} height={24} />
     </a>
-    <a className="block" href="https://github.com/veeso-dev" target="_blank">
+    <a
+      className="block"
+      href="https://github.com/veeso-dev/satoshispay"
+      target="_blank"
+    >
       <Github fill="#ffffff" width={24} height={24} />
     </a>
   </Container.FlexRow>

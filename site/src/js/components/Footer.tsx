@@ -22,14 +22,10 @@ const Footer = () => {
             Inizia ad usare SatoshisPay
           </Link.Default>
           <Link.Default href={Route.FAQ}>Domande Frequenti</Link.Default>
+          <Link.Default href={Route.SUPPORT}>Supporto</Link.Default>
+          <Link.Default href={Route.PRIVACY}>Privacy Policy</Link.Default>
           <Link.Default href="https://bitcoinmonfalcone.it" target="_blank">
             Bitcoin Monfalcone
-          </Link.Default>
-          <Link.Default
-            href="https://github.com/veeso-dev/satoshispay"
-            target="_blank"
-          >
-            Github
           </Link.Default>
         </Container.FlexCols>
         <Container.FlexCols className="gap-2 hidden">
@@ -59,6 +55,12 @@ const Footer = () => {
           </Link.Default>
           <Link.Default href="https://t.me/BitcoinMonfalcone" target="_blank">
             Telegram
+          </Link.Default>
+          <Link.Default
+            href="https://github.com/veeso-dev/satoshispay"
+            target="_blank"
+          >
+            Github
           </Link.Default>
           <Container.Container className="py-4">
             <Link.Default href="https://breez.technology" target="_blank">

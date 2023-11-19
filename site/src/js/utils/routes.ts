@@ -2,6 +2,8 @@ export enum Route {
   FAQ = 'faq',
   GET_STARTED = 'get-started',
   HOME = 'home',
+  PRIVACY = 'privacy',
+  SUPPORT = 'support',
 }
 
 // eslint-disable-next-line @typescript-eslint/no-namespace

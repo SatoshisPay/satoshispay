@@ -10,19 +10,24 @@ import Alerts from '../../reusable/Alerts';
 import Device from '../../reusable/Device';
 import Link from '../../reusable/Link';
 import List from '../../reusable/List';
+import Hr from '../../reusable/Hr';
+import { Route } from '@/src/js/utils/routes';
 
 import DepositScreenshot from '@/src/assets/images/app-screen-deposit.webp';
 import PosScreenshot from '@/src/assets/images/app-screen-home.webp';
 import TxScreenshot from '@/src/assets/images/app-screen-tx.webp';
 import HistoryScreenshot from '@/src/assets/images/app-screen-history.webp';
-import Hr from '../../reusable/Hr';
-import { Route } from '@/src/js/utils/routes';
+import OnboardingScreenshot from '@/src/assets/images/app-screen-onboarding.webp';
+import PassphraseScreenshot from '@/src/assets/images/app-screen-passphrase.webp';
+import PassphraseConfirmScreenshot from '@/src/assets/images/app-screen-passphrase-confirm.webp';
+import PinScreenshot from '@/src/assets/images/app-screen-pin.webp';
 
 const Steps = () => (
   <Container.FlexCols className="w-full gap-4">
     <Container.FlexCols className="items-center justify-center">
       <Heading.H2>
-        Comincia ad accettare <strong>Bitcoin</strong> in 5 semplici passi
+        Comincia ad accettare <strong>Bitcoin</strong> in <strong>9</strong>{' '}
+        semplici passi
       </Heading.H2>
     </Container.FlexCols>
     <Container.FlexCols className="gap-8 w-full">
@@ -35,7 +40,102 @@ const Steps = () => (
           <AppBadge containerClassName="flex flex-row gap-4" />
         </>
       </Step>
-      <Step number={2} title={"Avvia l'app e deposita Bitcoin"}>
+      <Step number={2} title={'Crea un nuovo Wallet'}>
+        <Container.Flex className="flex-row sm:flex-col-reverse  items-center">
+          <Container.Container className="flex-1">
+            <Device.IPhone
+              alt="Onboarding app screenshot"
+              image={OnboardingScreenshot}
+            />
+          </Container.Container>
+          <Container.Container className="flex-1">
+            <Paragraph.Leading>
+              Al primo avvio dell&apos;app ti verrà chiesto di creare un nuovo
+              wallet o di importarne uno già esistente.
+            </Paragraph.Leading>
+            <Paragraph.Leading>
+              Quindi, clicca sul pulsante <strong>Crea un nuovo wallet</strong>{' '}
+              per proseguire.
+            </Paragraph.Leading>
+          </Container.Container>
+        </Container.Flex>
+      </Step>
+      <Step number={3} title={'Salva la Secret Phrase'}>
+        <Container.Flex className="flex-row sm:flex-col-reverse  items-center">
+          <Container.Container className="flex-1">
+            <Device.IPhone alt="Secret phrase" image={PassphraseScreenshot} />
+          </Container.Container>
+          <Container.Container className="flex-1">
+            <Paragraph.Leading>
+              Una volta generato il wallet ti verrà mostrata una frase segreta
+              da 12 parole. Salvala e custodiscila in luogo sicuro.
+            </Paragraph.Leading>
+            <Paragraph.Leading>
+              Questa frase ti permetterà di{' '}
+              <strong>recuperare il tuo wallet</strong> in caso di{' '}
+              <strong>
+                smarrimento del telefono o di eliminazione dell&apos;app
+              </strong>
+              .
+            </Paragraph.Leading>
+            <Alerts.Warning>
+              Non condividere mai la tua frase segreta con nessuno. Se qualcuno
+              è in possesso della tua frase segreta può accedere al tuo wallet e
+              rubare i tuoi Bitcoin.
+            </Alerts.Warning>
+          </Container.Container>
+        </Container.Flex>
+      </Step>
+      <Step number={4} title={'Verifica la Secret Phrase'}>
+        <Container.Flex className="flex-row sm:flex-col-reverse  items-center">
+          <Container.Container className="flex-1">
+            <Device.IPhone
+              alt="Confirm Secret phrase"
+              image={PassphraseConfirmScreenshot}
+            />
+          </Container.Container>
+          <Container.Container className="flex-1">
+            <Paragraph.Leading>
+              Per confermare che hai salvato la frase segreta ti verrà chiesto
+              di inserire le parole in ordine sparso.
+            </Paragraph.Leading>
+            <Paragraph.Leading>
+              Inserisci le parole e clicca su <strong>Procedi</strong> per
+              proseguire.
+            </Paragraph.Leading>
+            <Alerts.Warning>
+              Se non te le sei segnate potrai tornare alla schermata precedente
+              premendo il pulsante Indietro.
+            </Alerts.Warning>
+          </Container.Container>
+        </Container.Flex>
+      </Step>
+      <Step number={5} title={'Crea un PIN per i prelievi'}>
+        <Container.Flex className="flex-row sm:flex-col-reverse  items-center">
+          <Container.Container className="flex-1">
+            <Device.IPhone alt="Confirm Secret phrase" image={PinScreenshot} />
+          </Container.Container>
+          <Container.Container className="flex-1">
+            <Paragraph.Leading>
+              Al fine di prevenire <strong>prelievi non autorizzati</strong>, ti
+              verrà chiesto di creare un <strong>PIN sicuro di 6 cifre</strong>.
+            </Paragraph.Leading>
+            <Paragraph.Leading>
+              Custodisci questo PIN in maniera <strong>sicura</strong> e non
+              condividerlo mai con nessuno.
+            </Paragraph.Leading>
+            <Paragraph.Leading>
+              Una volta inserito il PIN clicca su <strong>Procedi</strong> per
+              salvare il PIN.
+            </Paragraph.Leading>
+            <Alerts.Warning>
+              Se perdi il PIN dovrai ripristinare l&apos;app riutilizzando la
+              tua Secret Phrase per poter riaccedere ai fondi.
+            </Alerts.Warning>
+          </Container.Container>
+        </Container.Flex>
+      </Step>
+      <Step number={6} title={'Deposita Bitcoin'}>
         <>
           <Alerts.Info>
             Questo passo non è obbligatorio, ma permette di evitare di incorrere
@@ -143,7 +243,7 @@ const Steps = () => (
           </Container.Flex>
         </>
       </Step>
-      <Step number={3} title="Fatti pagare in Bitcoin">
+      <Step number={7} title="Fatti pagare in Bitcoin">
         <Container.Flex className="flex-row sm:flex-col-reverse items-center">
           <Container.Container className="flex-1">
             <Device.IPhone alt="Deposit app screenshot" image={PosScreenshot} />
@@ -172,7 +272,7 @@ const Steps = () => (
           </Container.Container>
         </Container.Flex>
       </Step>
-      <Step number={4} title="Mostra al cliente il QR e attendi il pagamento">
+      <Step number={8} title="Mostra al cliente il QR e attendi il pagamento">
         <Container.Flex className="flex-row sm:flex-col-reverse items-center">
           <Container.Container className="flex-1">
             <Device.IPhone alt="Deposit app screenshot" image={TxScreenshot} />
@@ -209,7 +309,7 @@ const Steps = () => (
           </Container.Container>
         </Container.Flex>
       </Step>
-      <Step number={5} title="Verifica la transazione">
+      <Step number={9} title="Verifica la transazione">
         <Container.Flex className="flex-row sm:flex-col-reverse items-center">
           <Container.Container className="flex-1">
             <Device.IPhone

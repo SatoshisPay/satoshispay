@@ -95,6 +95,11 @@ const Faq = () => (
                 <Icon.Camera size={24} className="inline" />
               </Paragraph.Leading>
               <Paragraph.Leading>
+                Una volta inseriti tutti i dati necessari al prelievo, premi
+                &quot;Preleva&quot; e successivamente inserisci{' '}
+                <strong>il PIN segreto</strong>.
+              </Paragraph.Leading>
+              <Paragraph.Leading>
                 Una volta inviata la richiesta di prelievo vedrai il tuo
                 prelievo nella lista dei prelievi{' '}
                 <strong>Storico prelievi</strong> visibile sotto al form con lo

@@ -20,6 +20,10 @@ export const MENU_ENTRIES = [
     route: Route.FAQ,
   },
   {
+    name: 'Supporto',
+    route: Route.SUPPORT,
+  },
+  {
     name: 'Bitcoin Monfalcone',
     url: 'https://bitcoinmonfalcone.it',
   },

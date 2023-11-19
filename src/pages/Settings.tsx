@@ -7,14 +7,13 @@ import Activity from '../components/reusable/Activity';
 import Page, { RootStackParamList } from './pages';
 import { BackHandler } from 'react-native';
 import Menu from '../components/Settings/Menu';
-import WalletBackup from '../components/Settings/WalletBackup';
-import RestoreWallet from '../components/Settings/RestoreWallet';
+import RestoreApp from '../components/Settings/RestoreApp';
 import SuccessModal from '../components/shared/SuccessModal';
 
 export enum SettingsPage {
   MENU,
-  BACKUP_WALLET,
-  RESTORE_WALLET,
+  APP_INFO,
+  RESTORE_APP,
 }
 
 type Props = NativeStackScreenProps<RootStackParamList, Page.WAIT_FOR_PAYMENT>;
@@ -30,6 +29,13 @@ const Settings = ({ navigation }: Props) => {
 
   const onSuccessDismiss = () => {
     setSuccess(undefined);
+  };
+
+  const onAppRestored = () => {
+    navigation.reset({
+      index: 0,
+      routes: [{ name: Page.STARTUP }],
+    });
   };
 
   // handle back button
@@ -57,11 +63,8 @@ const Settings = ({ navigation }: Props) => {
       {error && <ErrorModal error={error} onClick={onErrorDismiss} />}
       {success && <SuccessModal message={success} onClick={onSuccessDismiss} />}
       {page === SettingsPage.MENU ? <Menu onPageChange={setPage} /> : null}
-      {page === SettingsPage.BACKUP_WALLET ? (
-        <WalletBackup setError={setError} />
-      ) : null}
-      {page === SettingsPage.RESTORE_WALLET ? (
-        <RestoreWallet setError={setError} setSuccess={setSuccess} />
+      {page === SettingsPage.RESTORE_APP ? (
+        <RestoreApp onRestore={onAppRestored} setError={setError} />
       ) : null}
     </Activity.ListPage>
   );

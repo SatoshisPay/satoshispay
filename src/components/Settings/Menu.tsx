@@ -3,7 +3,7 @@ import { ScrollView, Text } from 'react-native';
 
 import { SettingsPage } from '../../pages/Settings';
 import MenuButton from './Menu/MenuButton';
-import { Download, Upload } from 'react-native-feather';
+import { AlertTriangle, Info } from 'react-native-feather';
 
 interface Props {
   onPageChange: (page: SettingsPage) => void;
@@ -13,14 +13,14 @@ const Menu = ({ onPageChange }: Props) => (
   <ScrollView className="py-8 w-page mx-auto">
     <Text className="text-3xl">Impostazioni</Text>
     <MenuButton
-      onClick={() => onPageChange(SettingsPage.BACKUP_WALLET)}
-      icon={<Download className="text-brandAlt" />}
-      text="Backup Wallet"
+      onClick={() => onPageChange(SettingsPage.APP_INFO)}
+      icon={<Info className="text-brandAlt" />}
+      text="Informazioni Sull'App"
     />
     <MenuButton
-      icon={<Upload className="text-brandAlt" />}
-      onClick={() => onPageChange(SettingsPage.RESTORE_WALLET)}
-      text="Ripristina Wallet"
+      icon={<AlertTriangle className="text-brandAlt" />}
+      onClick={() => onPageChange(SettingsPage.RESTORE_APP)}
+      text="Ripristino App"
     />
   </ScrollView>
 );

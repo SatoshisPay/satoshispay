@@ -59,17 +59,25 @@ const getDBConnection = async (): Promise<SQLiteDatabase> => {
 };
 
 /**
+ * @description reset the entire database
+ * @returns
+ */
+export const resetDB = async () => {
+  const db = await getDBConnection();
+  return await db.transaction(tx => {
+    tx.executeSql(`DROP TABLE ${ADDRESS_TABLE};`);
+    tx.executeSql(`DROP TABLE ${ORDER_TABLE};`);
+    tx.executeSql(`DROP TABLE ${TRANSACTION_TABLE};`);
+    tx.executeSql(`DROP TABLE ${WITHDRAWAL_TABLE};`);
+  });
+};
+
+/**
  * @description execute the table initialization. To be executed only once on startup
  * @param db
  */
 const initDB = async (db: SQLiteDatabase) => {
   return await db.transaction(tx => {
-    /* //FIXME: very dangerous; for tests only, use migrations otherwise
-    tx.executeSql(`DROP TABLE ${ADDRESS_TABLE};`);
-    tx.executeSql(`DROP TABLE ${ORDER_TABLE};`);
-    tx.executeSql(`DROP TABLE ${TRANSACTION_TABLE};`);
-    tx.executeSql(`DROP TABLE ${WITHDRAWAL_TABLE};`);
-    */
     tx.executeSql(
       `CREATE TABLE IF NOT EXISTS ${ADDRESS_TABLE} (
       ${ADDRESS_ADDRESS} TEXT PRIMARY KEY NOT NULL,

@@ -51,9 +51,15 @@ const WithdrawalHistory = ({ setError }: Props) => {
             let statusChanged = true;
             const assocSwap = pendingSwaps.find(s => s.id === withdrawal.id);
 
-            if (!assocSwap) {
+            if (
+              !assocSwap &&
+              withdrawal.status !== WithdrawalStatus.COMPLETED
+            ) {
               withdrawal.status = WithdrawalStatus.COMPLETED;
-            } else if (assocSwap.status === ReverseSwapStatus.CANCELLED) {
+            } else if (
+              assocSwap &&
+              assocSwap.status === ReverseSwapStatus.CANCELLED
+            ) {
               withdrawal.status = WithdrawalStatus.CANCELLED;
             } else {
               statusChanged = false;

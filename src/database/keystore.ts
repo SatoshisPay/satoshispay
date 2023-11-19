@@ -5,6 +5,7 @@ import * as bip39 from 'bip39';
 
 const KEY = 'KEY';
 const MNEMONIC = 'MNEMONIC';
+const PIN = 'PIN';
 
 /**
  * @description given a string returns encryption of it
@@ -24,6 +25,10 @@ export const decryptSecret = async (
   return bytes.toString(CryptoJS.enc.Utf8);
 };
 
+/**
+ * @description returns the key stored in the keychain. If it doesn't exist, it creates a new one
+ * @returns
+ */
 const getStoreKey = async (): Promise<string> => {
   const key = await Keychain.getGenericPassword({ service: KEY });
 
@@ -36,6 +41,10 @@ const getStoreKey = async (): Promise<string> => {
   return newKey;
 };
 
+/**
+ * @description returns the mnemonic stored in the keychain. If it doesn't exist, it creates a new one
+ * @returns
+ */
 export const getLnNodeMnemonic = async (): Promise<string> => {
   const existingMnemonic = await Keychain.getGenericPassword({
     service: MNEMONIC,
@@ -45,6 +54,14 @@ export const getLnNodeMnemonic = async (): Promise<string> => {
     return existingMnemonic.password;
   }
 
+  return await createLnNodeMnemonic();
+};
+
+/**
+ * @description creates a new mnemonic and stores it in the keychain
+ * @returns
+ */
+export const createLnNodeMnemonic = async (): Promise<string> => {
   const entropy = [
     0x4a, 0xd7, 0x8e, 0x2b, 0xf1, 0x0c, 0x3a, 0x6f, 0x9e, 0x5d, 0x72, 0xb0,
     0x8f, 0x61, 0xe3, 0x2a,
@@ -60,8 +77,30 @@ export const setLnNodeMnemonic = async (mnemonic: string) => {
   await Keychain.setGenericPassword(MNEMONIC, mnemonic, { service: MNEMONIC });
 };
 
+/**
+ * @description checks if the mnemonic is already set in the keychain
+ */
 export const isLnNodeMnemonicSet = async (): Promise<boolean> => {
   const key = await Keychain.getGenericPassword({ service: MNEMONIC });
 
   return key !== false;
+};
+
+/**
+ * @description set secret pin for withdrawals
+ * @param pin
+ */
+export const setPin = async (pin: string) => {
+  await Keychain.setGenericPassword(PIN, pin, { service: PIN });
+};
+
+/**
+ * @description verify the pin for withdrawals
+ * @param pin
+ * @returns whether they matches
+ */
+export const verifyPin = async (pin: string): Promise<boolean> => {
+  const existingPin = await Keychain.getGenericPassword({ service: PIN });
+
+  return existingPin !== false && existingPin.password === pin;
 };

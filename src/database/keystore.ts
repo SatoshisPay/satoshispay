@@ -104,3 +104,12 @@ export const verifyPin = async (pin: string): Promise<boolean> => {
 
   return existingPin !== false && existingPin.password === pin;
 };
+
+/**
+ * @description reset all the data stored in the keychain
+ */
+export const resetStorage = async () => {
+  await Keychain.resetGenericPassword({ service: KEY });
+  await Keychain.resetGenericPassword({ service: MNEMONIC });
+  await Keychain.resetGenericPassword({ service: PIN });
+};

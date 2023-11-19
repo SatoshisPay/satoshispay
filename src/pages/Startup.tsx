@@ -28,14 +28,6 @@ const Startup = ({ navigation }: Props) => {
         });
       })
       .catch(e => {
-        if (e.message.includes('already initialized')) {
-          setIsConnecting(false);
-          navigation.reset({
-            index: 0,
-            routes: [{ name: Page.HOME }],
-          });
-          return;
-        }
         console.error(e.message);
         setError(
           'Impossibile connettersi a Lightning Network, riprova più tardi',

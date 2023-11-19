@@ -75,7 +75,15 @@ export const breezConnect = async () => {
   await RNFS.mkdir(path);
   config.workingDir = path;
 
-  return await connect(config, seedNumeric, onBreezEvent);
+  try {
+    return await connect(config, seedNumeric, onBreezEvent);
+  } catch (e: any) {
+    if (e.message === 'already initialized') {
+      return undefined;
+    }
+
+    throw e;
+  }
 };
 
 export const breezDisconnect = async () => {

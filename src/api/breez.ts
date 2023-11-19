@@ -135,7 +135,6 @@ export const breezWithdrawSats = async (
   address: string,
 ): Promise<string> => {
   const fees = await fetchReverseSwapFees({ sendAmountSat: amount.toNumber() });
-  console.log('got fees', fees.feesHash, fees.max, fees.min);
   const response = await sendOnchain({
     amountSat: amount.toNumber(),
     onchainRecipientAddress: address,

@@ -21,6 +21,7 @@ import { breezGetFailedDeposits, breezRefundDeposit } from '../../../api/breez';
 import { SwapInfo } from '@breeztech/react-native-breez-sdk';
 import { isBtcAddress } from '../../../utils/parser';
 import FailedDepositItem from './FailedDepositItem';
+import Button from '../../reusable/Button';
 
 interface Props {
   setError: (error: string) => void;
@@ -142,15 +143,10 @@ const FailedDeposits = ({ setError }: Props) => {
       </View>
       <View className="flex flex-col justify-center items-center">
         {formError && <Text className="text-red-500">{formError}</Text>}
-        <TouchableOpacity
-          className={`${
-            loading ? 'bg-brandAlt' : 'bg-brand'
-          } flex-row items-center justify-center rounded-lg p-4 mt-4 shadow-lg border border-gray-300`}
-          onPress={onRefund}
-          disabled={loading}>
+        <Button.Primary onPress={onRefund} disabled={loading}>
           <Text className="text-white text-2xl">Rimborsa depositi</Text>
           <ArrowRight className=" text-white" width={24} height={24} />
-        </TouchableOpacity>
+        </Button.Primary>
       </View>
     </View>
   );

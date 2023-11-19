@@ -9,6 +9,7 @@ import { BackHandler } from 'react-native';
 import Menu from '../components/Settings/Menu';
 import RestoreApp from '../components/Settings/RestoreApp';
 import SuccessModal from '../components/shared/SuccessModal';
+import AppInfo from '../components/Settings/AppInfo';
 
 export enum SettingsPage {
   MENU,
@@ -63,6 +64,7 @@ const Settings = ({ navigation }: Props) => {
       {error && <ErrorModal error={error} onClick={onErrorDismiss} />}
       {success && <SuccessModal message={success} onClick={onSuccessDismiss} />}
       {page === SettingsPage.MENU ? <Menu onPageChange={setPage} /> : null}
+      {page === SettingsPage.APP_INFO ? <AppInfo /> : null}
       {page === SettingsPage.RESTORE_APP ? (
         <RestoreApp onRestore={onAppRestored} setError={setError} />
       ) : null}

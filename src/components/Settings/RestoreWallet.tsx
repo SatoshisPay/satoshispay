@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 import * as bip39 from 'bip39';
 
 import { setLnNodeMnemonic } from '../../database/keystore';
@@ -7,6 +7,7 @@ import Alerts from '../reusable/Alerts';
 import { breezRestart } from '../../api/breez';
 import WordForm from './RestoreWallet/WordForm';
 import { ArrowRight } from 'react-native-feather';
+import Button from '../reusable/Button';
 
 interface Props {
   setError: (error: string) => void;
@@ -171,15 +172,10 @@ const RestoreWallet = ({ setError, setSuccess }: Props) => {
             </View>
           </View>
           <View className="flex items-center justify-center">
-            <TouchableOpacity
-              className={`${
-                btnDisabled ? 'bg-brandAlt' : 'bg-brand'
-              } flex-row items-center justify-center rounded-lg p-4 mt-4 shadow-lg border border-gray-300`}
-              onPress={onBackupRestore}
-              disabled={btnDisabled}>
+            <Button.Primary onPress={onBackupRestore} disabled={btnDisabled}>
               <Text className="text-white text-2xl">Ripristina</Text>
               <ArrowRight className=" text-white" width={24} height={24} />
-            </TouchableOpacity>
+            </Button.Primary>
           </View>
         </View>
       </View>

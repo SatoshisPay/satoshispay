@@ -11,11 +11,12 @@ import { convertEURToSats } from '../../utils/conversion';
 import Alerts from '../reusable/Alerts';
 
 interface Props {
+  amount: Decimal;
+  setAmount: (amount: Decimal) => void;
   onSubmitted: (amount: Decimal) => void;
 }
 
-const Pos = (props: Props): JSX.Element => {
-  const [amount, setAmount] = React.useState(new Decimal(0));
+const Pos = ({ amount, setAmount, onSubmitted }: Props): JSX.Element => {
   const [cursor, setCursor] = React.useState(0);
   const [lnBalance, setLnBalance] = React.useState<Decimal>();
   const [eurTicker, setEurTicker] = React.useState<Decimal>();
@@ -60,7 +61,7 @@ const Pos = (props: Props): JSX.Element => {
     setAmount(new Decimal(0));
     setCursor(0);
 
-    props.onSubmitted(amount);
+    onSubmitted(amount);
   };
 
   React.useEffect(() => {

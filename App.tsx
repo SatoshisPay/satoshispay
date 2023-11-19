@@ -16,6 +16,8 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 import './global';
 import Settings from './src/pages/Settings';
+import Startup from './src/pages/Startup';
+import Onboarding from './src/pages/Onboarding';
 
 require('stream-browserify');
 
@@ -28,7 +30,7 @@ function App(): JSX.Element {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName={Page.HOME}
+        initialRouteName={Page.STARTUP}
         screenOptions={props => ({
           headerTitle: () => <Logo />,
           headerStyle: {
@@ -48,10 +50,23 @@ function App(): JSX.Element {
             </View>
           ),
         })}>
+        <Stack.Screen
+          name={Page.STARTUP}
+          component={Startup}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name={Page.ONBOARDING}
+          component={Onboarding}
+          options={{ headerShown: false }}
+        />
+
         <Stack.Screen name={Page.HOME} component={Home} />
         <Stack.Screen name={Page.HISTORY} component={History} />
-        <Stack.Screen name={Page.WALLET} component={Wallet} />
         <Stack.Screen name={Page.SETTINGS} component={Settings} />
+        <Stack.Screen name={Page.WALLET} component={Wallet} />
         <Stack.Screen
           name={Page.TRANSACTION}
           component={Transaction}

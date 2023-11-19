@@ -22,6 +22,9 @@ import Spinner from '../reusable/Spinner';
 import { isBtcAddress } from '../../utils/parser';
 import { insertWithdrawal } from '../../database/database';
 import { WithdrawalStatus } from '../../data/withdrawal';
+import Button from '../reusable/Button';
+import { verifyPin } from '../../database/keystore';
+import Alerts from '../reusable/Alerts';
 
 interface Props {
   eurTicker?: Decimal;
@@ -43,6 +46,8 @@ const WithdrawalForm = ({
   const { hasPermission, requestPermission } = useCameraPermission();
   const [activeCamera, setActiveCamera] = React.useState<boolean>(false);
   const [inProgress, setInProgress] = React.useState(false);
+  const [pin, setPin] = React.useState<string>('');
+  const [showPin, setShowPin] = React.useState<boolean>(false);
 
   const cameraDevice = useCameraDevice('back');
 
@@ -70,23 +75,64 @@ const WithdrawalForm = ({
     onCodeScanned: onQrScanned,
   });
 
-  const onWithdrawCb = () => {
+  const validateAll = (): Decimal | undefined => {
     let amountNumber: Decimal;
     try {
       amountNumber = new Decimal(satsAmount);
     } catch (e) {
       setFormError('Importo non valido');
-      return;
+      return undefined;
     }
     if (amountNumber.isZero() || amountNumber.isNegative()) {
       setFormError("L'importo deve essere maggiore di 0");
+      return undefined;
     }
     if (amountNumber.greaterThan(satsBalance)) {
       setFormError('Non hai abbastanza satoshi');
+      return undefined;
     }
     if (!isBtcAddress(address)) {
       setFormError('Indirizzo non valido');
+      return undefined;
     }
+
+    return amountNumber;
+  };
+
+  const onSubmit = () => {
+    setShowPin(true);
+    const amountNumber: Decimal | undefined = validateAll();
+
+    if (amountNumber === undefined) {
+      return;
+    }
+  };
+
+  const onConfirmPin = () => {
+    verifyPin(pin)
+      .then(pinMatches => {
+        if (pinMatches) {
+          setShowPin(false);
+          setFormError(undefined);
+          onWithdrawCb();
+        } else {
+          setFormError('PIN non corretto');
+        }
+      })
+      .catch(e => {
+        console.error(e);
+        setFormError('Impossibile verificare il PIN');
+      });
+  };
+
+  const onWithdrawCb = () => {
+    const amountNumber: Decimal | undefined = validateAll();
+
+    if (amountNumber === undefined) {
+      return;
+    }
+    setFormError(undefined);
+
     setInProgress(true);
     const fiatAmount = eurTicker
       ? convertSatsToEUR(eurTicker, amountNumber)
@@ -172,6 +218,43 @@ const WithdrawalForm = ({
 
   return (
     <View className="flex flex-col items-center justify-center mx-auto w-full">
+      {showPin && (
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={showPin}
+          onRequestClose={() => {
+            setShowPin(false);
+          }}>
+          <View className="flex flex-col items-center justify-between w-full py-4">
+            <Text className="text-center text-2xl">
+              Inserisci il tuo PIN segreto per confermare il prelievo
+            </Text>
+            <TextInput
+              inputMode="numeric"
+              keyboardType="numeric"
+              secureTextEntry={true}
+              maxLength={6}
+              className="w-3/4 text-4xl text-center py-4 mt-4 bg-white border border-gray-200 rounded-xl shadow-xl"
+              value={pin}
+              onChangeText={text => setPin(text)}
+            />
+            {formError && (
+              <Alerts.Danger>
+                <Text className="text-red-700 text-lg text-center">
+                  {formError}
+                </Text>
+              </Alerts.Danger>
+            )}
+            <Button.Primary disabled={buttonDisabled} onPress={onConfirmPin}>
+              <Text className="text-white text-center text-2xl">
+                Conferma PIN
+              </Text>
+              <ArrowRight className="ml-2 text-white" />
+            </Button.Primary>
+          </View>
+        </Modal>
+      )}
       {cameraDevice && (
         <Modal visible={activeCamera} animationType="slide">
           <Camera
@@ -214,15 +297,10 @@ const WithdrawalForm = ({
       </View>
       <View className="flex flex-col justify-center items-center">
         {formError && <Text className="text-red-500">{formError}</Text>}
-        <TouchableOpacity
-          className={`${
-            buttonDisabled ? 'bg-brandAlt' : 'bg-brand'
-          } flex-row items-center justify-center rounded-lg p-4 mt-4 shadow-lg border border-gray-300`}
-          onPress={onWithdrawCb}
-          disabled={buttonDisabled}>
+        <Button.Primary onPress={onSubmit} disabled={buttonDisabled}>
           <Text className="text-white text-2xl">Preleva</Text>
           <ArrowRight className=" text-white" width={24} height={24} />
-        </TouchableOpacity>
+        </Button.Primary>
       </View>
     </View>
   );

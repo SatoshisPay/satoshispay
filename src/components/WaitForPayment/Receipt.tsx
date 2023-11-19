@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import { Check } from 'react-native-feather';
+import { View, Text } from 'react-native';
+import { ArrowRight, Check } from 'react-native-feather';
+import Button from '../reusable/Button';
 
 interface Props {
   onGoHomeClicked: () => void;
@@ -14,11 +15,10 @@ const Receipt = (props: Props) => (
     <Text className="text-brandAlt w-full px-4 text-2xl text-center">
       Transazione completata{'\n'}con successo!
     </Text>
-    <TouchableOpacity
-      onPress={props.onGoHomeClicked}
-      className="bg-brandAlt p-2 rounded-lg mt-4">
-      <Text className="text-white text-2xl">Torna alla home</Text>
-    </TouchableOpacity>
+    <Button.Secondary onPress={props.onGoHomeClicked}>
+      <Text className="text-brandAlt text-2xl">Torna alla home</Text>
+      <ArrowRight className="text-brandAlt ml-2" />
+    </Button.Secondary>
   </View>
 );
 

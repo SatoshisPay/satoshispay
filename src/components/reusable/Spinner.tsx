@@ -3,11 +3,12 @@ import { View, ActivityIndicator } from 'react-native';
 
 interface Props {
   children: React.ReactNode;
+  size?: number;
 }
 
-const Spinner = ({ children }: Props) => (
+const Spinner = ({ children, size }: Props) => (
   <View className="flex flex-col items-center justify-center bg-white px-2 py-8 rounded-xl">
-    <ActivityIndicator size={128} color="#F7931A" />
+    <ActivityIndicator size={size ?? 128} color="#F7931A" />
     {children}
   </View>
 );

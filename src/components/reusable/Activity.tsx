@@ -3,20 +3,25 @@ import { View } from 'react-native';
 
 interface Props {
   children: React.ReactNode;
+  className?: string;
 }
 
-const Page = ({ children }: Props): JSX.Element => (
-  <View className="flex flex-col items-center justify-center w-full">
+const Page = ({ children, className }: Props): JSX.Element => (
+  <View
+    className={`${className} flex flex-col items-center justify-center w-full`}>
     {children}
   </View>
 );
 
-const ListPage = ({ children }: Props): JSX.Element => (
-  <View className="flex flex-col justify-center w-full">{children}</View>
+const ListPage = ({ children, className }: Props): JSX.Element => (
+  <View className={`${className} flex flex-col justify-center w-full`}>
+    {children}
+  </View>
 );
 
-const BrandPage = ({ children }: Props): JSX.Element => (
-  <View className="flex flex-col items-center justify-center w-full bg-brand h-full">
+const BrandPage = ({ children, className }: Props): JSX.Element => (
+  <View
+    className={`${className} flex flex-col items-center justify-center w-full bg-brand h-full`}>
     {children}
   </View>
 );

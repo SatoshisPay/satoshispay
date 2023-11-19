@@ -76,7 +76,7 @@ const WalletBackup = ({ setError }: Props) => {
         />
         <View className="flex items-center justify-center">
           <TouchableOpacity
-            className={`bg-white flex-row items-center justify-center rounded-lg p-4 mt-4 shadow-lg border border-gray-300`}
+            className="bg-white flex-row items-center justify-center rounded-lg p-4 mt-4 shadow-lg border border-gray-300"
             onPress={onCopyWords}>
             <Copy className=" text-brandAlt mr-4" width={24} height={24} />
             <Text className="text-brandAlt text-2xl">Copia</Text>

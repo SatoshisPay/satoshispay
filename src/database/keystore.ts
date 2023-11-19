@@ -59,3 +59,9 @@ export const getLnNodeMnemonic = async (): Promise<string> => {
 export const setLnNodeMnemonic = async (mnemonic: string) => {
   await Keychain.setGenericPassword(MNEMONIC, mnemonic, { service: MNEMONIC });
 };
+
+export const isLnNodeMnemonicSet = async (): Promise<boolean> => {
+  const key = await Keychain.getGenericPassword({ service: MNEMONIC });
+
+  return key !== false;
+};

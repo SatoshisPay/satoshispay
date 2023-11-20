@@ -19,3 +19,10 @@ export const convertBTCToEUR = (eurValue: Decimal, btc: Decimal): Decimal =>
 
 export const convertSatsToEUR = (eurValue: Decimal, sats: Decimal): Decimal =>
   convertBTCToEUR(eurValue, convertSatsToBTC(sats));
+
+export const convertStringToBytes = (str: string): number[] => {
+  const buffer = Buffer.from(str, 'utf8');
+  const byteArray = Array.from(buffer);
+
+  return byteArray;
+};

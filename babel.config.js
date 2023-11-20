@@ -2,7 +2,13 @@ module.exports = {
   presets: ['module:metro-react-native-babel-preset'],
   plugins: [
     'nativewind/babel',
-    // other plugins
+
+    [
+      'module:react-native-dotenv',
+      {
+        allowUndefined: false,
+      },
+    ],
     [
       'babel-plugin-rewrite-require',
       {

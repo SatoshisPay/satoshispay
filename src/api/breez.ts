@@ -76,7 +76,7 @@ export const breezConnect = async () => {
     nodeConfig,
   );
 
-  const path = RNFS.DocumentDirectoryPath + '/breez-node';
+  const path = breezWorkingDirectory();
   await RNFS.mkdir(path);
   config.workingDir = path;
 
@@ -200,4 +200,11 @@ export const breezRefundDeposit = async (
   });
 
   return result.refundTxId;
+};
+
+const breezWorkingDirectory = (): string =>
+  RNFS.DocumentDirectoryPath + '/breez-node';
+
+export const breezRemoveDir = async () => {
+  await RNFS.unlink(breezWorkingDirectory());
 };

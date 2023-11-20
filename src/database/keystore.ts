@@ -2,6 +2,7 @@ import * as Keychain from 'react-native-keychain';
 import uuid from 'react-native-uuid';
 import * as CryptoJS from 'react-native-crypto-js';
 import * as bip39 from 'bip39';
+import { generateEntropy } from '../utils/random';
 
 const KEY = 'KEY';
 const MNEMONIC = 'MNEMONIC';
@@ -62,10 +63,7 @@ export const getLnNodeMnemonic = async (): Promise<string> => {
  * @returns
  */
 export const createLnNodeMnemonic = async (): Promise<string> => {
-  const entropy = [
-    0x4a, 0xd7, 0x8e, 0x2b, 0xf1, 0x0c, 0x3a, 0x6f, 0x9e, 0x5d, 0x72, 0xb0,
-    0x8f, 0x61, 0xe3, 0x2a,
-  ];
+  const entropy = generateEntropy();
   const mnemonic = bip39.entropyToMnemonic(Buffer.from(entropy));
 
   await setLnNodeMnemonic(mnemonic);

@@ -11,9 +11,9 @@ const Card = ({ title, children }: Props) => (
   <Container.Card className="bg-white sm:bg-transparent">
     <Container.FlexCols className="items-center justify-center">
       <Container.Container>
-        <Heading.H3 className="!text-xl text-brandAlt text-center">
+        <Heading.H2 className="!text-xl text-brandAlt text-center">
           {title}
-        </Heading.H3>
+        </Heading.H2>
       </Container.Container>
       <Container.Container>{children}</Container.Container>
     </Container.FlexCols>

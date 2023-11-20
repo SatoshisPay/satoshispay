@@ -7,6 +7,7 @@ import BreezLogo from '@/src/assets/images/breez.svg';
 import Image from 'next/image';
 import Link from './reusable/Link';
 import { Route } from '../utils/routes';
+import Donate from './shared/Donate';
 
 const Footer = () => {
   const year = new Date().getFullYear();
@@ -27,12 +28,16 @@ const Footer = () => {
           <Link.Default href="https://bitcoinmonfalcone.it" target="_blank">
             Bitcoin Monfalcone
           </Link.Default>
+          <Donate
+            size={128}
+            text="Supporta il nostro progetto con una piccola donazione"
+          />
         </Container.FlexCols>
-        <Container.FlexCols className="gap-2 hidden">
+        <Container.FlexCols className="gap-2">
           <div>
             <span className="text-2xl block pb-4">Download</span>
           </div>
-          <AppBadge containerClassName="flex flex-col gap-2 items-center" />
+          <AppBadge containerClassName="flex flex-col gap-2" />
         </Container.FlexCols>
         <Container.FlexCols className="gap-2">
           <div>

@@ -5,11 +5,13 @@ import Container from '../../reusable/Container';
 import Heading from '../../reusable/Heading';
 import Paragraph from '../../reusable/Paragraph';
 import Accordion from '../../reusable/Accordion';
-import Jumbotron from '../../reusable/Jumbotron';
 
 import WalletScreenshot from '@/src/assets/images/app-screen-wallet.webp';
+import SettingsScreenshot from '@/src/assets/images/app-screen-settings.webp';
+import FactoryResetScreenshot from '@/src/assets/images/app-screen-factory.webp';
 
 import Device from '../../reusable/Device';
+import Donate from '../../shared/Donate';
 
 const Faq = () => (
   <Container.FlexCols className="gap-8">
@@ -20,10 +22,10 @@ const Faq = () => (
       </Paragraph.Center>
     </Container.FlexCols>
     <Container.FlexCols className="gap-4">
-      <Jumbotron>
+      <Container.Container className="border-t border-gray-200 p-2">
         <Accordion
           title={
-            <Heading.H2>
+            <Heading.H2 className="text-xl pt-4">
               Quali sono le commissioni per il venditore su SatoshisPay?
             </Heading.H2>
           }
@@ -72,10 +74,14 @@ const Faq = () => (
             coprire gli importi che si vogliono ricevere.
           </Paragraph.Default>
         </Accordion>
-      </Jumbotron>
-      <Jumbotron>
+      </Container.Container>
+      <Container.Container className="border-t border-gray-200 p-2">
         <Accordion
-          title={<Heading.H2>Come prelevo i miei Bitcoin?</Heading.H2>}
+          title={
+            <Heading.H2 className="text-xl pt-4">
+              Come prelevo i miei Bitcoin?
+            </Heading.H2>
+          }
         >
           <Container.Flex className="flex-row sm:flex-col-reverse">
             <Container.Container className="flex-1">
@@ -109,7 +115,105 @@ const Faq = () => (
             </Container.Container>
           </Container.Flex>
         </Accordion>
-      </Jumbotron>
+      </Container.Container>
+      <Container.Container className="border-t border-gray-200 p-2">
+        <Accordion
+          title={
+            <Heading.H2 className="text-xl pt-4">
+              {' '}
+              Come ripristino SatoshisPay?
+            </Heading.H2>
+          }
+        >
+          <Container.FlexCols className="gap-4">
+            <Container.Flex className="flex-row sm:flex-col-reverse">
+              <Container.Container className="flex-1">
+                <Device.IPhone
+                  alt="settings screenshot"
+                  image={SettingsScreenshot}
+                />
+              </Container.Container>
+              <Container.FlexCols className="flex-1 items-center justify-center">
+                <Paragraph.Leading>
+                  In caso fosse necessario ripristinare l&apos;app SatoshisPay,
+                  come per esempio in caso di smarrimento del PIN per effetuare
+                  prelievi o compromissione della sicurezza, sarà sufficiente
+                  andare nella pagina <strong>Impostazioni</strong> cliccando
+                  sull&apos;icona <Icon.Settings size={24} className="inline" />
+                  .
+                </Paragraph.Leading>
+                <Paragraph.Leading>
+                  Quindi cliccare su{' '}
+                  <Icon.AlertTriangle className="inline mr-2" />
+                  <strong>Ripristino App</strong> cliccando sull&apos;icona{' '}
+                </Paragraph.Leading>
+              </Container.FlexCols>
+            </Container.Flex>
+            <Container.Flex className="flex-row sm:flex-col-reverse">
+              <Container.Container className="flex-1">
+                <Device.IPhone
+                  alt="factory reset screenshot"
+                  image={FactoryResetScreenshot}
+                />
+              </Container.Container>
+              <Container.FlexCols className="flex-1 items-center justify-center">
+                <Paragraph.Leading>
+                  A questo punto verrà chiesto di confermare il ripristino.
+                </Paragraph.Leading>
+                <Paragraph.Leading>
+                  Una volta confermato il ripristino, l&apos;app verrà
+                  ripristinata e verrai reindirizzato alla pagina di
+                  configurazione dell&apos;app. A questo punto potrai scegliere
+                  se ripristinare il <strong>wallet</strong> da un backup o
+                  creare un nuovo wallet.
+                </Paragraph.Leading>
+              </Container.FlexCols>
+            </Container.Flex>
+          </Container.FlexCols>
+        </Accordion>
+      </Container.Container>
+      <Container.Container className="border-t border-gray-200 p-2">
+        <Accordion
+          title={
+            <Heading.H2 className="text-xl pt-4">
+              Ho perso il PIN per effettuare i prelievi, come faccio?
+            </Heading.H2>
+          }
+        >
+          <Container.Container>
+            <Paragraph.Leading>
+              In caso di smarrimento del PIN, l&apos;unico modo per recuperare i
+              fondi in app, sarà quello di ripristinare l&apos;app SatoshisPay.
+            </Paragraph.Leading>
+            <Paragraph.Leading>
+              Leggi di più nella sezione{' '}
+              <strong>Come ripristino SatoshisPay?</strong>.
+            </Paragraph.Leading>
+          </Container.Container>
+        </Accordion>
+      </Container.Container>
+      <Container.Container className="border-t border-gray-200 p-2">
+        <Accordion
+          title={
+            <Heading.H2 className="text-xl pt-4">
+              SatoshisPay è gratuita?
+            </Heading.H2>
+          }
+        >
+          <Container.Container>
+            <Paragraph.Leading>
+              SatoshisPay è completamente <strong>gratuita</strong> e{' '}
+              <strong>open-source</strong> e lo sarà sempre.
+            </Paragraph.Leading>
+            <Paragraph.Leading>
+              Ti invitiamo però a supportare il progetto con una donazione in
+              BTC all&apos;indirizzo:{' '}
+              <code>bc1qql247l894ahqvd5affjk69mrf49dcnxg7c0l74</code>
+            </Paragraph.Leading>
+            <Donate center address />
+          </Container.Container>
+        </Accordion>
+      </Container.Container>
     </Container.FlexCols>
   </Container.FlexCols>
 );

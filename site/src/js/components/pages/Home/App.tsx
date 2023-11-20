@@ -66,9 +66,6 @@ const App = () => (
       <span className="block text-brandAlt font-bold text-xl">
         Entra a far parte della rivoluzione ORA!
       </span>
-      <span className="block text-text text-lg">
-        Disponibile prossimamente su Android e iOS
-      </span>
       <AppBadge containerClassName="flex flex-row sm:flex-col gap-4 items-center" />
     </Container.FlexCols>
   </Container.FlexCols>

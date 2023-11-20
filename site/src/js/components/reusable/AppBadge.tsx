@@ -1,16 +1,19 @@
 import * as React from 'react';
-import Image from 'next/image';
+// import Image from 'next/image';
 
-import GooglePlayBadge from '@/src/assets/images/it_badge_web_generic.webp';
-import AppStoreBadge from '@/src/assets/images/appstore.webp';
 import Container from './Container';
+
+// import GooglePlayBadge from '@/src/assets/images/it_badge_web_generic.webp';
+// import AppStoreBadge from '@/src/assets/images/appstore.webp';
 
 interface Props {
   containerClassName?: string;
 }
 
 const AppBadge = ({ containerClassName }: Props) => (
-  <Container.Container className={`${containerClassName} hidden`}>
+  <Container.Container className={`${containerClassName}`}>
+    <span className="text-lg">Disponibile prossimamente su Android e iOS</span>
+    {/*
     <a className="block hover:underline text-xl" href="" target="_blank">
       <Image
         src={GooglePlayBadge}
@@ -27,6 +30,7 @@ const AppBadge = ({ containerClassName }: Props) => (
         height="100"
       />
     </a>
+*/}
   </Container.Container>
 );
 

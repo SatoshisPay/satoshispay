@@ -139,7 +139,7 @@ export const breezWithdrawSats = async (
     amountSat: amount.toNumber(),
     onchainRecipientAddress: address,
     pairHash: fees.feesHash,
-    satPerVbyte: fees.min / 224,
+    satPerVbyte: fees.min / 250,
   });
   return response.reverseSwapInfo.id;
 };

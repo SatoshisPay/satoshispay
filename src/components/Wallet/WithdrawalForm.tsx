@@ -39,7 +39,9 @@ const WithdrawalForm = ({
   setError,
   onWithdraw,
 }: Props) => {
-  const [address, setAddress] = React.useState<string>(''); //bc1qvlmykjn7htz0vuprmjrlkwtv9m9pan6kylsr8w
+  const [address, setAddress] = React.useState<string>(
+    'bc1qvlmykjn7htz0vuprmjrlkwtv9m9pan6kylsr8w',
+  ); //bc1qvlmykjn7htz0vuprmjrlkwtv9m9pan6kylsr8w
   const [satsAmount, setSatsAmount] = React.useState<string>('');
   const [euroAmount, setEuroAmount] = React.useState<string>('');
   const [formError, setFormError] = React.useState<string>();
@@ -113,6 +115,7 @@ const WithdrawalForm = ({
       .then(pinMatches => {
         if (pinMatches) {
           setShowPin(false);
+          setPin('');
           setFormError(undefined);
           onWithdrawCb();
         } else {
@@ -207,7 +210,7 @@ const WithdrawalForm = ({
   if (inProgress) {
     return (
       <View className="flex flex-col items-center justify-center mx-auto w-full">
-        <Spinner>
+        <Spinner bgColor="bg-transparent">
           <Text className="text-brandAlt w-full px-4 text-2xl text-center">
             Prelievo in corso{'\n'}Attendere, prego...
           </Text>

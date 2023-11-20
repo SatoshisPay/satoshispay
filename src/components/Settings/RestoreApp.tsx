@@ -3,7 +3,7 @@ import { ScrollView, Text, View } from 'react-native';
 
 import { resetStorage } from '../../database/keystore';
 import Alerts from '../reusable/Alerts';
-import { breezDisconnect } from '../../api/breez';
+import { breezDisconnect, breezRemoveDir } from '../../api/breez';
 import { ArrowRight } from 'react-native-feather';
 import Button from '../reusable/Button';
 import { resetDB } from '../../database/database';
@@ -68,6 +68,7 @@ const RestoreApp = ({ setError, onRestore }: Props) => {
 
 const restoreApp = async () => {
   await breezDisconnect();
+  await breezRemoveDir();
   await resetStorage();
   await resetDB();
 };

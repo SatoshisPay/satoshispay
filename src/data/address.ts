@@ -5,10 +5,10 @@ import * as bip39 from 'bip39';
 import BIP32Factory from 'bip32';
 import * as bitcoin from 'bitcoinjs-lib';
 import { encryptSecret } from '../database/keystore';
+import { generateEntropy } from '../utils/random';
 
 const ECPair = ECPairFactory(tinySecp256k1);
 const bip32 = BIP32Factory(tinySecp256k1);
-const getRandomValues = global.crypto.getRandomValues;
 
 export default interface Address {
   address: string;
@@ -19,8 +19,7 @@ export default interface Address {
 }
 
 export const generateNewAddress = async (): Promise<Address> => {
-  const randomBytes = new Uint8Array(16);
-  const entropy = getRandomValues(randomBytes);
+  const entropy = generateEntropy();
   const mnemonic = bip39.entropyToMnemonic(Buffer.from(entropy));
 
   const seed = await bip39.mnemonicToSeed(mnemonic);

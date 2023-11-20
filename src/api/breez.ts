@@ -28,9 +28,12 @@ import {
 import * as bip39 from 'bip39';
 import Decimal from 'decimal.js';
 import RNFS from 'react-native-fs';
+import { DEVICE_KEY, DEVICE_CERT } from '@env';
+
 import { getLnNodeMnemonic } from '../database/keystore';
 import { finalizeOrder, getOrderByPaymentHash } from '../database/database';
 import Order, { OrderStatus } from '../data/order';
+import { convertStringToBytes } from '../utils/conversion';
 
 const onBreezEvent = (event: BreezEvent) => {
   console.log(`received event ${event.type}`);
@@ -54,14 +57,16 @@ export const breezConnect = async () => {
   for (const byte of seed) {
     seedNumeric.push(byte);
   }
-  const inviteCode = 'L6EE-Y5L9';
   const apiKey =
     '39bca1bf047e0cac054859ac66cd511dfe5bca5cd8b571975c965963254ba69f';
 
   const nodeConfig: NodeConfig = {
     type: NodeConfigVariant.GREENLIGHT,
     config: {
-      inviteCode,
+      partnerCredentials: {
+        deviceCert: convertStringToBytes(DEVICE_CERT),
+        deviceKey: convertStringToBytes(DEVICE_KEY),
+      },
     },
   };
 

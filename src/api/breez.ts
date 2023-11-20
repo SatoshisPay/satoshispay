@@ -138,19 +138,16 @@ export const breezCreateInvoice = async (
 export const breezWithdrawSats = async (
   amount: Decimal,
   address: string,
+  fee: number,
 ): Promise<string> => {
   const fees = await fetchReverseSwapFees({ sendAmountSat: amount.toNumber() });
   const response = await sendOnchain({
     amountSat: amount.toNumber(),
     onchainRecipientAddress: address,
     pairHash: fees.feesHash,
-    satPerVbyte: fees.min / 250,
+    satPerVbyte: fee,
   });
   return response.reverseSwapInfo.id;
-};
-
-export const breezGetWithdrawFee = async (): Promise<RecommendedFees> => {
-  return await recommendedFees();
 };
 
 export const breezGetPendingWithdrawals = async (): Promise<
@@ -192,14 +189,19 @@ export const breezGetFailedDeposits = async (): Promise<SwapInfo[]> => {
 export const breezRefundDeposit = async (
   address: string,
   swap: SwapInfo,
+  fee: number,
 ): Promise<string> => {
   const result = await refund({
     swapAddress: swap.bitcoinAddress,
     toAddress: address,
-    satPerVbyte: 5,
+    satPerVbyte: fee,
   });
 
   return result.refundTxId;
+};
+
+export const breezGetRecommendedFees = async (): Promise<RecommendedFees> => {
+  return await recommendedFees();
 };
 
 const breezWorkingDirectory = (): string =>

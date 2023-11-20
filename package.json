@@ -16,6 +16,7 @@
     "@breeztech/react-native-breez-sdk": "^0.2.7",
     "@craftzdog/react-native-buffer": "^6.0.5",
     "@react-native-clipboard/clipboard": "^1.12.1",
+    "@react-native-picker/picker": "^2.5.1",
     "@react-navigation/native": "^6.1.8",
     "@react-navigation/native-stack": "^6.9.14",
     "bip32": "^4.0.0",

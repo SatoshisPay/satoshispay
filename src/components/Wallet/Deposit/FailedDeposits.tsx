@@ -22,6 +22,7 @@ import { SwapInfo } from '@breeztech/react-native-breez-sdk';
 import { isBtcAddress } from '../../../utils/parser';
 import FailedDepositItem from './FailedDepositItem';
 import Button from '../../reusable/Button';
+import FeePicker from '../../shared/FeePicker';
 
 interface Props {
   setError: (error: string) => void;
@@ -30,6 +31,7 @@ interface Props {
 const FailedDeposits = ({ setError }: Props) => {
   const [failedDeposits, setFailedDeposits] = React.useState<SwapInfo[]>();
   const [refundAddress, setRefundAddress] = React.useState<string>('');
+  const [fee, setFee] = React.useState<number | undefined>();
   const [formError, setFormError] = React.useState<string | undefined>();
   const [loading, setLoading] = React.useState<boolean>(false);
 
@@ -69,8 +71,13 @@ const FailedDeposits = ({ setError }: Props) => {
       setFormError('Indirizzo BTC non valido');
       return;
     }
+    if (!fee) {
+      setFormError('Seleziona una fee');
+      return;
+    }
+
     for (const swap of failedDeposits) {
-      breezRefundDeposit(refundAddress, swap).then(() => {
+      breezRefundDeposit(refundAddress, swap, fee).then(() => {
         setFormError(undefined);
         setFailedDeposits(
           failedDeposits?.filter(s => s.paymentHash !== swap.paymentHash),
@@ -140,6 +147,14 @@ const FailedDeposits = ({ setError }: Props) => {
         <TouchableOpacity onPress={onScanQrCode}>
           <CameraIcon className="w-8 h-8 text-brandAlt" />
         </TouchableOpacity>
+      </View>
+      <View className="mt-4 pr-20 flex flex-row items-center justify-center bg-gray-50 border border-gray-300 h-min">
+        <FeePicker
+          className="w-full"
+          fee={fee}
+          onFeeChanged={setFee}
+          onError={setError}
+        />
       </View>
       <View className="flex flex-col justify-center items-center">
         {formError && <Text className="text-red-500">{formError}</Text>}

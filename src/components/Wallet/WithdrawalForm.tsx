@@ -25,6 +25,7 @@ import { WithdrawalStatus } from '../../data/withdrawal';
 import Button from '../reusable/Button';
 import { verifyPin } from '../../database/keystore';
 import Alerts from '../reusable/Alerts';
+import FeePicker from '../shared/FeePicker';
 
 interface Props {
   eurTicker?: Decimal;
@@ -42,6 +43,7 @@ const WithdrawalForm = ({
   const [address, setAddress] = React.useState<string>(''); //bc1qvlmykjn7htz0vuprmjrlkwtv9m9pan6kylsr8w
   const [satsAmount, setSatsAmount] = React.useState<string>('');
   const [euroAmount, setEuroAmount] = React.useState<string>('');
+  const [fee, setFee] = React.useState<number | undefined>();
   const [formError, setFormError] = React.useState<string>();
   const { hasPermission, requestPermission } = useCameraPermission();
   const [activeCamera, setActiveCamera] = React.useState<boolean>(false);
@@ -95,6 +97,10 @@ const WithdrawalForm = ({
       setFormError('Indirizzo non valido');
       return undefined;
     }
+    if (fee === undefined) {
+      setFormError('Devi selezionare una fee per il prelievo');
+      return undefined;
+    }
 
     return amountNumber;
   };
@@ -129,7 +135,7 @@ const WithdrawalForm = ({
   const onWithdrawCb = () => {
     const amountNumber: Decimal | undefined = validateAll();
 
-    if (amountNumber === undefined) {
+    if (amountNumber === undefined || fee === undefined) {
       return;
     }
     setFormError(undefined);
@@ -139,7 +145,7 @@ const WithdrawalForm = ({
       ? convertSatsToEUR(eurTicker, amountNumber)
       : new Decimal(0);
 
-    breezWithdrawSats(amountNumber, address)
+    breezWithdrawSats(amountNumber, address, fee)
       .then(id => {
         onWithdraw();
         setInProgress(false);
@@ -295,6 +301,16 @@ const WithdrawalForm = ({
           defaultValue={euroAmount}
           inputMode="numeric"
         />
+      </View>
+      <View className="mt-4 flex flex-row items-center justify-center h-[55px] w-full">
+        <View className="left-0 right-0 mx-auto border-gray-300 border bg-gray-50 h-full w-4/6">
+          <FeePicker
+            className="text-text"
+            fee={fee}
+            onFeeChanged={setFee}
+            onError={setError}
+          />
+        </View>
       </View>
       <View className="flex flex-col justify-center items-center">
         {formError && <Text className="text-red-500">{formError}</Text>}

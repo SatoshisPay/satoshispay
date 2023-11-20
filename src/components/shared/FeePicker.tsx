@@ -61,16 +61,16 @@ const FeePicker = ({ className, onFeeChanged, fee, onError }: Props) => {
       )}
       {recommendedFees && (
         <Picker.Item
-          key={'halfhour'}
-          label={`~30 minuti (${recommendedFees.halfHourFee} sat/vB)`}
-          value={recommendedFees.halfHourFee}
+          key={'hour'}
+          label={`~1 ora (${recommendedFees.hourFee} sat/vB)`}
+          value={recommendedFees.hourFee}
         />
       )}
       {recommendedFees && (
         <Picker.Item
-          key={'hour'}
-          label={`~1 ora (${recommendedFees.hourFee} sat/vB)`}
-          value={recommendedFees.hourFee}
+          key={'halfhour'}
+          label={`~30 minuti (${recommendedFees.halfHourFee} sat/vB)`}
+          value={recommendedFees.halfHourFee}
         />
       )}
       {recommendedFees && (

@@ -1,9 +1,9 @@
 import * as React from 'react';
-// import Image from 'next/image';
+import Image from 'next/image';
 
 import Container from './Container';
 
-// import GooglePlayBadge from '@/src/assets/images/it_badge_web_generic.webp';
+import GooglePlayBadge from '@/src/assets/images/it_badge_web_generic.webp';
 // import AppStoreBadge from '@/src/assets/images/appstore.webp';
 
 interface Props {
@@ -12,9 +12,11 @@ interface Props {
 
 const AppBadge = ({ containerClassName }: Props) => (
   <Container.Container className={`${containerClassName}`}>
-    <span className="text-lg">Disponibile prossimamente su Android e iOS</span>
-    {/*
-    <a className="block hover:underline text-xl" href="" target="_blank">
+    <a
+      className="block hover:underline text-xl"
+      href="https://play.google.com/store/apps/details?id=com.satoshispay&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1"
+      target="_blank"
+    >
       <Image
         src={GooglePlayBadge}
         alt="google play badge"
@@ -22,6 +24,7 @@ const AppBadge = ({ containerClassName }: Props) => (
         height="100"
       />
     </a>
+    {/*
     <a className="block hover:underline text-xl" href="" target="_blank">
       <Image
         src={AppStoreBadge}

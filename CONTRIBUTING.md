@@ -5,6 +5,9 @@
   - [2. How to contribute](#2-how-to-contribute)
     - [2.1 New features](#21-new-features)
     - [2.2 Security concerns](#22-security-concerns)
+    - [2.3 Website](#23-website)
+  - [3. Code guidelines](#3-code-guidelines)
+    - [3.1 Conventional commits](#31-conventional-commits)
 
 ## 1. Project mission
 
@@ -46,3 +49,15 @@ While contributing on SatoshisPay the following security concerns MUST always be
 2. The wallet *MUST* always be restorable and the funds cannot be lost
 3. A loss of the transactions history *MAY* cause tax issues to the retailer.
 4. **Security is everything when we talk about people's money**.
+
+### 2.3 Website
+
+Websites improvements are welcome, the source code is found under the `site/` directory, but please, focus on the APP first.
+
+## 3. Code guidelines
+
+### 3.1 Conventional commits
+
+We use **Conventional Commits**.
+
+Please, when committing code, use this syntax for the commit message <https://www.conventionalcommits.org/en/v1.0.0/>

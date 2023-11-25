@@ -11,14 +11,20 @@
 
 ## Description
 
-SatoshisPay is an Android/iOS application meant to be used by Italian sellers to accept Bitcoin payments on the Lightning Network.
+SatoshisPay is an Android/iOS application meant to be used by Italian retailers to accept Bitcoin payments on the Lightning Network.
 
 The app supports the following features:
 
 - Deposit from BTC address to your Lightning Network wallet
-- Insert a FIAT import and generate a LN invoice to accept the payment
+- Insert a FIAT (EUR) import and generate a LN invoice to accept the payment
 - View the transactions history
 - Withdraw the LN balance on your BTC address
+
+## Contributing
+
+Contributions to improve the app with new features and ideas, or just bugfix are welcome!
+
+Please read our [CONTRIBUTING](./CONTRIBUTING.md) guidelines first.
 
 ## The Lightning Node
 

@@ -9,7 +9,6 @@
 [![CI](https://github.com/veeso-dev/satoshispay/actions/workflows/ci.yml/badge.svg)](https://github.com/veeso-dev/satoshispay/actions/workflows/ci.yml)
 [![Frontend](https://github.com/veeso-dev/satoshispay/actions/workflows/frontend.yml/badge.svg)](https://github.com/veeso-dev/satoshispay/actions/workflows/frontend.yml)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org)
-[![bitcoin](https://img.shields.io/badge/Bitcoin-ff9416?style=for-the-badge&logo=bitcoin&logoColor=white)](https://btc.com/bc1qql247l894ahqvd5affjk69mrf49dcnxg7c0l74)
 
 ## Description
 

@@ -10,7 +10,9 @@ const AppInfo = () => (
     </View>
     <View className="py-4">
       <Text className="text-2xl">Copyright</Text>
-      <Text className="text-lg">Copyright © CHRISTIAN VISINTIN 2024</Text>
+      <Text className="text-lg">
+        Copyright © CHRISTIAN VISINTIN {new Date().getFullYear()}
+      </Text>
       <Text className="text-lg">Distribuita sotto licenza Apache-2.0</Text>
     </View>
     <View className="py-4">
@@ -25,11 +27,6 @@ const AppInfo = () => (
         className="text-brand underline text-lg"
         onPress={() => Linking.openURL('mailto:info@veeso.dev')}>
         info@veeso.dev
-      </Text>
-      <Text
-        className="text-brand underline text-lg"
-        onPress={() => Linking.openURL('tel:+393792615635')}>
-        379 261 5635
       </Text>
     </View>
     <View className="py-4">

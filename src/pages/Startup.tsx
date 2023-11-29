@@ -19,6 +19,7 @@ const Startup = ({ navigation }: Props) => {
 
   const connectToLnNetwork = () => {
     setIsConnecting(true);
+    console.log('Connecting to LN network...');
     breezConnect()
       .then(() => {
         setIsConnecting(false);

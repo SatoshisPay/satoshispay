@@ -118,7 +118,7 @@ export const breezGetBalance = async (): Promise<Balance> => {
 
 export const breezListPayments = async (): Promise<Payment[]> => {
   const payments = await listPayments({
-    filter: PaymentTypeFilter.RECEIVED,
+    filters: [PaymentTypeFilter.RECEIVED],
   });
 
   return payments;

@@ -6,8 +6,7 @@
 
 <p align="center">~ An app for shops to easily accept payments with Bitcoin on the Lightning network ~</p>
 
-[![CI](https://github.com/veeso-dev/satoshispay/actions/workflows/ci.yml/badge.svg)](https://github.com/veeso-dev/satoshispay/actions/workflows/ci.yml)
-[![Frontend](https://github.com/veeso-dev/satoshispay/actions/workflows/frontend.yml/badge.svg)](https://github.com/veeso-dev/satoshispay/actions/workflows/frontend.yml)
+[![CI](https://github.com/SatoshisPay/satoshispay/actions/workflows/ci.yml/badge.svg)](https://github.com/SatoshisPay/satoshispay/actions/workflows/ci.yml)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org)
 
 ## Description

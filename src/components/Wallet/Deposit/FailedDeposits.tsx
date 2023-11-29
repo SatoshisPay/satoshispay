@@ -1,19 +1,5 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  TextInput,
-  Modal,
-  StyleSheet,
-} from 'react-native';
-import {
-  Camera,
-  Code,
-  useCameraDevice,
-  useCameraPermission,
-  useCodeScanner,
-} from 'react-native-vision-camera';
+import { View, Text, TouchableOpacity, TextInput } from 'react-native';
 import { ArrowRight, Camera as CameraIcon } from 'react-native-feather';
 
 import Spinner from '../../reusable/Spinner';
@@ -23,6 +9,7 @@ import { isBtcAddress } from '../../../utils/parser';
 import FailedDepositItem from './FailedDepositItem';
 import Button from '../../reusable/Button';
 import FeePicker from '../../shared/FeePicker';
+import QrScanner from '../../reusable/QrScanner';
 
 interface Props {
   setError: (error: string) => void;
@@ -35,33 +22,18 @@ const FailedDeposits = ({ setError }: Props) => {
   const [formError, setFormError] = React.useState<string | undefined>();
   const [loading, setLoading] = React.useState<boolean>(false);
 
-  const { hasPermission, requestPermission } = useCameraPermission();
   const [activeCamera, setActiveCamera] = React.useState<boolean>(false);
-  const cameraDevice = useCameraDevice('back');
 
   const onScanQrCode = () => {
-    if (!hasPermission) {
-      requestPermission().then(permission => {
-        if (permission && cameraDevice) {
-          setActiveCamera(true);
-        }
-      });
-    }
+    setActiveCamera(true);
   };
 
-  const onQrScanned = (codes: Code[]) => {
-    for (const code of codes) {
-      if (code.type === 'qr' && code.value) {
-        setRefundAddress(code.value);
-      }
+  const onQrScanned = (value: string) => {
+    if (isBtcAddress(value)) {
+      setRefundAddress(value);
+      setActiveCamera(false);
     }
-    setActiveCamera(false);
   };
-
-  const codeScanner = useCodeScanner({
-    codeTypes: ['qr'],
-    onCodeScanned: onQrScanned,
-  });
 
   const onRefund = () => {
     if (!failedDeposits) {
@@ -118,16 +90,11 @@ const FailedDeposits = ({ setError }: Props) => {
 
   return (
     <View className="flex flex-col mx-auto w-full py-4 px-2 pb-16">
-      {cameraDevice && (
-        <Modal visible={activeCamera} animationType="slide">
-          <Camera
-            codeScanner={codeScanner}
-            style={StyleSheet.absoluteFill}
-            device={cameraDevice}
-            isActive={activeCamera}
-          />
-        </Modal>
-      )}
+      <QrScanner
+        onClose={() => setActiveCamera(false)}
+        visible={activeCamera}
+        onQrCodeScanned={onQrScanned}
+      />
       <Text className="text-xl">Depositi falliti</Text>
       <View>
         {failedDeposits.map((deposit, i) => (

@@ -83,7 +83,7 @@ export const breezConnect = async () => {
   try {
     return await connect(config, seedNumeric, onBreezEvent);
   } catch (e: any) {
-    if (e.message === 'already initialized') {
+    if (e.message.includes('already initialized')) {
       return undefined;
     }
 

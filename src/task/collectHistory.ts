@@ -12,9 +12,8 @@ const ORDER_EXPIRATION_DAYS = 1;
  */
 const processPendingOrders = async (): Promise<void> => {
   const pendingOrders = await getPendingOrders();
-  const confirmedOrders = await breezCheckPaymentForPendingTransactions(
-    pendingOrders,
-  );
+  const confirmedOrders =
+    await breezCheckPaymentForPendingTransactions(pendingOrders);
   for (const order of confirmedOrders) {
     await finalizeOrder(undefined, order, []);
   }

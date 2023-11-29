@@ -6,6 +6,7 @@ module.exports = {
       colors: {
         brand: '#F7931A',
         brandAlt: '#4D4D4D',
+        text: '#202020',
       },
       spacing: {
         page: '80%',

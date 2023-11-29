@@ -1,21 +1,8 @@
 import Decimal from 'decimal.js';
 import React from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Modal,
-} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Modal } from 'react-native';
 import { ArrowRight, Camera as CameraIcon } from 'react-native-feather';
-import {
-  Camera,
-  Code,
-  useCameraDevice,
-  useCameraPermission,
-  useCodeScanner,
-} from 'react-native-vision-camera';
+
 import { breezWithdrawSats } from '../../api/breez';
 import { convertEURToSats, convertSatsToEUR } from '../../utils/conversion';
 import Spinner from '../reusable/Spinner';
@@ -26,6 +13,7 @@ import Button from '../reusable/Button';
 import { verifyPin } from '../../database/keystore';
 import Alerts from '../reusable/Alerts';
 import FeePicker from '../shared/FeePicker';
+import QrScanner from '../reusable/QrScanner';
 
 interface Props {
   eurTicker?: Decimal;
@@ -45,37 +33,22 @@ const WithdrawalForm = ({
   const [euroAmount, setEuroAmount] = React.useState<string>('');
   const [fee, setFee] = React.useState<number | undefined>();
   const [formError, setFormError] = React.useState<string>();
-  const { hasPermission, requestPermission } = useCameraPermission();
   const [activeCamera, setActiveCamera] = React.useState<boolean>(false);
   const [inProgress, setInProgress] = React.useState(false);
   const [pin, setPin] = React.useState<string>('');
   const [showPin, setShowPin] = React.useState<boolean>(false);
 
-  const cameraDevice = useCameraDevice('back');
-
   const onScanQrCode = () => {
-    if (!hasPermission) {
-      requestPermission().then(permission => {
-        if (permission && cameraDevice) {
-          setActiveCamera(true);
-        }
-      });
-    }
+    setActiveCamera(true);
   };
 
-  const onQrScanned = (codes: Code[]) => {
-    for (const code of codes) {
-      if (code.type === 'qr' && code.value) {
-        setAddress(code.value);
-      }
+  const onQrScanned = (value: string) => {
+    // validate address and set value
+    if (isBtcAddress(value)) {
+      setAddress(value);
+      setActiveCamera(false);
     }
-    setActiveCamera(false);
   };
-
-  const codeScanner = useCodeScanner({
-    codeTypes: ['qr'],
-    onCodeScanned: onQrScanned,
-  });
 
   const validateAll = (): Decimal | undefined => {
     let amountNumber: Decimal;
@@ -262,16 +235,11 @@ const WithdrawalForm = ({
           </View>
         </Modal>
       )}
-      {cameraDevice && (
-        <Modal visible={activeCamera} animationType="slide">
-          <Camera
-            codeScanner={codeScanner}
-            style={StyleSheet.absoluteFill}
-            device={cameraDevice}
-            isActive={activeCamera}
-          />
-        </Modal>
-      )}
+      <QrScanner
+        onClose={() => setActiveCamera(false)}
+        visible={activeCamera}
+        onQrCodeScanned={onQrScanned}
+      />
       <Text className="text-3xl text-brandAlt">Prelievo</Text>
       <View className="mt-4 pr-4 flex flex-row items-center justify-center bg-gray-50 border border-gray-300 h-min">
         <TextInput

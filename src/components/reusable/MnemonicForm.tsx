@@ -12,14 +12,14 @@ const WordForm = ({ number, word, onWordChanged, readOnly }: WordFormProps) => {
     <View className="flex flex-row items-center justify-between my-2">
       <Text className="text-xl">{number}.</Text>
       {readOnly ? (
-        <Text className="flex-1 text-xl py-2.5 mx-4 text-center bg-white border border-gray-200 rounded-xl shadow-xl">
+        <Text className="flex-1 text-xl py-2.5 mx-4 text-center bg-white border border-gray-200 rounded-xl shadow-xl text-brandAlt">
           {word}
         </Text>
       ) : (
         <TextInput
           autoCapitalize="none"
           inputMode="text"
-          className="flex-1 text-xl py-2.5 mx-4 text-center bg-white border border-gray-200 rounded-xl shadow-xl"
+          className="flex-1 text-xl py-2.5 mx-4 text-center bg-white border border-gray-200 rounded-xl shadow-xl text-brandAlt"
           value={word}
           onChangeText={text => onWordChanged(number, text)}
         />

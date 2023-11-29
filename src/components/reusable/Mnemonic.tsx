@@ -14,13 +14,13 @@ const MnemonicRow = (props: MnemonicRowProps) => (
   <View className="flex flex-row justify-around w-full pb-4">
     <View className="w-6/12 flex flex-row items-center">
       <Text>{props.mnemonicNum}.</Text>
-      <Text className="flex-1 text-xl py-2.5 mx-4 text-center bg-white border border-gray-200 rounded-xl shadow-xl">
+      <Text className="flex-1 text-xl py-2.5 mx-4 text-center bg-white border border-gray-200 rounded-xl shadow-xl text-brandAlt">
         {props.mnemonic1}
       </Text>
     </View>
     <View className="w-6/12 flex flex-row items-center">
       <Text>{props.mnemonicNum + 1}.</Text>
-      <Text className="flex-1 text-xl py-2.5 mx-4 text-center bg-white border border-gray-200 rounded-xl shadow-xl">
+      <Text className="flex-1 text-xl py-2.5 mx-4 text-center bg-white border border-gray-200 rounded-xl shadow-xl text-brandAlt">
         {props.mnemonic2}
       </Text>
     </View>
@@ -40,12 +40,12 @@ const Mnemonic = ({ mnemonic }: Props) => {
     <ScrollView>
       <View className="flex flex-col py-4 w-page mx-auto">
         <View>
-          <Text className="text-3xl text-center">Secret Phrase</Text>
-          <Text className="text-center text-lg pt-4">
+          <Text className="text-3xl text-center text-text">Secret Phrase</Text>
+          <Text className="text-center text-lg pt-4 text-text">
             Trascrivi queste parole nell'ordine seguente e custodiscile in un
             luogo sicuro.
           </Text>
-          <Text className="text-center text-md pb-4">
+          <Text className="text-center text-md pb-4 text-text">
             Ti serviranno a recuperare i tuoi fondi in caso di cancellazione
             dell'app o smarrimento del dispositivo.
           </Text>

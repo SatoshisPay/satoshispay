@@ -1,4 +1,5 @@
 import React from 'react';
+import { Appearance } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -25,6 +26,7 @@ function App(): JSX.Element {
   React.useEffect(() => {
     StatusBar.setBackgroundColor('#F7931A');
     StatusBar.setBarStyle('light-content');
+    Appearance.setColorScheme('light');
   }, []);
 
   return (

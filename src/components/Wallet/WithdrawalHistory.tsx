@@ -1,10 +1,13 @@
 import {
-  ReverseSwapInfo,
+  PaymentStatus,
   ReverseSwapStatus,
 } from '@breeztech/react-native-breez-sdk';
 import React from 'react';
 import { View, Text } from 'react-native';
-import { breezGetPendingWithdrawals } from '../../api/breez';
+import {
+  Withdrawals as BreezWithdrawals,
+  breezGetPendingWithdrawals,
+} from '../../api/breez';
 import WithdrawalItem from './PendingWithdrawals/WithdrawalItem';
 import {
   getWithdrawalsByDate,
@@ -21,10 +24,71 @@ interface Props {
 }
 
 const WithdrawalHistory = ({ setError }: Props) => {
-  const [pendingSwaps, setPendingSwaps] = React.useState<ReverseSwapInfo[]>();
+  const [pendingWithdrawals, setPendingWithdrawals] =
+    React.useState<BreezWithdrawals>();
   const [withdrawalsCount, setWithdrawalsCount] = React.useState<number>();
   const [withdrawals, setWithdrawals] = React.useState<Withdrawal[]>();
   const [page, setPage] = React.useState(1);
+
+  const handlePendingWithdrawals = (
+    breezWithdrawals: BreezWithdrawals,
+    pageWithdrawals: Withdrawal[],
+  ) => {
+    // update states
+    for (const withdrawal of pageWithdrawals) {
+      let statusChanged = true;
+      const assocSwap = breezWithdrawals.pendingSwaps.find(
+        s => s.id === withdrawal.id,
+      );
+
+      if (!assocSwap && withdrawal.status !== WithdrawalStatus.COMPLETED) {
+        withdrawal.status = WithdrawalStatus.COMPLETED;
+      } else if (
+        assocSwap &&
+        assocSwap.status === ReverseSwapStatus.CANCELLED
+      ) {
+        withdrawal.status = WithdrawalStatus.CANCELLED;
+      } else {
+        statusChanged = false;
+      }
+
+      // search for lightning invoice
+      if (!statusChanged) {
+        const assocInvoice = breezWithdrawals.lnWithdrawals.find(
+          i => i.id === withdrawal.id,
+        );
+        if (assocInvoice) {
+          if (
+            assocInvoice.status === PaymentStatus.FAILED &&
+            withdrawal.status !== WithdrawalStatus.CANCELLED
+          ) {
+            withdrawal.status = WithdrawalStatus.CANCELLED;
+            statusChanged = true;
+          } else if (
+            assocInvoice.status === PaymentStatus.COMPLETE &&
+            withdrawal.status !== WithdrawalStatus.COMPLETED
+          ) {
+            withdrawal.status = WithdrawalStatus.COMPLETED;
+            statusChanged = true;
+          }
+        }
+      }
+
+      if (statusChanged) {
+        updateWithdrawalStatus(withdrawal)
+          .then(() => {
+            console.log('Withdrawal status updated to', withdrawal.status);
+          })
+          .catch(e => {
+            console.error(e);
+            setError(
+              `Impossibile aggiornare lo stato del prelievo ${withdrawal.id}: ${e.message}`,
+            );
+          });
+      }
+    }
+    setWithdrawals(pageWithdrawals);
+  };
 
   React.useEffect(() => {
     if (!withdrawalsCount) {
@@ -39,49 +103,15 @@ const WithdrawalHistory = ({ setError }: Props) => {
     }
   }, [withdrawalsCount]);
 
+  // if page or pending swaps change, update withdrawals with received data
   React.useEffect(() => {
-    if (pendingSwaps && withdrawalsCount) {
+    if (pendingWithdrawals && withdrawalsCount) {
       getWithdrawalsByDate(
         MAX_WITHDRAWALS_PER_PAGE,
         MAX_WITHDRAWALS_PER_PAGE * (page - 1),
       )
         .then(pageWithdrawals => {
-          // update states
-          for (const withdrawal of pageWithdrawals) {
-            let statusChanged = true;
-            const assocSwap = pendingSwaps.find(s => s.id === withdrawal.id);
-
-            if (
-              !assocSwap &&
-              withdrawal.status !== WithdrawalStatus.COMPLETED
-            ) {
-              withdrawal.status = WithdrawalStatus.COMPLETED;
-            } else if (
-              assocSwap &&
-              assocSwap.status === ReverseSwapStatus.CANCELLED
-            ) {
-              withdrawal.status = WithdrawalStatus.CANCELLED;
-            } else {
-              statusChanged = false;
-            }
-
-            if (statusChanged) {
-              updateWithdrawalStatus(withdrawal)
-                .then(() => {
-                  console.log(
-                    'Withdrawal status updated to',
-                    withdrawal.status,
-                  );
-                })
-                .catch(e => {
-                  console.error(e);
-                  setError(
-                    `Impossibile aggiornare lo stato del prelievo ${withdrawal.id}: ${e.message}`,
-                  );
-                });
-            }
-          }
-          setWithdrawals(pageWithdrawals);
+          handlePendingWithdrawals(pendingWithdrawals, pageWithdrawals);
         })
         .catch(e => {
           console.error(e);
@@ -90,13 +120,14 @@ const WithdrawalHistory = ({ setError }: Props) => {
           );
         });
     }
-  }, [page, pendingSwaps, withdrawalsCount]);
+  }, [page, pendingWithdrawals, withdrawalsCount]);
 
+  // get pending swaps and set pending swaps
   React.useEffect(() => {
-    if (!pendingSwaps) {
+    if (!pendingWithdrawals) {
       breezGetPendingWithdrawals()
-        .then(swaps => {
-          setPendingSwaps(swaps);
+        .then(wtds => {
+          setPendingWithdrawals(wtds);
         })
         .catch(error => {
           setError(
@@ -104,7 +135,7 @@ const WithdrawalHistory = ({ setError }: Props) => {
           );
         });
     }
-  }, [pendingSwaps]);
+  }, [pendingWithdrawals]);
 
   if (!withdrawals || withdrawals.length === 0) {
     return null;

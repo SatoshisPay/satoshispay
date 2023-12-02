@@ -28,6 +28,7 @@
     "decimal.js": "^10.4.3",
     "ecpair": "^2.1.0",
     "events": "^3.3.0",
+    "light-bolt11-decoder": "^3.0.0",
     "nativewind": "^2.0.11",
     "react": "18.2.0",
     "react-native": "0.72.7",
@@ -43,7 +44,8 @@
     "react-native-svg": "^14.0.0",
     "react-native-uuid": "^2.0.1",
     "react-native-vision-camera": "^3.6.12",
-    "stream-browserify": "^3.0.0"
+    "stream-browserify": "^3.0.0",
+    "text-encoding": "^0.7.0"
   },
   "devDependencies": {
     "@babel/core": "^7.23.3",

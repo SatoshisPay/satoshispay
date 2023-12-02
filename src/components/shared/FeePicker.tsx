@@ -40,6 +40,7 @@ const FeePicker = ({ className, onFeeChanged, fee, onError }: Props) => {
       }}>
       {fee === undefined && (
         <Picker.Item
+          style={{ color: 'gray' }}
           key={'none'}
           label={'Seleziona la fee'}
           value={undefined}

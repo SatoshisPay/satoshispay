@@ -12,6 +12,7 @@ Released on 02/12/2023
 - [Issue 10](https://github.com/SatoshisPay/satoshispay/issues/10): Added copy button on Invoice BOLT11
 - [Issue 12](https://github.com/SatoshisPay/satoshispay/issues/12): Allow to backup seed in app settings (protected with pin).
 - [Issue 13](https://github.com/SatoshisPay/satoshispay/issues/13): Don't allow the user to create invoices lower than the minimum fee, if they dont't have enough liquidity.
+- [Issue 2](https://github.com/SatoshisPay/satoshispay/issues/2): Lightning Network withdrawals
 
 ## 0.1.2
 

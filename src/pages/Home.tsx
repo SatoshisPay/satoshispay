@@ -14,7 +14,7 @@ const Home = ({ navigation }: Props): JSX.Element => {
   const [amount, setAmount] = React.useState(new Decimal(0));
 
   const onPosSubmit = (charge: Decimal) => {
-    navigation.navigate(Page.TRANSACTION, {
+    navigation.navigate(Page.INVOICE, {
       charge: charge.toFixed(2),
       orderType: OrderType.LN,
     });

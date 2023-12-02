@@ -1,12 +1,12 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { Text, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useBackHandler } from '@react-native-community/hooks';
 
 import Page, { RootStackParamList } from './pages';
 import Decimal from 'decimal.js';
 import Address, { generateNewAddress } from '../data/address';
-import Receipt from '../components/Transaction/Receipt';
+import Receipt from '../components/Invoice/Receipt';
 import { getBTCEURTicker } from '../api/ticker';
 import { convertEURToSats } from '../utils/conversion';
 import {
@@ -14,22 +14,22 @@ import {
   insertAddressWithOrder,
   insertLnOrder,
 } from '../database/database';
-import ButtonBar from '../components/Transaction/ButtonBar';
+import ButtonBar from '../components/Invoice/ButtonBar';
 import Order, {
   OrderStatus,
   OrderType,
   createOrderForAddress,
   createOrderForLnInvoice,
 } from '../data/order';
-import CancelModal from '../components/Transaction/CancelModal';
+import CancelModal from '../components/Invoice/CancelModal';
 import ErrorModal from '../components/shared/ErrorModal';
 import Activity from '../components/reusable/Activity';
 import { breezCreateInvoice } from '../api/breez';
 import Spinner from '../components/reusable/Spinner';
 
-type Props = NativeStackScreenProps<RootStackParamList, Page.TRANSACTION>;
+type Props = NativeStackScreenProps<RootStackParamList, Page.INVOICE>;
 
-const Transaction = ({ route, navigation }: Props): JSX.Element => {
+const Invoice = ({ route, navigation }: Props): JSX.Element => {
   const eurCharge = React.useMemo(
     () => new Decimal(route.params.charge),
     [route.params.charge],
@@ -146,14 +146,14 @@ const Transaction = ({ route, navigation }: Props): JSX.Element => {
         onDismiss={onDismissModal}
       />
       {order && transactionAddress && satsAmount && (
-        <>
+        <View className="flex flex-col items-center justify-between h-full pt-8">
           <Receipt
             eurCharge={eurCharge}
             satsCharge={satsAmount}
             address={transactionAddress}
           />
           <ButtonBar onCancel={onCancelPressed} onDone={onDone} />
-        </>
+        </View>
       )}
       {(!transactionAddress || !order) && (
         <Spinner>
@@ -167,4 +167,4 @@ const Transaction = ({ route, navigation }: Props): JSX.Element => {
   );
 };
 
-export default Transaction;
+export default Invoice;

@@ -6,7 +6,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Page, { RootStackParamList } from './src/pages/pages';
 import Home from './src/pages/Home';
 import Logo from './src/components/Topbar/Logo';
-import Transaction from './src/pages/Transaction';
+import Invoice from './src/pages/Invoice';
 import WaitForPayment from './src/pages/WaitForPayment';
 import { StatusBar, View } from 'react-native';
 import Button from './src/components/Topbar/Button';
@@ -70,8 +70,8 @@ function App(): JSX.Element {
         <Stack.Screen name={Page.SETTINGS} component={Settings} />
         <Stack.Screen name={Page.WALLET} component={Wallet} />
         <Stack.Screen
-          name={Page.TRANSACTION}
-          component={Transaction}
+          name={Page.INVOICE}
+          component={Invoice}
           options={{ headerBackVisible: false, headerRight: () => <></> }}
         />
         <Stack.Screen

@@ -22,6 +22,7 @@ import {
   ReverseSwapInfo,
   receiveOnchain,
   listRefundables,
+  sendPayment,
   SwapInfo,
   refund,
 } from '@breeztech/react-native-breez-sdk';
@@ -34,6 +35,11 @@ import { getLnNodeMnemonic } from '../database/keystore';
 import { finalizeOrder, getOrderByPaymentHash } from '../database/database';
 import Order, { OrderStatus } from '../data/order';
 import { convertStringToBytes } from '../utils/conversion';
+
+export interface Withdrawals {
+  pendingSwaps: ReverseSwapInfo[];
+  lnWithdrawals: Payment[];
+}
 
 const onBreezEvent = (event: BreezEvent) => {
   console.log(`received event ${event.type}`);
@@ -135,6 +141,23 @@ export const breezCreateInvoice = async (
   return invoice.lnInvoice;
 };
 
+export const breezSendPayment = async (
+  bolt11: string,
+  amount?: Decimal,
+): Promise<string> => {
+  let amountMsat;
+  if (amount) {
+    amountMsat = amount.mul(1000).toNumber();
+  }
+
+  const payment = await sendPayment({
+    amountMsat,
+    bolt11,
+  });
+
+  return payment.payment.id;
+};
+
 export const breezWithdrawSats = async (
   amount: Decimal,
   address: string,
@@ -150,10 +173,16 @@ export const breezWithdrawSats = async (
   return response.reverseSwapInfo.id;
 };
 
-export const breezGetPendingWithdrawals = async (): Promise<
-  ReverseSwapInfo[]
-> => {
-  return await inProgressReverseSwaps();
+export const breezGetPendingWithdrawals = async (): Promise<Withdrawals> => {
+  const pendingSwaps = await inProgressReverseSwaps();
+  const lnWithdrawals = await listPayments({
+    filters: [PaymentTypeFilter.SENT],
+    includeFailures: true,
+  });
+  return {
+    pendingSwaps,
+    lnWithdrawals,
+  };
 };
 
 export const breezCheckPaymentForPendingTransactions = async (

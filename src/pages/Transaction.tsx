@@ -1,7 +1,7 @@
 import React from 'react';
-import { BackHandler, Text } from 'react-native';
+import { Text } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useFocusEffect } from '@react-navigation/native';
+import { useBackHandler } from '@react-native-community/hooks';
 
 import Page, { RootStackParamList } from './pages';
 import Decimal from 'decimal.js';
@@ -108,20 +108,10 @@ const Transaction = ({ route, navigation }: Props): JSX.Element => {
   }, [order, address, route.params.orderType]);
 
   // Handle back button
-  useFocusEffect(
-    React.useCallback(() => {
-      const onBackPress = () => {
-        onCancelPressed();
-        return true;
-      };
-
-      const subscription = BackHandler.addEventListener(
-        'hardwareBackPress',
-        onBackPress,
-      );
-      return () => subscription.remove();
-    }, []),
-  );
+  useBackHandler(() => {
+    onCancelPressed();
+    return true;
+  });
 
   const onCancelPressed = () => {
     setShowCancelConfirmation(true);

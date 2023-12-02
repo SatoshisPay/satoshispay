@@ -6,8 +6,8 @@ import {
   useCameraPermission,
   useCodeScanner,
 } from 'react-native-vision-camera';
-import { useFocusEffect } from '@react-navigation/native';
-import { BackHandler, Modal, Text, TouchableOpacity, View } from 'react-native';
+import { Modal, Text, TouchableOpacity, View } from 'react-native';
+import { useBackHandler } from '@react-native-community/hooks';
 import { X } from 'react-native-feather';
 
 interface Props {
@@ -36,24 +36,14 @@ const QrScanner = ({ visible, onQrCodeScanned, onClose }: Props) => {
   });
 
   // handle back button
-  useFocusEffect(
-    React.useCallback(() => {
-      const onBackPress = () => {
-        if (visible) {
-          onClose();
-          return true;
-        }
+  useBackHandler(() => {
+    if (visible) {
+      onClose();
+      return true;
+    }
 
-        return false;
-      };
-
-      const subscription = BackHandler.addEventListener(
-        'hardwareBackPress',
-        onBackPress,
-      );
-      return () => subscription.remove();
-    }, [visible]),
-  );
+    return false;
+  });
 
   React.useEffect(() => {
     if (visible) {

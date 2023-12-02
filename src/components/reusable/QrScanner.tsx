@@ -7,7 +7,6 @@ import {
   useCodeScanner,
 } from 'react-native-vision-camera';
 import { Modal, Text, TouchableOpacity, View } from 'react-native';
-import { useBackHandler } from '@react-native-community/hooks';
 import { X } from 'react-native-feather';
 
 interface Props {
@@ -35,16 +34,6 @@ const QrScanner = ({ visible, onQrCodeScanned, onClose }: Props) => {
     onCodeScanned: onScan,
   });
 
-  // handle back button
-  useBackHandler(() => {
-    if (visible) {
-      onClose();
-      return true;
-    }
-
-    return false;
-  });
-
   React.useEffect(() => {
     if (visible) {
       if (!hasPermission) {
@@ -62,7 +51,7 @@ const QrScanner = ({ visible, onQrCodeScanned, onClose }: Props) => {
   }, [visible]);
 
   return (
-    <Modal visible={visible} animationType="slide">
+    <Modal visible={visible} onRequestClose={onClose} animationType="slide">
       <View className="w-full h-full flex flex-col">
         <View className="flex flex-row items-center justify-between px-4 w-full bg-brand z-10">
           <Text className="text-brandAlt text-xl">Scannerizza QR Code</Text>

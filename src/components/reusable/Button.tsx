@@ -30,7 +30,19 @@ const Secondary = ({ onPress, disabled, children, className }: Props) => (
   </TouchableOpacity>
 );
 
+const Danger = ({ onPress, disabled, children, className }: Props) => (
+  <TouchableOpacity
+    className={`${className} ${
+      disabled ? 'bg-brandAlt' : 'bg-red-500'
+    } flex-row items-center justify-center rounded-lg p-4 mt-4 shadow-lg border border-gray-300`}
+    onPress={onPress}
+    disabled={disabled}>
+    {children}
+  </TouchableOpacity>
+);
+
 export default {
+  Danger,
   Primary,
   Secondary,
 };

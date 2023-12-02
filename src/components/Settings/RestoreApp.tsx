@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { Modal, ScrollView, Text, View } from 'react-native';
 
 import { resetStorage } from '../../database/keystore';
 import Alerts from '../reusable/Alerts';
@@ -31,15 +31,39 @@ const RestoreApp = ({ setError, onRestore }: Props) => {
   };
 
   const onSubmit = () => {
-    if (!confirmRecovery) {
-      setConfirmRecovery(true);
-    } else {
-      onAppRestore();
-    }
+    setConfirmRecovery(true);
   };
 
   return (
     <ScrollView>
+      <Modal
+        onRequestClose={() => setConfirmRecovery(false)}
+        visible={confirmRecovery}
+        animationType="slide">
+        <View className="flex flex-col py-4 w-page mx-auto">
+          <View>
+            <Text className="text-3xl text-center">Conferma ripristino</Text>
+            <Text className="w-fit text-lg">
+              Sei sicuro di voler ripristinare l&apos;app? Questa operazione
+              cancellerà tutti i dati presenti e non potranno essere recuperati
+            </Text>
+          </View>
+          <View className="flex items-center justify-center">
+            {processing ? null : (
+              <Button.Danger onPress={onAppRestore} disabled={processing}>
+                <Text className="text-white text-2xl">
+                  Conferma ripristino App
+                </Text>
+                <ArrowRight
+                  className="ml-2 text-white"
+                  width={24}
+                  height={24}
+                />
+              </Button.Danger>
+            )}
+          </View>
+        </View>
+      </Modal>
       <View className="flex flex-col py-4 w-page mx-auto">
         <View>
           <Text className="text-3xl text-center">Ripristina l&apos;App</Text>
@@ -53,12 +77,10 @@ const RestoreApp = ({ setError, onRestore }: Props) => {
         </View>
         <View className="flex items-center justify-center">
           {processing ? null : (
-            <Button.Primary onPress={onSubmit} disabled={processing}>
-              <Text className="text-white text-2xl">
-                {confirmRecovery ? 'Conferma ripristino App' : 'Ripristina App'}
-              </Text>
+            <Button.Danger onPress={onSubmit} disabled={processing}>
+              <Text className="text-white text-2xl">Ripristina App</Text>
               <ArrowRight className="ml-2 text-white" width={24} height={24} />
-            </Button.Primary>
+            </Button.Danger>
           )}
         </View>
       </View>

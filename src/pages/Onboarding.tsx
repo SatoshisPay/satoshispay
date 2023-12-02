@@ -1,5 +1,5 @@
 import React from 'react';
-import { BackHandler, ScrollView } from 'react-native';
+import { ScrollView } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import Page, { RootStackParamList } from './pages';

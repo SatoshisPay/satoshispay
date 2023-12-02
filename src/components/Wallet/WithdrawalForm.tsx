@@ -1,6 +1,6 @@
 import Decimal from 'decimal.js';
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, Modal } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { ArrowRight, Camera as CameraIcon } from 'react-native-feather';
 
 import { breezWithdrawSats } from '../../api/breez';

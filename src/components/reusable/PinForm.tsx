@@ -15,12 +15,15 @@ interface Props {
 const PinForm = ({ onClose, onValidPin, visibile }: Props) => {
   const [pin, setPin] = React.useState<string>('');
   const [formError, setFormError] = React.useState<string>();
+  const [processing, setProcessing] = React.useState<boolean>(false);
 
-  const disabled = pin.length < 6;
+  const disabled = pin.length < 6 || processing;
 
   const onSubmit = () => {
+    setProcessing(true);
     verifyPin(pin)
       .then(pinMatches => {
+        setProcessing(false);
         if (pinMatches) {
           setPin('');
           setFormError(undefined);
@@ -30,6 +33,7 @@ const PinForm = ({ onClose, onValidPin, visibile }: Props) => {
         }
       })
       .catch(e => {
+        setProcessing(false);
         console.error(e);
         setFormError('Impossibile verificare il PIN');
       });
@@ -43,7 +47,7 @@ const PinForm = ({ onClose, onValidPin, visibile }: Props) => {
       onRequestClose={onClose}>
       <View className="flex flex-col items-center justify-between w-full py-4">
         <Text className="text-center text-2xl">
-          Inserisci il tuo PIN segreto per confermare il prelievo
+          Inserisci il tuo PIN segreto
         </Text>
         <TextInput
           inputMode="numeric"

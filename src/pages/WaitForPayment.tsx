@@ -1,7 +1,7 @@
 import React from 'react';
-import { BackHandler, Text } from 'react-native';
+import { Text } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useFocusEffect } from '@react-navigation/native';
+import { useBackHandler } from '@react-native-community/hooks';
 
 import Page, { RootStackParamList } from './pages';
 import { finalizeOrder, getOrderById } from '../database/database';
@@ -34,21 +34,11 @@ const WaitForPayment = ({ route, navigation }: Props) => {
   }, [route.params.orderId]);
 
   // handle back button
-  useFocusEffect(
-    React.useCallback(() => {
-      const onBackPress = () => {
-        cancelWorker();
-        navigation.navigate(Page.HOME);
-        return true;
-      };
-
-      const subscription = BackHandler.addEventListener(
-        'hardwareBackPress',
-        onBackPress,
-      );
-      return () => subscription.remove();
-    }, []),
-  );
+  useBackHandler(() => {
+    cancelWorker();
+    navigation.navigate(Page.HOME);
+    return true;
+  });
 
   React.useEffect(() => {
     if (order) {

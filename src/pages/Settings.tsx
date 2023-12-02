@@ -1,19 +1,20 @@
 import React from 'react';
-import { useFocusEffect } from '@react-navigation/native';
+import { useBackHandler } from '@react-native-community/hooks';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import ErrorModal from '../components/shared/ErrorModal';
 import Activity from '../components/reusable/Activity';
 import Page, { RootStackParamList } from './pages';
-import { BackHandler } from 'react-native';
 import Menu from '../components/Settings/Menu';
 import RestoreApp from '../components/Settings/RestoreApp';
 import SuccessModal from '../components/shared/SuccessModal';
 import AppInfo from '../components/Settings/AppInfo';
+import BackupPhrase from '../components/Settings/BackupPhrase';
 
 export enum SettingsPage {
   MENU,
   APP_INFO,
+  BACKUP_PHRASE,
   RESTORE_APP,
 }
 
@@ -40,24 +41,15 @@ const Settings = ({ navigation }: Props) => {
   };
 
   // handle back button
-  useFocusEffect(
-    React.useCallback(() => {
-      const onBackPress = () => {
-        if (page === SettingsPage.MENU) {
-          navigation.goBack();
-        } else {
-          setPage(SettingsPage.MENU);
-        }
-        return true;
-      };
 
-      const subscription = BackHandler.addEventListener(
-        'hardwareBackPress',
-        onBackPress,
-      );
-      return () => subscription.remove();
-    }, [page]),
-  );
+  useBackHandler(() => {
+    if (page === SettingsPage.MENU) {
+      navigation.goBack();
+    } else {
+      setPage(SettingsPage.MENU);
+    }
+    return true;
+  });
 
   return (
     <Activity.ListPage>
@@ -65,6 +57,7 @@ const Settings = ({ navigation }: Props) => {
       {success && <SuccessModal message={success} onClick={onSuccessDismiss} />}
       {page === SettingsPage.MENU ? <Menu onPageChange={setPage} /> : null}
       {page === SettingsPage.APP_INFO ? <AppInfo /> : null}
+      {page === SettingsPage.BACKUP_PHRASE ? <BackupPhrase /> : null}
       {page === SettingsPage.RESTORE_APP ? (
         <RestoreApp onRestore={onAppRestored} setError={setError} />
       ) : null}

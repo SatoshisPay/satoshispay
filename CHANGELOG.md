@@ -1,8 +1,15 @@
 # Changelog
 
 - [Changelog](#changelog)
+  - [0.2.0](#020)
   - [0.1.2](#012)
   - [0.1.1](#011)
+
+## 0.2.0
+
+Released on 02/12/2023
+
+- [Issue 12](https://github.com/SatoshisPay/satoshispay/issues/12): Allow to backup seed in app settings (protected with pin).
 
 ## 0.1.2
 

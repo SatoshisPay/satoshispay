@@ -1,6 +1,6 @@
 import Decimal from 'decimal.js';
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, Modal } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { ArrowRight, Camera as CameraIcon } from 'react-native-feather';
 
 import { breezWithdrawSats } from '../../api/breez';
@@ -10,10 +10,9 @@ import { isBtcAddress } from '../../utils/parser';
 import { insertWithdrawal } from '../../database/database';
 import { WithdrawalStatus } from '../../data/withdrawal';
 import Button from '../reusable/Button';
-import { verifyPin } from '../../database/keystore';
-import Alerts from '../reusable/Alerts';
 import FeePicker from '../shared/FeePicker';
 import QrScanner from '../reusable/QrScanner';
+import PinForm from '../reusable/PinForm';
 
 interface Props {
   eurTicker?: Decimal;
@@ -35,7 +34,6 @@ const WithdrawalForm = ({
   const [formError, setFormError] = React.useState<string>();
   const [activeCamera, setActiveCamera] = React.useState<boolean>(false);
   const [inProgress, setInProgress] = React.useState(false);
-  const [pin, setPin] = React.useState<string>('');
   const [showPin, setShowPin] = React.useState<boolean>(false);
 
   const onScanQrCode = () => {
@@ -87,22 +85,8 @@ const WithdrawalForm = ({
     }
   };
 
-  const onConfirmPin = () => {
-    verifyPin(pin)
-      .then(pinMatches => {
-        if (pinMatches) {
-          setShowPin(false);
-          setPin('');
-          setFormError(undefined);
-          onWithdrawCb();
-        } else {
-          setFormError('PIN non corretto');
-        }
-      })
-      .catch(e => {
-        console.error(e);
-        setFormError('Impossibile verificare il PIN');
-      });
+  const onValidPin = () => {
+    onWithdrawCb();
   };
 
   const onWithdrawCb = () => {
@@ -198,43 +182,11 @@ const WithdrawalForm = ({
 
   return (
     <View className="flex flex-col items-center justify-center mx-auto w-full">
-      {showPin && (
-        <Modal
-          animationType="slide"
-          transparent={false}
-          visible={showPin}
-          onRequestClose={() => {
-            setShowPin(false);
-          }}>
-          <View className="flex flex-col items-center justify-between w-full py-4">
-            <Text className="text-center text-2xl">
-              Inserisci il tuo PIN segreto per confermare il prelievo
-            </Text>
-            <TextInput
-              inputMode="numeric"
-              keyboardType="numeric"
-              secureTextEntry={true}
-              maxLength={6}
-              className="w-3/4 text-4xl text-center py-4 mt-4 bg-white border border-gray-200 rounded-xl shadow-xl"
-              value={pin}
-              onChangeText={text => setPin(text)}
-            />
-            {formError && (
-              <Alerts.Danger>
-                <Text className="text-red-700 text-lg text-center">
-                  {formError}
-                </Text>
-              </Alerts.Danger>
-            )}
-            <Button.Primary disabled={buttonDisabled} onPress={onConfirmPin}>
-              <Text className="text-white text-center text-2xl">
-                Conferma PIN
-              </Text>
-              <ArrowRight className="ml-2 text-white" />
-            </Button.Primary>
-          </View>
-        </Modal>
-      )}
+      <PinForm
+        onClose={() => setShowPin(false)}
+        onValidPin={onValidPin}
+        visibile={showPin}
+      />
       <QrScanner
         onClose={() => setActiveCamera(false)}
         visible={activeCamera}

@@ -1,7 +1,6 @@
 import React from 'react';
-import { BackHandler } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useBackHandler } from '@react-native-community/hooks';
 import Decimal from 'decimal.js';
 
 import Pos from '../components/Home/Pos';
@@ -22,24 +21,14 @@ const Home = ({ navigation }: Props): JSX.Element => {
   };
 
   // handle back button
-  useFocusEffect(
-    React.useCallback(() => {
-      const onBackPress = () => {
-        if (amount.isZero()) {
-          return false;
-        } else {
-          setAmount(new Decimal(0));
-        }
-        return true;
-      };
-
-      const subscription = BackHandler.addEventListener(
-        'hardwareBackPress',
-        onBackPress,
-      );
-      return () => subscription.remove();
-    }, [amount]),
-  );
+  useBackHandler(() => {
+    if (amount.isZero()) {
+      return false;
+    } else {
+      setAmount(new Decimal(0));
+    }
+    return true;
+  });
 
   return (
     <Activity.Page>

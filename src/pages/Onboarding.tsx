@@ -1,6 +1,5 @@
 import React from 'react';
-import { BackHandler, ScrollView } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
+import { ScrollView } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import Page, { RootStackParamList } from './pages';
@@ -18,6 +17,7 @@ import ConfirmBackup from '../components/Onboarding/ConfirmBackup';
 import PinForm from '../components/Onboarding/PinForm';
 import OnboardingCompleted from '../components/Onboarding/OnboardingCompleted';
 import ImportWallet from '../components/Onboarding/ImportWallet';
+import { useBackHandler } from '@react-native-community/hooks';
 
 type Props = NativeStackScreenProps<RootStackParamList, Page.ONBOARDING>;
 
@@ -110,30 +110,20 @@ const Onboarding = ({ navigation }: Props) => {
   };
 
   // handle back button
-  useFocusEffect(
-    React.useCallback(() => {
-      const onBackPress = () => {
-        // cancel import wallet
-        if (viewState === State.IMPORT_WALLET) {
-          setViewState(State.MENU);
-          return true;
-        }
-        // allow reading backup again if forgotten
-        if (viewState === State.CONFIRM_BACKUP) {
-          setViewState(State.WALLET_CREATED);
-          return true;
-        }
+  useBackHandler(() => {
+    // cancel import wallet
+    if (viewState === State.IMPORT_WALLET) {
+      setViewState(State.MENU);
+      return true;
+    }
+    // allow reading backup again if forgotten
+    if (viewState === State.CONFIRM_BACKUP) {
+      setViewState(State.WALLET_CREATED);
+      return true;
+    }
 
-        return true;
-      };
-
-      const subscription = BackHandler.addEventListener(
-        'hardwareBackPress',
-        onBackPress,
-      );
-      return () => subscription.remove();
-    }, [viewState]),
-  );
+    return true;
+  });
 
   return (
     <Activity.ListPage>

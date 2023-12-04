@@ -20,6 +20,13 @@ The app supports the following features:
 - View the transactions history
 - Withdraw the LN balance on your BTC address
 
+## Install
+
+You can install it from Google Play, or directly as an APK
+
+[![google-play-badge](./assets/google-play-badge.png)](https://play.google.com/store/apps/details?id=com.satoshispay&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1)
+[![apk-badge](./assets/apk-badge.png)](https://github.com/SatoshisPay/satoshispay/releases/latest/download/app-release.apk)
+
 ## Developers
 
 To contribute as a developer, here you can find how to get started with the project.
@@ -98,3 +105,5 @@ SatoshisPay is powered by these awesome projects:
 ## License
 
 Licensed under [Apache License, Version 2.0](/LICENSE).
+
+Google Play and the Google Play logo are trademarks of Google LLC.

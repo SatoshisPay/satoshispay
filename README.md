@@ -55,13 +55,17 @@ Contributions to improve the app with new features and ideas, or just bugfix are
 
 Please read our [CONTRIBUTING](./CONTRIBUTING.md) guidelines first.
 
+Join our insighters group on Telegram:
+
+[![telegram-qr](./assets/telegram.png)](https://t.me/+g-0OoyIPUS0yNWM0)
+
+Link: <https://t.me/+g-0OoyIPUS0yNWM0>
+
 ## Support Us
 
 If you wish to support our project, please consider a donation
 
-[![bitcoin](https://img.shields.io/badge/Bitcoin-ff9416?style=for-the-badge&logo=bitcoin&logoColor=white)](https://btc.com/bc1qql247l894ahqvd5affjk69mrf49dcnxg7c0l74)
-
-<img src="/assets/btc-donate.svg" width="256" height="256" alt="donate" />
+[![bitcoin-donate](./assets/btc-donate.png)](https://explorer.btc.com/btc/address/bc1qql247l894ahqvd5affjk69mrf49dcnxg7c0l74)
 
 `bc1qql247l894ahqvd5affjk69mrf49dcnxg7c0l74`
 

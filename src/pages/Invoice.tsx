@@ -88,6 +88,7 @@ const Invoice = ({ route, navigation }: Props): JSX.Element => {
 
   React.useEffect(() => {
     if (order) {
+      console.log('inserting order', order.id);
       // register address / order into database
       if (route.params.orderType === OrderType.BTC && address) {
         insertAddressWithOrder(address, order)

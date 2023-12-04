@@ -249,28 +249,30 @@ export const getOrderById = async (id: string): Promise<Order> => {
 };
 
 export const getOrdersByDate = async (
+  startDate: Date,
+  endDate: Date,
   limit: number,
   offset: number,
 ): Promise<Order[]> => {
   const db = await getDBConnection();
   const [result] = await db.executeSql(
-    `SELECT * FROM ${ORDER_TABLE} ORDER BY ${ORDER_UPDATED_AT} DESC LIMIT ? OFFSET ?;`,
-    [limit, offset],
+    `SELECT * FROM ${ORDER_TABLE} WHERE ${ORDER_INSERTED_AT} >= ? AND ${ORDER_INSERTED_AT} <= ? ORDER BY ${ORDER_UPDATED_AT} DESC LIMIT ? OFFSET ?;`,
+    [startDate.toISOString(), endDate.toISOString(), limit, offset],
   );
   const orders: Order[] = [];
   for (let i = 0; i < result.rows.length; i++) {
     // get address if btc
-    const orderType = result.rows.item(0).orderType;
+    const orderType = result.rows.item(i).orderType;
     let address;
     if (orderType === OrderType.BTC) {
-      address = await getAddressByAddress(result.rows.item(0).address);
+      address = await getAddressByAddress(result.rows.item(i).address);
     }
 
     const order: Order = {
-      id: result.rows.item(0).id,
+      id: result.rows.item(i).id,
       orderType,
       address,
-      paymentHash: result.rows.item(0).paymentHash,
+      paymentHash: result.rows.item(i).paymentHash,
       status: result.rows.item(i).status,
       satsAmount: new Decimal(result.rows.item(i).satsAmount),
       fiatAmount: new Decimal(result.rows.item(i).fiatAmount),
@@ -283,10 +285,14 @@ export const getOrdersByDate = async (
   return orders;
 };
 
-export const getOrdersCount = async (): Promise<number> => {
+export const getOrdersCount = async (
+  startDate: Date,
+  endDate: Date,
+): Promise<number> => {
   const db = await getDBConnection();
   const [result] = await db.executeSql(
-    `SELECT COUNT(*) AS count FROM ${ORDER_TABLE};`,
+    `SELECT COUNT(*) AS count FROM ${ORDER_TABLE} WHERE ${ORDER_INSERTED_AT} >= ? AND ${ORDER_INSERTED_AT} <= ?;`,
+    [startDate.toISOString(), endDate.toISOString()],
   );
   return result.rows.item(0).count;
 };
@@ -300,17 +306,17 @@ export const getPendingOrders = async (): Promise<Order[]> => {
   const orders: Order[] = [];
   for (let i = 0; i < result.rows.length; i++) {
     // get address if btc
-    const orderType = result.rows.item(0).orderType;
+    const orderType = result.rows.item(i).orderType;
     let address;
     if (orderType === OrderType.BTC) {
-      address = await getAddressByAddress(result.rows.item(0).address);
+      address = await getAddressByAddress(result.rows.item(i).address);
     }
 
     const order: Order = {
-      id: result.rows.item(0).id,
+      id: result.rows.item(i).id,
       orderType,
       address,
-      paymentHash: result.rows.item(0).paymentHash,
+      paymentHash: result.rows.item(i).paymentHash,
       status: result.rows.item(i).status,
       satsAmount: new Decimal(result.rows.item(i).satsAmount),
       fiatAmount: new Decimal(result.rows.item(i).fiatAmount),

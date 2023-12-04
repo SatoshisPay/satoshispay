@@ -77,7 +77,7 @@ Currently SatoshisPay is connected to the Lightning Network thanks to the node p
 
 Satoshispay relies on [Breez](https://breez.technology/) to allow Lightning Network payments.
 
-![breez-logo](assets/breez.png)
+[![breez-logo](assets/breez.png)](https://breez.technology/)
 
 SatoshisPay is powered by these awesome projects:
 

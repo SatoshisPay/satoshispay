@@ -55,7 +55,7 @@ Contributions to improve the app with new features and ideas, or just bugfix are
 
 Please read our [CONTRIBUTING](./CONTRIBUTING.md) guidelines first.
 
-Join our insighters group on Telegram:
+Join our insiders group on Telegram:
 
 [![telegram-qr](./assets/telegram.png)](https://t.me/+g-0OoyIPUS0yNWM0)
 

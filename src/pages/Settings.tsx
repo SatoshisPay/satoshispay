@@ -10,11 +10,13 @@ import RestoreApp from '../components/Settings/RestoreApp';
 import SuccessModal from '../components/shared/SuccessModal';
 import AppInfo from '../components/Settings/AppInfo';
 import BackupPhrase from '../components/Settings/BackupPhrase';
+import BtcMap from '../components/Settings/BtcMap';
 
 export enum SettingsPage {
   MENU,
   APP_INFO,
   BACKUP_PHRASE,
+  BTC_MAP,
   RESTORE_APP,
 }
 
@@ -58,6 +60,7 @@ const Settings = ({ navigation }: Props) => {
       {page === SettingsPage.MENU ? <Menu onPageChange={setPage} /> : null}
       {page === SettingsPage.APP_INFO ? <AppInfo /> : null}
       {page === SettingsPage.BACKUP_PHRASE ? <BackupPhrase /> : null}
+      {page === SettingsPage.BTC_MAP ? <BtcMap /> : null}
       {page === SettingsPage.RESTORE_APP ? (
         <RestoreApp onRestore={onAppRestored} setError={setError} />
       ) : null}

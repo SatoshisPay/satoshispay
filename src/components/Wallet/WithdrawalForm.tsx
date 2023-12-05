@@ -282,7 +282,7 @@ const WithdrawalForm = ({
         visible={activeCamera}
         onQrCodeScanned={onQrScanned}
       />
-      <Text className="text-3xl text-brandAlt">Prelievo</Text>
+      <Text className="text-3xl text-brandAlt">Invia Bitcoin</Text>
       <View className="mt-4 flex flex-row items-center justify-center h-[55px] w-full">
         <View className="left-0 right-0 mx-auto border-gray-300 border bg-gray-50 h-full w-page">
           <NetworkPicker
@@ -340,7 +340,7 @@ const WithdrawalForm = ({
       <View className="flex flex-col justify-center items-center pb-8">
         {formError && <Text className="text-red-500">{formError}</Text>}
         <Button.Primary onPress={onSubmit} disabled={buttonDisabled}>
-          <Text className="text-white text-2xl">Preleva</Text>
+          <Text className="text-white text-2xl">Invia</Text>
           <ArrowRight className=" text-white" width={24} height={24} />
         </Button.Primary>
       </View>

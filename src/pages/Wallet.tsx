@@ -79,8 +79,8 @@ const Wallet = ({}: Props) => {
             onChange={onWalletModeChange}
             selected={walletMode}
             tabs={[
-              { title: 'Prelievo', value: WalletMode.WITHDRAW },
-              { title: 'Deposito', value: WalletMode.DEPOSIT },
+              { title: 'Invia', value: WalletMode.WITHDRAW },
+              { title: 'Deposita', value: WalletMode.DEPOSIT },
             ]}
           />
         </View>

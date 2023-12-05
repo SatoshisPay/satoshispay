@@ -1,12 +1,7 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
-import {
-  Clock,
-  Home,
-  CreditCard,
-  Settings as SettingsIcon,
-} from 'react-native-feather';
+import { Clock, Home, CreditCard, MoreVertical } from 'react-native-feather';
 
 import Page, { RootStackParamList } from '../../pages/pages';
 
@@ -41,7 +36,7 @@ const Settings = ({ navigation }: Props) => (
     onPress={() => {
       navigation.navigate(Page.SETTINGS);
     }}>
-    <SettingsIcon color="white" width={32} height={32} />
+    <MoreVertical color="white" width={32} height={32} />
   </TouchableOpacity>
 );
 

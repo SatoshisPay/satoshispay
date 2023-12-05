@@ -12,10 +12,14 @@ Released on 02/12/2023
 - [Issue 1](https://github.com/SatoshisPay/satoshispay/issues/1): Implement transactions export as CSV
   - Filter transactions by date
 - [Issue 2](https://github.com/SatoshisPay/satoshispay/issues/2): Lightning Network withdrawals
+- [Issue 8](https://github.com/SatoshisPay/satoshispay/issues/8): Commecial activity map where to spend BTC
 - [Issue 10](https://github.com/SatoshisPay/satoshispay/issues/10): Added copy button on Invoice BOLT11
 - [Issue 11](https://github.com/SatoshisPay/satoshispay/issues/11): Protect recovery confirm with a modal
 - [Issue 12](https://github.com/SatoshisPay/satoshispay/issues/12): Allow to backup seed in app settings (protected with pin).
 - [Issue 13](https://github.com/SatoshisPay/satoshispay/issues/13): Don't allow the user to create invoices lower than the minimum fee, if they dont't have enough liquidity.
+- Minor changes:
+  - Changed settings "Gear" icon to "More"
+  - Changed withdrawal form from "Prelievo" to "Invia"
 
 ## 0.1.2
 

@@ -1,12 +1,14 @@
 import React from 'react';
 import { Text, View, Linking } from 'react-native';
 
+import packageJson from '../../../package.json';
+
 const AppInfo = () => (
   <View className="w-full flex flex-col h-full pt-2 px-4">
     <Text className="text-3xl">Informazioni Sull'App</Text>
     <View className="py-4">
       <Text className="text-2xl">Versione App</Text>
-      <Text className="text-lg">0.1.0</Text>
+      <Text className="text-lg">{packageJson.version}</Text>
     </View>
     <View className="py-4">
       <Text className="text-2xl">Copyright</Text>

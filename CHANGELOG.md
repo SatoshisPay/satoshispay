@@ -12,6 +12,7 @@ Released on
 
 - [Issue 25](https://github.com/SatoshisPay/satoshispay/issues/25): Deposits are now logged in the deposit form.
   - Added amount for deposits (BIP21).
+- [Issue 28](https://github.com/SatoshisPay/satoshispay/issues/28): Check for minimum amount to withdraw before sending withdraw
 - [Issue 32](https://github.com/SatoshisPay/satoshispay/issues/32): the transactions CSV couldn't be located.
 - [Issue 35](https://github.com/SatoshisPay/satoshispay/issues/35): BIP21 QR code support
 

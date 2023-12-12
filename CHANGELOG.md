@@ -8,7 +8,7 @@
 
 ## 0.2.1
 
-Released on
+Released on 13/12/2023
 
 - [Issue 25](https://github.com/SatoshisPay/satoshispay/issues/25): Deposits are now logged in the deposit form.
   - Added amount for deposits (BIP21).

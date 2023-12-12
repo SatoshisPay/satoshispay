@@ -8,6 +8,8 @@ import Transaction from '../data/transaction';
 import Decimal from 'decimal.js';
 import Order, { OrderStatus, OrderType } from '../data/order';
 import Withdrawal from '../data/withdrawal';
+import Deposit, { DepositStatus } from '../data/deposit';
+import { SwapInfo } from '@breeztech/react-native-breez-sdk';
 
 const DATABASE_NAME = 'satoshispay.db';
 
@@ -21,6 +23,15 @@ const ADDRESS_MNEMONIC = 'mnemonic';
 const ADDRESS_PRIVATE_KEY = 'privateKey';
 const ADDRESS_BALANCE = 'balance';
 const ADDRESS_INSERTED_AT = 'insertedAt';
+
+const DEPOSIT_TABLE = 'deposit';
+const DEPOSIT_ID = 'id';
+const DEPOSIT_ADDRESS = 'address';
+const DEPOSIT_STATUS = 'status';
+const DEPOSIT_SATS_AMOUNT = 'satsAmount';
+const DEPOSIT_FIAT_AMOUNT = 'fiatAmount';
+const DEPOSIT_PRIVATE_KEY = 'privateKey';
+const DEPOSIT_INSERTED_AT = 'insertedAt';
 
 const ORDER_TABLE = 'buyOrder';
 const ORDER_ID = 'id';
@@ -66,6 +77,7 @@ export const resetDB = async () => {
   const db = await getDBConnection();
   return await db.transaction(tx => {
     tx.executeSql(`DROP TABLE ${ADDRESS_TABLE};`);
+    tx.executeSql(`DROP TABLE ${DEPOSIT_TABLE};`);
     tx.executeSql(`DROP TABLE ${ORDER_TABLE};`);
     tx.executeSql(`DROP TABLE ${TRANSACTION_TABLE};`);
     tx.executeSql(`DROP TABLE ${WITHDRAWAL_TABLE};`);
@@ -85,6 +97,18 @@ const initDB = async (db: SQLiteDatabase) => {
       ${ADDRESS_MNEMONIC} TEXT NOT NULL,
       ${ADDRESS_BALANCE} TEXT NOT NULL,
       ${ADDRESS_INSERTED_AT} TEXT NOT NULL
+    );`,
+    );
+
+    tx.executeSql(
+      `CREATE TABLE IF NOT EXISTS ${DEPOSIT_TABLE} (
+      ${DEPOSIT_ID} TEXT PRIMARY KEY NOT NULL,
+      ${DEPOSIT_ADDRESS} TEXT NOT NULL,
+      ${DEPOSIT_STATUS} TEXT NOT NULL,
+      ${DEPOSIT_SATS_AMOUNT} TEXT NOT NULL,
+      ${DEPOSIT_FIAT_AMOUNT} TEXT NOT NULL,
+      ${DEPOSIT_PRIVATE_KEY} TEXT NOT NULL,
+      ${DEPOSIT_INSERTED_AT} TEXT NOT NULL
     );`,
     );
 
@@ -258,6 +282,41 @@ export const getOrdersByDate = async (
   const [result] = await db.executeSql(
     `SELECT * FROM ${ORDER_TABLE} WHERE ${ORDER_INSERTED_AT} >= ? AND ${ORDER_INSERTED_AT} <= ? ORDER BY ${ORDER_UPDATED_AT} DESC LIMIT ? OFFSET ?;`,
     [startDate.toISOString(), endDate.toISOString(), limit, offset],
+  );
+  const orders: Order[] = [];
+  for (let i = 0; i < result.rows.length; i++) {
+    // get address if btc
+    const orderType = result.rows.item(i).orderType;
+    let address;
+    if (orderType === OrderType.BTC) {
+      address = await getAddressByAddress(result.rows.item(i).address);
+    }
+
+    const order: Order = {
+      id: result.rows.item(i).id,
+      orderType,
+      address,
+      paymentHash: result.rows.item(i).paymentHash,
+      status: result.rows.item(i).status,
+      satsAmount: new Decimal(result.rows.item(i).satsAmount),
+      fiatAmount: new Decimal(result.rows.item(i).fiatAmount),
+      insertedAt: new Date(result.rows.item(i).insertedAt),
+      updatedAt: new Date(result.rows.item(i).updatedAt),
+    };
+    orders.push(order);
+  }
+
+  return orders;
+};
+
+export const getAllOrdersByDate = async (
+  startDate: Date,
+  endDate: Date,
+): Promise<Order[]> => {
+  const db = await getDBConnection();
+  const [result] = await db.executeSql(
+    `SELECT * FROM ${ORDER_TABLE} WHERE ${ORDER_INSERTED_AT} >= ? AND ${ORDER_INSERTED_AT} <= ? ORDER BY ${ORDER_UPDATED_AT} DESC;`,
+    [startDate.toISOString(), endDate.toISOString()],
   );
   const orders: Order[] = [];
   for (let i = 0; i < result.rows.length; i++) {
@@ -465,4 +524,93 @@ export const getWithdrawalsCount = async (): Promise<number> => {
     `SELECT COUNT(*) AS count FROM ${WITHDRAWAL_TABLE};`,
   );
   return result.rows.item(0).count;
+};
+
+export const insertDeposit = async (deposit: Deposit) => {
+  const db = await getDBConnection();
+  return await db.executeSql(
+    `INSERT INTO ${DEPOSIT_TABLE} (${DEPOSIT_ID}, ${DEPOSIT_ADDRESS}, ${DEPOSIT_SATS_AMOUNT}, ${DEPOSIT_FIAT_AMOUNT}, ${DEPOSIT_PRIVATE_KEY}, ${DEPOSIT_STATUS}, ${DEPOSIT_INSERTED_AT}) VALUES (?, ?, ?, ?, ?, ?, ?);`,
+    [
+      deposit.id,
+      deposit.address,
+      deposit.satsAmount.toString(),
+      deposit.fiatAmount.toString(),
+      deposit.privateKey,
+      deposit.status,
+      deposit.insertedAt.toISOString(),
+    ],
+  );
+};
+
+export const getDeposits = async (
+  limit: number,
+  offset: number,
+): Promise<Deposit[]> => {
+  const db = await getDBConnection();
+  const [result] = await db.executeSql(
+    `SELECT * FROM ${DEPOSIT_TABLE} ORDER BY ${DEPOSIT_INSERTED_AT} DESC LIMIT ? OFFSET ?;`,
+    [limit, offset],
+  );
+  const deposits: Deposit[] = [];
+  for (let i = 0; i < result.rows.length; i++) {
+    const deposit: Deposit = {
+      id: result.rows.item(i).id,
+      address: result.rows.item(i).address,
+      fiatAmount: new Decimal(result.rows.item(i).fiatAmount),
+      satsAmount: new Decimal(result.rows.item(i).satsAmount),
+      privateKey: result.rows.item(i).privateKey,
+      status: result.rows.item(i).status,
+      insertedAt: new Date(result.rows.item(i).insertedAt),
+    };
+    deposits.push(deposit);
+  }
+
+  return deposits;
+};
+
+export const getAllDeposits = async (): Promise<Deposit[]> => {
+  const db = await getDBConnection();
+  const [result] = await db.executeSql(
+    `SELECT * FROM ${DEPOSIT_TABLE} ORDER BY ${DEPOSIT_INSERTED_AT} DESC;`,
+    [],
+  );
+  const deposits: Deposit[] = [];
+  for (let i = 0; i < result.rows.length; i++) {
+    const deposit: Deposit = {
+      id: result.rows.item(i).id,
+      address: result.rows.item(i).address,
+      fiatAmount: new Decimal(result.rows.item(i).fiatAmount),
+      satsAmount: new Decimal(result.rows.item(i).satsAmount),
+      privateKey: result.rows.item(i).privateKey,
+      status: result.rows.item(i).status,
+      insertedAt: new Date(result.rows.item(i).insertedAt),
+    };
+    deposits.push(deposit);
+  }
+
+  return deposits;
+};
+
+export const getDepositsCount = async (): Promise<number> => {
+  const db = await getDBConnection();
+  const [result] = await db.executeSql(
+    `SELECT COUNT(*) AS count FROM ${DEPOSIT_TABLE};`,
+  );
+  return result.rows.item(0).count;
+};
+
+export const updateDepositStatus = async (deposit: Deposit) => {
+  const db = await getDBConnection();
+  return await db.executeSql(
+    `UPDATE ${DEPOSIT_TABLE} SET ${DEPOSIT_STATUS} = ? WHERE ${DEPOSIT_ID} = ?;`,
+    [deposit.status, deposit.id],
+  );
+};
+
+export const refundDeposit = async (swap: SwapInfo) => {
+  const db = await getDBConnection();
+  return await db.executeSql(
+    `UPDATE ${DEPOSIT_TABLE} SET ${DEPOSIT_STATUS} = ? WHERE ${DEPOSIT_ADDRESS} = ? AND ${DEPOSIT_STATUS} = ? LIMIT 1;`,
+    [DepositStatus.REFUNDED, swap.bitcoinAddress, DepositStatus.REFUNDABLE],
+  );
 };

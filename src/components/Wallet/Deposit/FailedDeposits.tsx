@@ -10,6 +10,7 @@ import FailedDepositItem from './FailedDepositItem';
 import Button from '../../reusable/Button';
 import FeePicker from '../../shared/FeePicker';
 import QrScanner from '../../reusable/QrScanner';
+import { refundDeposit } from '../../../database/database';
 
 interface Props {
   setError: (error: string) => void;
@@ -50,12 +51,18 @@ const FailedDeposits = ({ setError }: Props) => {
 
     for (const swap of failedDeposits) {
       breezRefundDeposit(refundAddress, swap, fee).then(() => {
-        setFormError(undefined);
-        setFailedDeposits(
-          failedDeposits?.filter(s => s.paymentHash !== swap.paymentHash),
-        );
+        refundDeposit(swap)
+          .then(() => {
+            console.log('Refunded deposit', swap);
+          })
+          .catch(() => {
+            console.error('Failed write refunded state to deposit', swap);
+          });
       });
     }
+
+    setFailedDeposits([]);
+    setFormError(undefined);
   };
 
   React.useEffect(() => {

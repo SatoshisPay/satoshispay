@@ -2,9 +2,14 @@ import Decimal from 'decimal.js';
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { ArrowRight, Camera as CameraIcon } from 'react-native-feather';
+import * as bip21 from 'bip21';
 
 import { breezSendPayment, breezWithdrawSats } from '../../api/breez';
-import { convertEURToSats, convertSatsToEUR } from '../../utils/conversion';
+import {
+  convertBTCtoSats,
+  convertEURToSats,
+  convertSatsToEUR,
+} from '../../utils/conversion';
 import Spinner from '../reusable/Spinner';
 import { isBolt11, isBtcAddress, parseBolt11Amount } from '../../utils/parser';
 import { insertWithdrawal } from '../../database/database';
@@ -51,9 +56,16 @@ const WithdrawalForm = ({
 
   const onQrScanned = (value: string) => {
     // validate address and set value
-    if (isBtcAddress(value)) {
-      setRecipient(value);
+    try {
+      const decoded = bip21.decode(value);
+      setRecipient(decoded.address);
+      if (decoded.options.amount) {
+        const amount = new Decimal(decoded.options.amount);
+        setSatsAmount(convertBTCtoSats(amount).toFixed(0));
+      }
       setActiveCamera(false);
+    } catch (_) {
+      console.error('found invalid BIP21');
     }
   };
 
@@ -303,7 +315,7 @@ const WithdrawalForm = ({
         <View className="w-full flex flex-row items-center bg-gray-50 border border-gray-300 h-min relative">
           <TextInput
             className="text-text text-sm rounded-lg focus:ring-brand focus:border-brand p-4 focus-visible:outline-none w-5/6 mr-[20px]"
-            placeholder={`bc1...`}
+            placeholder={'bc1...'}
             onChangeText={setRecipient}
             defaultValue={recipient}
           />

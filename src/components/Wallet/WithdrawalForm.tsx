@@ -44,9 +44,7 @@ const WithdrawalForm = ({
   onWithdraw,
 }: Props) => {
   const [network, setNetwork] = React.useState<Network>(Network.BTC); // ['btc', 'ln']
-  const [recipient, setRecipient] = React.useState<string>(
-    'bc1qql247l894ahqvd5affjk69mrf49dcnxg7c0l74',
-  ); // address or invoice
+  const [recipient, setRecipient] = React.useState<string>(''); // address or invoice
   const [satsAmount, setSatsAmount] = React.useState<string>('');
   const [euroAmount, setEuroAmount] = React.useState<string>('');
   const [fee, setFee] = React.useState<number | undefined>();
@@ -141,11 +139,12 @@ const WithdrawalForm = ({
   };
 
   const onSubmit = () => {
-    setShowPin(true);
     const amountNumber: Decimal | undefined = validateAll();
 
     if (amountNumber === undefined) {
       return;
+    } else {
+      setShowPin(true);
     }
   };
 

@@ -6,7 +6,7 @@ import { Download } from 'react-native-feather';
 
 import DatePicker from '../reusable/DatePicker';
 import Button from '../reusable/Button';
-import { getOrdersByDate } from '../../database/database';
+import { getAllOrdersByDate } from '../../database/database';
 import ErrorModal from '../shared/ErrorModal';
 import SuccessModal from '../shared/SuccessModal';
 import { isAndroid } from '../../utils/device';
@@ -91,12 +91,7 @@ const downloadOrderCsv = async (
   endDate: Date,
 ): Promise<string> => {
   const fixedStartDate = startDate ?? new Date(0);
-  const orders = await getOrdersByDate(
-    fixedStartDate,
-    endDate,
-    999999999999,
-    0,
-  );
+  const orders = await getAllOrdersByDate(fixedStartDate, endDate);
 
   // write csv
   const now = new Date();

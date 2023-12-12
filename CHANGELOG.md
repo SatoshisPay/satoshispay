@@ -10,6 +10,8 @@
 
 Released on
 
+- [Issue 25](https://github.com/SatoshisPay/satoshispay/issues/25): Deposits are now logged in the deposit form.
+  - Added amount for deposits (BIP21).
 - [Issue 32](https://github.com/SatoshisPay/satoshispay/issues/32): the transactions CSV couldn't be located.
 
 ## 0.2.0

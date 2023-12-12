@@ -25,6 +25,7 @@ import {
   sendPayment,
   SwapInfo,
   refund,
+  inProgressSwap,
 } from '@breeztech/react-native-breez-sdk';
 import * as bip39 from 'bip39';
 import Decimal from 'decimal.js';
@@ -206,9 +207,15 @@ export const breezCheckPaymentForPendingTransactions = async (
   return confirmedOrders;
 };
 
-export const breezGetDepositAddress = async (): Promise<string> => {
+export const breezGetDepositAddress = async (): Promise<SwapInfo> => {
   const swapInfo = await receiveOnchain({});
-  return swapInfo.bitcoinAddress;
+  return swapInfo;
+};
+
+export const breezGetPendingDeposit = async (): Promise<SwapInfo | null> => {
+  const deposit = await inProgressSwap();
+
+  return deposit;
 };
 
 export const breezGetFailedDeposits = async (): Promise<SwapInfo[]> => {

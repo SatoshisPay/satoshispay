@@ -1,11 +1,11 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, TextInput } from 'react-native';
 import { ArrowRight, Camera as CameraIcon } from 'react-native-feather';
-import * as bip21 from 'bip21';
+import bip21 from 'bip21';
 
 import Spinner from '../../reusable/Spinner';
 import { breezGetFailedDeposits, breezRefundDeposit } from '../../../api/breez';
-import { SwapInfo, SwapStatus } from '@breeztech/react-native-breez-sdk';
+import { SwapInfo } from '@breeztech/react-native-breez-sdk';
 import { isBtcAddress } from '../../../utils/parser';
 import FailedDepositItem from './FailedDepositItem';
 import Button from '../../reusable/Button';

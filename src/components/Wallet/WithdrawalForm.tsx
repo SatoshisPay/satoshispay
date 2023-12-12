@@ -2,9 +2,13 @@ import Decimal from 'decimal.js';
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { ArrowRight, Camera as CameraIcon } from 'react-native-feather';
-import * as bip21 from 'bip21';
+import bip21 from 'bip21';
 
-import { breezSendPayment, breezWithdrawSats } from '../../api/breez';
+import {
+  breezGetWithdrawLimits,
+  breezSendPayment,
+  breezWithdrawSats,
+} from '../../api/breez';
 import {
   convertBTCtoSats,
   convertEURToSats,
@@ -40,10 +44,13 @@ const WithdrawalForm = ({
   onWithdraw,
 }: Props) => {
   const [network, setNetwork] = React.useState<Network>(Network.BTC); // ['btc', 'ln']
-  const [recipient, setRecipient] = React.useState<string>(''); // address or invoice
+  const [recipient, setRecipient] = React.useState<string>(
+    'bc1qql247l894ahqvd5affjk69mrf49dcnxg7c0l74',
+  ); // address or invoice
   const [satsAmount, setSatsAmount] = React.useState<string>('');
   const [euroAmount, setEuroAmount] = React.useState<string>('');
   const [fee, setFee] = React.useState<number | undefined>();
+  const [limits, setLimits] = React.useState<{ min: Decimal; max: Decimal }>();
 
   const [formError, setFormError] = React.useState<string>();
   const [activeCamera, setActiveCamera] = React.useState<boolean>(false);
@@ -70,12 +77,21 @@ const WithdrawalForm = ({
   };
 
   const validateAllBtc = (): boolean => {
+    const amountNumber = new Decimal(satsAmount);
     if (!isBtcAddress(recipient)) {
       setFormError('Indirizzo non valido');
       return false;
     }
     if (fee === undefined) {
       setFormError('Devi selezionare una fee per il prelievo');
+      return false;
+    }
+    if (limits && amountNumber.greaterThan(limits.max)) {
+      setFormError(`L'importo massimo è ${limits.max.toFixed(0)} satoshi`);
+      return false;
+    }
+    if (limits && amountNumber.lessThanOrEqualTo(limits.min)) {
+      setFormError(`L'importo minimo è ${limits.min.toFixed(0)} satoshi`);
       return false;
     }
 
@@ -268,6 +284,23 @@ const WithdrawalForm = ({
       } catch (e) {}
     }
   }, [network, recipient]);
+
+  React.useEffect(() => {
+    if (satsAmount) {
+      const amountNumber = new Decimal(satsAmount);
+      breezGetWithdrawLimits(amountNumber)
+        .then(wLimits => {
+          setLimits(wLimits);
+        })
+        .catch(e => {
+          setLimits({
+            max: new Decimal(500_000_000_000),
+            min: new Decimal(50_000),
+          });
+          console.log(e);
+        });
+    }
+  }, [satsAmount]);
 
   const buttonDisabled = inProgress || !recipient || !satsAmount;
 

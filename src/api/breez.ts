@@ -159,6 +159,19 @@ export const breezSendPayment = async (
   return payment.payment.id;
 };
 
+export const breezGetWithdrawLimits = async (
+  amount: Decimal,
+): Promise<{
+  min: Decimal;
+  max: Decimal;
+}> => {
+  const fees = await fetchReverseSwapFees({ sendAmountSat: amount.toNumber() });
+  return {
+    min: new Decimal(fees.min),
+    max: new Decimal(fees.max),
+  };
+};
+
 export const breezWithdrawSats = async (
   amount: Decimal,
   address: string,

@@ -14,6 +14,7 @@ import FeePicker from '../shared/FeePicker';
 import QrScanner from '../reusable/QrScanner';
 import PinForm from '../reusable/PinForm';
 import NetworkPicker from './Withdrawal/NetworkPicker';
+import Input from '../reusable/Input';
 
 interface Props {
   eurTicker?: Decimal;
@@ -283,57 +284,62 @@ const WithdrawalForm = ({
         onQrCodeScanned={onQrScanned}
       />
       <Text className="text-3xl text-brandAlt">Invia Bitcoin</Text>
-      <View className="mt-4 flex flex-row items-center justify-center h-[55px] w-full">
-        <View className="left-0 right-0 mx-auto border-gray-300 border bg-gray-50 h-full w-page">
-          <NetworkPicker
-            className="text-text"
-            network={network}
-            onChange={setNetwork}
-          />
+      <View className="mt-4 w-page">
+        <Text className=" text-text py-1 text-lg">Seleziona rete</Text>
+        <View className="flex flex-row items-center justify-center h-[55px] w-full">
+          <View className="left-0 right-0 mx-auto border-gray-300 border bg-gray-50 h-full w-full">
+            <NetworkPicker
+              className="text-text"
+              network={network}
+              onChange={setNetwork}
+            />
+          </View>
         </View>
       </View>
-      <View className="mt-4 flex flex-row items-center bg-gray-50 border border-gray-300 h-min relative w-page">
-        <TextInput
-          className="text-text text-sm rounded-lg focus:ring-brand focus:border-brand p-4 focus-visible:outline-none w-5/6 mr-[20px]"
-          placeholder={`${
-            network === Network.BTC ? 'Indirizzo BTC' : 'Invoice LN'
-          }`}
-          onChangeText={setRecipient}
-          defaultValue={recipient}
-        />
-        <TouchableOpacity
-          onPress={onScanQrCode}
-          className="right-2 top-4 bottom-0 absolute">
-          <CameraIcon className="w-8 h-8 text-brandAlt" />
-        </TouchableOpacity>
+      <View className="mt-4 w-page">
+        <Text className=" text-text py-1 text-lg">
+          {network === Network.BTC ? 'Indirizzo BTC' : 'Invoice LN'}
+        </Text>
+        <View className="w-full flex flex-row items-center bg-gray-50 border border-gray-300 h-min relative">
+          <TextInput
+            className="text-text text-sm rounded-lg focus:ring-brand focus:border-brand p-4 focus-visible:outline-none w-5/6 mr-[20px]"
+            placeholder={`bc1...`}
+            onChangeText={setRecipient}
+            defaultValue={recipient}
+          />
+          <TouchableOpacity
+            onPress={onScanQrCode}
+            className="right-2 top-4 bottom-0 absolute">
+            <CameraIcon className="w-8 h-8 text-brandAlt" />
+          </TouchableOpacity>
+        </View>
       </View>
-      <View className="mt-4 flex flex-row items-center justify-center bg-gray-50 border border-gray-300 h-min">
-        <TextInput
-          className="text-text text-sm rounded-lg focus:ring-brand focus:border-brand p-4 focus-visible:outline-none w-page"
-          placeholder="Importo in Satoshi"
-          onChangeText={onSatsAmountChanged}
-          defaultValue={satsAmount}
-          inputMode="numeric"
-        />
-      </View>
-      <View className="mt-4 flex flex-row items-center justify-center bg-gray-50 border border-gray-300 h-min">
-        <TextInput
-          className="text-text text-sm rounded-lg focus:ring-brand focus:border-brand p-4 focus-visible:outline-none w-page"
-          placeholder="Importo in Euro"
-          onChangeText={onEurAmountChanged}
-          defaultValue={euroAmount}
-          inputMode="numeric"
-        />
-      </View>
+      <Input
+        placeholder="0"
+        label="Importo in Satoshi"
+        onChangeText={onSatsAmountChanged}
+        value={satsAmount}
+        keyboardType="numeric"
+      />
+      <Input
+        placeholder="0"
+        label="Importo in Euro"
+        onChangeText={onEurAmountChanged}
+        value={euroAmount}
+        keyboardType="numeric"
+      />
       {network === Network.BTC && (
-        <View className="mt-4 flex flex-row items-center justify-center h-[55px] w-full">
-          <View className="left-0 right-0 mx-auto border-gray-300 border bg-gray-50 h-full w-page">
-            <FeePicker
-              className="text-text"
-              fee={fee}
-              onFeeChanged={setFee}
-              onError={setError}
-            />
+        <View className="mt-4 w-page">
+          <Text className=" text-text py-1 text-lg">Seleziona fee</Text>
+          <View className="flex flex-row items-center justify-center h-[55px] w-full">
+            <View className="left-0 right-0 mx-auto border-gray-300 border bg-gray-50 h-full w-full">
+              <FeePicker
+                className="text-text"
+                fee={fee}
+                onFeeChanged={setFee}
+                onError={setError}
+              />
+            </View>
           </View>
         </View>
       )}

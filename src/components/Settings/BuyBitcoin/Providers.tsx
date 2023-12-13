@@ -32,7 +32,7 @@ interface ProviderProps {
 
 const Provider = ({ logo, provider, onChange }: ProviderProps) => (
   <TouchableOpacity
-    className="flex flex-col justify-center items-center border-2 border-gray-200 w-full h-[128px] rounded-xl shardow-xl my-2 p-8"
+    className="bg-white flex flex-col justify-center items-center border-2 border-gray-200 w-full h-[128px] rounded-xl shardow-xl my-2 p-8"
     onPress={() => onChange(provider)}>
     {logo}
   </TouchableOpacity>

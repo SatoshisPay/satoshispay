@@ -1,10 +1,17 @@
 # Changelog
 
 - [Changelog](#changelog)
+  - [0.2.2](#022)
   - [0.2.1](#021)
   - [0.2.0](#020)
   - [0.1.2](#012)
   - [0.1.1](#011)
+
+## 0.2.2
+
+Released on 13/12/2023
+
+- Fixed bitcoin QR scan not parsing addresses not starting with `bitcoin:`
 
 ## 0.2.1
 

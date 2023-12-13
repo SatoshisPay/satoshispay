@@ -1,12 +1,11 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, TextInput } from 'react-native';
 import { ArrowRight, Camera as CameraIcon } from 'react-native-feather';
-import bip21 from 'bip21';
 
 import Spinner from '../../reusable/Spinner';
 import { breezGetFailedDeposits, breezRefundDeposit } from '../../../api/breez';
 import { SwapInfo } from '@breeztech/react-native-breez-sdk';
-import { isBtcAddress } from '../../../utils/parser';
+import { isBtcAddress, parseBitcoinQRCode } from '../../../utils/parser';
 import FailedDepositItem from './FailedDepositItem';
 import Button from '../../reusable/Button';
 import FeePicker from '../../shared/FeePicker';
@@ -32,13 +31,14 @@ const FailedDeposits = ({ setError }: Props) => {
 
   const onQrScanned = (value: string) => {
     // validate address and set value
-    try {
-      const decoded = bip21.decode(value);
-      setRefundAddress(decoded.address);
-      setActiveCamera(false);
-    } catch (_) {
-      console.error('found invalid BIP21');
-    }
+    parseBitcoinQRCode(value)
+      .then(({ address }) => {
+        setRefundAddress(address);
+        setActiveCamera(false);
+      })
+      .catch(() => {
+        console.log('found invalid BIP21');
+      });
   };
 
   const onRefund = () => {

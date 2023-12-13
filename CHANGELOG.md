@@ -12,6 +12,7 @@
 Released on 13/12/2023
 
 - Fixed bitcoin QR scan not parsing addresses not starting with `bitcoin:`
+- Qr code scanner support for LN invoice
 
 ## 0.2.1
 

@@ -64,18 +64,27 @@ const WithdrawalForm = ({
   };
 
   const onQrScanned = (value: string) => {
-    // validate address and set value
-    parseBitcoinQRCode(value)
-      .then(({ address, amount }) => {
-        setRecipient(address);
-        if (amount) {
-          setSatsAmount(convertBTCtoSats(amount).toFixed(0));
-        }
-        setActiveCamera(false);
-      })
-      .catch(() => {
-        console.log('found invalid BIP21');
-      });
+    // try to parse bolt11
+    if (isBolt11(value)) {
+      setRecipient(value);
+      setNetwork(Network.LN);
+      setActiveCamera(false);
+    } else {
+      // try with bitcoin
+      // validate address and set value
+      parseBitcoinQRCode(value)
+        .then(({ address, amount }) => {
+          setRecipient(address);
+          setNetwork(Network.BTC);
+          if (amount) {
+            setSatsAmount(convertBTCtoSats(amount).toFixed(0));
+          }
+          setActiveCamera(false);
+        })
+        .catch(() => {
+          console.log('found invalid BIP21');
+        });
+    }
   };
 
   const validateAllBtc = (): boolean => {

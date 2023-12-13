@@ -1,4 +1,5 @@
 import Decimal from 'decimal.js';
+import bip21 from 'bip21';
 import { decode as decodeBolt11 } from 'light-bolt11-decoder';
 
 export const isBtcAddress = (address: string): boolean => {
@@ -22,4 +23,24 @@ export const parseBolt11Amount = (bolt11: string): Decimal | undefined => {
   }
 
   return undefined;
+};
+
+export const parseBitcoinQRCode = async (
+  data: string,
+): Promise<{ address: string; amount?: Decimal }> => {
+  if (!data.startsWith('bitcoin:')) {
+    data = `bitcoin:${data}`;
+  }
+
+  const decoded = bip21.decode(data);
+  let amount;
+
+  if (decoded.options.amount) {
+    amount = new Decimal(decoded.options.amount);
+  }
+
+  return {
+    address: decoded.address,
+    amount,
+  };
 };

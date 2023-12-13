@@ -2,7 +2,6 @@ import Decimal from 'decimal.js';
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { ArrowRight, Camera as CameraIcon } from 'react-native-feather';
-import bip21 from 'bip21';
 
 import {
   breezGetWithdrawLimits,
@@ -15,7 +14,12 @@ import {
   convertSatsToEUR,
 } from '../../utils/conversion';
 import Spinner from '../reusable/Spinner';
-import { isBolt11, isBtcAddress, parseBolt11Amount } from '../../utils/parser';
+import {
+  isBolt11,
+  isBtcAddress,
+  parseBitcoinQRCode,
+  parseBolt11Amount,
+} from '../../utils/parser';
 import { insertWithdrawal } from '../../database/database';
 import { WithdrawalStatus } from '../../data/withdrawal';
 import Button from '../reusable/Button';
@@ -60,17 +64,26 @@ const WithdrawalForm = ({
   };
 
   const onQrScanned = (value: string) => {
-    // validate address and set value
-    try {
-      const decoded = bip21.decode(value);
-      setRecipient(decoded.address);
-      if (decoded.options.amount) {
-        const amount = new Decimal(decoded.options.amount);
-        setSatsAmount(convertBTCtoSats(amount).toFixed(0));
-      }
+    // try to parse bolt11
+    if (isBolt11(value)) {
+      setRecipient(value);
+      setNetwork(Network.LN);
       setActiveCamera(false);
-    } catch (_) {
-      console.error('found invalid BIP21');
+    } else {
+      // try with bitcoin
+      // validate address and set value
+      parseBitcoinQRCode(value)
+        .then(({ address, amount }) => {
+          setRecipient(address);
+          setNetwork(Network.BTC);
+          if (amount) {
+            setSatsAmount(convertBTCtoSats(amount).toFixed(0));
+          }
+          setActiveCamera(false);
+        })
+        .catch(() => {
+          console.log('found invalid BIP21');
+        });
     }
   };
 

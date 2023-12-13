@@ -15,7 +15,7 @@ const Balance = ({ satsBalance, eurTicker }: Props) => {
     : null;
 
   return (
-    <View className="flex flex-col items-center justify-center mx-auto p-5 w-full">
+    <View className="flex flex-col items-center justify-center mx-auto py-2 w-full">
       <Text className="text-3xl text-brandAlt">Bilancio attuale</Text>
       <Text className="text-2xl text-brandAlt">
         {satsBalance.toNumber().toLocaleString(undefined, {

@@ -15,6 +15,7 @@ Released on 13/12/2023
 - [Issue 28](https://github.com/SatoshisPay/satoshispay/issues/28): Check for minimum amount to withdraw before sending withdraw
 - [Issue 32](https://github.com/SatoshisPay/satoshispay/issues/32): the transactions CSV couldn't be located.
 - [Issue 35](https://github.com/SatoshisPay/satoshispay/issues/35): BIP21 QR code support
+- [Issue 41](https://github.com/SatoshisPay/satoshispay/issues/41): It is now possible to buy Bitcoin in-app through the Breez providers (Moonpay atm)
 
 ## 0.2.0
 

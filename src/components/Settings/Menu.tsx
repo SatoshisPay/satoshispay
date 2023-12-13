@@ -3,7 +3,13 @@ import { ScrollView, Text } from 'react-native';
 
 import { SettingsPage } from '../../pages/Settings';
 import MenuButton from './Menu/MenuButton';
-import { AlertTriangle, Edit, Info, MapPin } from 'react-native-feather';
+import {
+  AlertTriangle,
+  Edit,
+  Info,
+  MapPin,
+  ShoppingCart,
+} from 'react-native-feather';
 
 interface Props {
   onPageChange: (page: SettingsPage) => void;
@@ -11,6 +17,12 @@ interface Props {
 
 const Menu = ({ onPageChange }: Props) => (
   <ScrollView className="py-8 w-page mx-auto">
+    <Text className="text-3xl">Il mio wallet</Text>
+    <MenuButton
+      onClick={() => onPageChange(SettingsPage.BUY_BITCOIN)}
+      icon={<ShoppingCart className="text-brandAlt" />}
+      text="Compra Bitcoin"
+    />
     <Text className="text-3xl">Informazioni</Text>
     <MenuButton
       onClick={() => onPageChange(SettingsPage.APP_INFO)}

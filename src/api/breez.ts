@@ -26,6 +26,8 @@ import {
   SwapInfo,
   refund,
   inProgressSwap,
+  BuyBitcoinProvider,
+  buyBitcoin,
 } from '@breeztech/react-native-breez-sdk';
 import * as bip39 from 'bip39';
 import Decimal from 'decimal.js';
@@ -258,4 +260,14 @@ const breezWorkingDirectory = (): string =>
 
 export const breezRemoveDir = async () => {
   await RNFS.unlink(breezWorkingDirectory());
+};
+
+export const breezGetBuyBitcoinUrl = async (
+  buyBitcoinProvider: BuyBitcoinProvider,
+): Promise<string> => {
+  const response = await buyBitcoin({
+    provider: buyBitcoinProvider,
+  });
+
+  return response.url;
 };

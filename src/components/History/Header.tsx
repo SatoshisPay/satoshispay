@@ -1,13 +1,15 @@
 import React from 'react';
-import { Text, View, Linking } from 'react-native';
+import { Text, View } from 'react-native';
+import Share from 'react-native-share';
 import RNFS from 'react-native-fs';
 import { Download } from 'react-native-feather';
 
 import DatePicker from '../reusable/DatePicker';
 import Button from '../reusable/Button';
-import { getOrdersByDate } from '../../database/database';
+import { getAllOrdersByDate } from '../../database/database';
 import ErrorModal from '../shared/ErrorModal';
 import SuccessModal from '../shared/SuccessModal';
+import { isAndroid } from '../../utils/device';
 
 interface Props {
   startDate?: Date;
@@ -33,14 +35,9 @@ const Header = ({
       .then(path => {
         setProcessingCsv(false);
         setError(undefined);
-        setSuccess(`Transazioni scritte con successo in "${path}"`);
-        Linking.openURL(`file://${path}`)
-          .then(() => {
-            console.log('Opened file');
-          })
-          .catch(e => {
-            console.error(e);
-          });
+        setSuccess(
+          `Transazioni scritte con successo in "${path}", nella cartella download`,
+        );
       })
       .catch(e => {
         setError(e.message);
@@ -94,21 +91,17 @@ const downloadOrderCsv = async (
   endDate: Date,
 ): Promise<string> => {
   const fixedStartDate = startDate ?? new Date(0);
-  const orders = await getOrdersByDate(
-    fixedStartDate,
-    endDate,
-    999999999999,
-    0,
-  );
+  const orders = await getAllOrdersByDate(fixedStartDate, endDate);
 
   // write csv
   const now = new Date();
-  const fileName = `${RNFS.ExternalDirectoryPath}/orders_${now.getFullYear()}-${
+  const fileName = `orders_${now.getFullYear()}-${
     now.getMonth() + 1
   }-${now.getDate()}.csv`;
+  const filePath = `${fileDirectory()}/${fileName}`;
 
   await RNFS.writeFile(
-    fileName,
+    filePath,
     'id,orderType,address,paymentHash,status,satsAmount,fiatAmount,insertedAt,updatedAt\n',
   );
 
@@ -117,7 +110,7 @@ const downloadOrderCsv = async (
     const paymentHash = order.paymentHash ?? '';
 
     await RNFS.appendFile(
-      fileName,
+      filePath,
       `${order.id},${order.orderType},${btcAddress},${paymentHash},${
         order.status
       },${order.satsAmount.toFixed(0)},${order.fiatAmount.toFixed(
@@ -126,7 +119,26 @@ const downloadOrderCsv = async (
     );
   }
 
+  // share file to allow saving the file to iOS systems
+  if (!isAndroid()) {
+    await Share.open({
+      title: fileName,
+      filename: filePath,
+      url: `file://${filePath}`,
+      type: 'text/csv',
+      saveToFiles: true,
+    });
+  }
+
   return fileName;
+};
+
+const fileDirectory = (): string => {
+  if (isAndroid()) {
+    return RNFS.DownloadDirectoryPath;
+  } else {
+    return RNFS.DocumentDirectoryPath;
+  }
 };
 
 export default Header;

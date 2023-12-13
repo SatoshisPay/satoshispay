@@ -2,9 +2,18 @@ import Decimal from 'decimal.js';
 import React from 'react';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { ArrowRight, Camera as CameraIcon } from 'react-native-feather';
+import bip21 from 'bip21';
 
-import { breezSendPayment, breezWithdrawSats } from '../../api/breez';
-import { convertEURToSats, convertSatsToEUR } from '../../utils/conversion';
+import {
+  breezGetWithdrawLimits,
+  breezSendPayment,
+  breezWithdrawSats,
+} from '../../api/breez';
+import {
+  convertBTCtoSats,
+  convertEURToSats,
+  convertSatsToEUR,
+} from '../../utils/conversion';
 import Spinner from '../reusable/Spinner';
 import { isBolt11, isBtcAddress, parseBolt11Amount } from '../../utils/parser';
 import { insertWithdrawal } from '../../database/database';
@@ -14,6 +23,7 @@ import FeePicker from '../shared/FeePicker';
 import QrScanner from '../reusable/QrScanner';
 import PinForm from '../reusable/PinForm';
 import NetworkPicker from './Withdrawal/NetworkPicker';
+import Input from '../reusable/Input';
 
 interface Props {
   eurTicker?: Decimal;
@@ -38,6 +48,7 @@ const WithdrawalForm = ({
   const [satsAmount, setSatsAmount] = React.useState<string>('');
   const [euroAmount, setEuroAmount] = React.useState<string>('');
   const [fee, setFee] = React.useState<number | undefined>();
+  const [limits, setLimits] = React.useState<{ min: Decimal; max: Decimal }>();
 
   const [formError, setFormError] = React.useState<string>();
   const [activeCamera, setActiveCamera] = React.useState<boolean>(false);
@@ -50,19 +61,35 @@ const WithdrawalForm = ({
 
   const onQrScanned = (value: string) => {
     // validate address and set value
-    if (isBtcAddress(value)) {
-      setRecipient(value);
+    try {
+      const decoded = bip21.decode(value);
+      setRecipient(decoded.address);
+      if (decoded.options.amount) {
+        const amount = new Decimal(decoded.options.amount);
+        setSatsAmount(convertBTCtoSats(amount).toFixed(0));
+      }
       setActiveCamera(false);
+    } catch (_) {
+      console.error('found invalid BIP21');
     }
   };
 
   const validateAllBtc = (): boolean => {
+    const amountNumber = new Decimal(satsAmount);
     if (!isBtcAddress(recipient)) {
       setFormError('Indirizzo non valido');
       return false;
     }
     if (fee === undefined) {
       setFormError('Devi selezionare una fee per il prelievo');
+      return false;
+    }
+    if (limits && amountNumber.greaterThan(limits.max)) {
+      setFormError(`L'importo massimo è ${limits.max.toFixed(0)} satoshi`);
+      return false;
+    }
+    if (limits && amountNumber.lessThanOrEqualTo(limits.min)) {
+      setFormError(`L'importo minimo è ${limits.min.toFixed(0)} satoshi`);
       return false;
     }
 
@@ -112,11 +139,12 @@ const WithdrawalForm = ({
   };
 
   const onSubmit = () => {
-    setShowPin(true);
     const amountNumber: Decimal | undefined = validateAll();
 
     if (amountNumber === undefined) {
       return;
+    } else {
+      setShowPin(true);
     }
   };
 
@@ -256,6 +284,23 @@ const WithdrawalForm = ({
     }
   }, [network, recipient]);
 
+  React.useEffect(() => {
+    if (satsAmount) {
+      const amountNumber = new Decimal(satsAmount);
+      breezGetWithdrawLimits(amountNumber)
+        .then(wLimits => {
+          setLimits(wLimits);
+        })
+        .catch(e => {
+          setLimits({
+            max: new Decimal(500_000_000_000),
+            min: new Decimal(50_000),
+          });
+          console.log(e);
+        });
+    }
+  }, [satsAmount]);
+
   const buttonDisabled = inProgress || !recipient || !satsAmount;
 
   if (inProgress) {
@@ -283,57 +328,62 @@ const WithdrawalForm = ({
         onQrCodeScanned={onQrScanned}
       />
       <Text className="text-3xl text-brandAlt">Invia Bitcoin</Text>
-      <View className="mt-4 flex flex-row items-center justify-center h-[55px] w-full">
-        <View className="left-0 right-0 mx-auto border-gray-300 border bg-gray-50 h-full w-page">
-          <NetworkPicker
-            className="text-text"
-            network={network}
-            onChange={setNetwork}
-          />
+      <View className="mt-4 w-page">
+        <Text className=" text-text py-1 text-lg">Seleziona rete</Text>
+        <View className="flex flex-row items-center justify-center h-[55px] w-full">
+          <View className="left-0 right-0 mx-auto border-gray-300 border bg-gray-50 h-full w-full">
+            <NetworkPicker
+              className="text-text"
+              network={network}
+              onChange={setNetwork}
+            />
+          </View>
         </View>
       </View>
-      <View className="mt-4 flex flex-row items-center bg-gray-50 border border-gray-300 h-min relative w-page">
-        <TextInput
-          className="text-text text-sm rounded-lg focus:ring-brand focus:border-brand p-4 focus-visible:outline-none w-5/6 mr-[20px]"
-          placeholder={`${
-            network === Network.BTC ? 'Indirizzo BTC' : 'Invoice LN'
-          }`}
-          onChangeText={setRecipient}
-          defaultValue={recipient}
-        />
-        <TouchableOpacity
-          onPress={onScanQrCode}
-          className="right-2 top-4 bottom-0 absolute">
-          <CameraIcon className="w-8 h-8 text-brandAlt" />
-        </TouchableOpacity>
+      <View className="mt-4 w-page">
+        <Text className=" text-text py-1 text-lg">
+          {network === Network.BTC ? 'Indirizzo BTC' : 'Invoice LN'}
+        </Text>
+        <View className="w-full flex flex-row items-center bg-gray-50 border border-gray-300 h-min relative">
+          <TextInput
+            className="text-text text-sm rounded-lg focus:ring-brand focus:border-brand p-4 focus-visible:outline-none w-5/6 mr-[20px]"
+            placeholder={'bc1...'}
+            onChangeText={setRecipient}
+            defaultValue={recipient}
+          />
+          <TouchableOpacity
+            onPress={onScanQrCode}
+            className="right-2 top-4 bottom-0 absolute">
+            <CameraIcon className="w-8 h-8 text-brandAlt" />
+          </TouchableOpacity>
+        </View>
       </View>
-      <View className="mt-4 flex flex-row items-center justify-center bg-gray-50 border border-gray-300 h-min">
-        <TextInput
-          className="text-text text-sm rounded-lg focus:ring-brand focus:border-brand p-4 focus-visible:outline-none w-page"
-          placeholder="Importo in Satoshi"
-          onChangeText={onSatsAmountChanged}
-          defaultValue={satsAmount}
-          inputMode="numeric"
-        />
-      </View>
-      <View className="mt-4 flex flex-row items-center justify-center bg-gray-50 border border-gray-300 h-min">
-        <TextInput
-          className="text-text text-sm rounded-lg focus:ring-brand focus:border-brand p-4 focus-visible:outline-none w-page"
-          placeholder="Importo in Euro"
-          onChangeText={onEurAmountChanged}
-          defaultValue={euroAmount}
-          inputMode="numeric"
-        />
-      </View>
+      <Input
+        placeholder="0"
+        label="Importo in Satoshi"
+        onChangeText={onSatsAmountChanged}
+        value={satsAmount}
+        keyboardType="numeric"
+      />
+      <Input
+        placeholder="0"
+        label="Importo in Euro"
+        onChangeText={onEurAmountChanged}
+        value={euroAmount}
+        keyboardType="numeric"
+      />
       {network === Network.BTC && (
-        <View className="mt-4 flex flex-row items-center justify-center h-[55px] w-full">
-          <View className="left-0 right-0 mx-auto border-gray-300 border bg-gray-50 h-full w-page">
-            <FeePicker
-              className="text-text"
-              fee={fee}
-              onFeeChanged={setFee}
-              onError={setError}
-            />
+        <View className="mt-4 w-page">
+          <Text className=" text-text py-1 text-lg">Seleziona fee</Text>
+          <View className="flex flex-row items-center justify-center h-[55px] w-full">
+            <View className="left-0 right-0 mx-auto border-gray-300 border bg-gray-50 h-full w-full">
+              <FeePicker
+                className="text-text"
+                fee={fee}
+                onFeeChanged={setFee}
+                onError={setError}
+              />
+            </View>
           </View>
         </View>
       )}

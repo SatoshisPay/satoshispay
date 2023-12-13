@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, StatusBar, Text } from 'react-native';
+import { View, StatusBar, Text, Dimensions } from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
 import { WebView } from 'react-native-webview';
 
@@ -11,8 +11,10 @@ enum LocationPermissions {
   UNKNOWN,
 }
 
+const screenDimensions = Dimensions.get('screen');
+
 const BtcMap = () => {
-  const statusBarHeight = StatusBar.currentHeight || 0;
+  const [statusBarHeight, setStatusBarHeight] = React.useState(0);
   const [locationPermissions, setLocationPermission] =
     React.useState<LocationPermissions>(LocationPermissions.UNKNOWN);
 
@@ -29,6 +31,12 @@ const BtcMap = () => {
     }
   }, [locationPermissions]);
 
+  React.useEffect(() => {
+    if (StatusBar.currentHeight) {
+      setStatusBarHeight(StatusBar.currentHeight);
+    }
+  }, [StatusBar.currentHeight]);
+
   if (locationPermissions === LocationPermissions.UNKNOWN) {
     return (
       <Spinner bgColor="bg-transparent">
@@ -38,13 +46,17 @@ const BtcMap = () => {
   }
 
   return (
-    <View className="w-full h-screen">
+    <View
+      className="w-full"
+      style={{
+        marginTop: statusBarHeight,
+        height: screenDimensions.height - statusBarHeight,
+      }}>
       <WebView
         className="w-full h-full"
         source={{
           uri: 'https://btcmap.org/map',
         }}
-        style={{ marginTop: statusBarHeight }}
         geolocationEnabled={locationPermissions === LocationPermissions.GRANTED}
       />
     </View>

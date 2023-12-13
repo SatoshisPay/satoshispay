@@ -11,12 +11,14 @@ import SuccessModal from '../components/shared/SuccessModal';
 import AppInfo from '../components/Settings/AppInfo';
 import BackupPhrase from '../components/Settings/BackupPhrase';
 import BtcMap from '../components/Settings/BtcMap';
+import BuyBitcoin from '../components/Settings/BuyBitcoin';
 
 export enum SettingsPage {
   MENU,
   APP_INFO,
   BACKUP_PHRASE,
   BTC_MAP,
+  BUY_BITCOIN,
   RESTORE_APP,
 }
 
@@ -43,7 +45,6 @@ const Settings = ({ navigation }: Props) => {
   };
 
   // handle back button
-
   useBackHandler(() => {
     if (page === SettingsPage.MENU) {
       navigation.goBack();
@@ -61,6 +62,7 @@ const Settings = ({ navigation }: Props) => {
       {page === SettingsPage.APP_INFO ? <AppInfo /> : null}
       {page === SettingsPage.BACKUP_PHRASE ? <BackupPhrase /> : null}
       {page === SettingsPage.BTC_MAP ? <BtcMap /> : null}
+      {page === SettingsPage.BUY_BITCOIN ? <BuyBitcoin /> : null}
       {page === SettingsPage.RESTORE_APP ? (
         <RestoreApp onRestore={onAppRestored} setError={setError} />
       ) : null}

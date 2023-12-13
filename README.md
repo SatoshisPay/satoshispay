@@ -37,6 +37,7 @@ In order to develop on SatoshisPay, you are required for the following software 
 
 - [yarn](https://classic.yarnpkg.com/lang/en/docs/install/#debian-stable). I suggest you using [nvm](https://github.com/nvm-sh/nvm) on your machine for a better NodeJS version management.
 - [Android Studio](https://reactnative.dev/docs/environment-setup?guide=native&os=linux&package-manager=yarn&platform=android)
+- OpenJDK 11: JDK17 is recommended tbh, but react-native-keychain won't build apparently, so use 11 instead.
 
 ### Setup
 

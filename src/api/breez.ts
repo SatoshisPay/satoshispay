@@ -25,6 +25,9 @@ import {
   sendPayment,
   SwapInfo,
   refund,
+  inProgressSwap,
+  BuyBitcoinProvider,
+  buyBitcoin,
 } from '@breeztech/react-native-breez-sdk';
 import * as bip39 from 'bip39';
 import Decimal from 'decimal.js';
@@ -158,6 +161,19 @@ export const breezSendPayment = async (
   return payment.payment.id;
 };
 
+export const breezGetWithdrawLimits = async (
+  amount: Decimal,
+): Promise<{
+  min: Decimal;
+  max: Decimal;
+}> => {
+  const fees = await fetchReverseSwapFees({ sendAmountSat: amount.toNumber() });
+  return {
+    min: new Decimal(fees.min),
+    max: new Decimal(fees.max),
+  };
+};
+
 export const breezWithdrawSats = async (
   amount: Decimal,
   address: string,
@@ -206,9 +222,15 @@ export const breezCheckPaymentForPendingTransactions = async (
   return confirmedOrders;
 };
 
-export const breezGetDepositAddress = async (): Promise<string> => {
+export const breezGetDepositAddress = async (): Promise<SwapInfo> => {
   const swapInfo = await receiveOnchain({});
-  return swapInfo.bitcoinAddress;
+  return swapInfo;
+};
+
+export const breezGetPendingDeposit = async (): Promise<SwapInfo | null> => {
+  const deposit = await inProgressSwap();
+
+  return deposit;
 };
 
 export const breezGetFailedDeposits = async (): Promise<SwapInfo[]> => {
@@ -238,4 +260,14 @@ const breezWorkingDirectory = (): string =>
 
 export const breezRemoveDir = async () => {
   await RNFS.unlink(breezWorkingDirectory());
+};
+
+export const breezGetBuyBitcoinUrl = async (
+  buyBitcoinProvider: BuyBitcoinProvider,
+): Promise<string> => {
+  const response = await buyBitcoin({
+    provider: buyBitcoinProvider,
+  });
+
+  return response.url;
 };

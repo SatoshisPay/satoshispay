@@ -13,7 +13,6 @@ const FailedDepositItem = ({ swap }: Props) => (
       <Text className="text-brandAlt text-xs">
         Inviato da: {swap.bitcoinAddress}
       </Text>
-      <Text className="text-brandAlt text-xs">{swap.paidSats} Sats</Text>
     </View>
     <View className="flex flex-row justify-between items-center w-full px-2">
       {swap.confirmedTxIds.length > 1 && (
@@ -27,6 +26,7 @@ const FailedDepositItem = ({ swap }: Props) => (
         <Clock width={24} height={24} className="text-brand mr-2" />
         <Text>{new Date(swap.createdAt).toLocaleDateString(['it'])}</Text>
       </View>
+      <Text className="text-brandAlt text-xl">{swap.paidSats} Sats</Text>
     </View>
   </View>
 );

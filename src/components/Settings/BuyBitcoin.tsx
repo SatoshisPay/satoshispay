@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, StatusBar, Text, Dimensions } from 'react-native';
+import { View, Text, Dimensions } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { BuyBitcoinProvider } from '@breeztech/react-native-breez-sdk';
 import { useBackHandler } from '@react-native-community/hooks';
@@ -8,10 +8,11 @@ import Providers from './BuyBitcoin/Providers';
 import Spinner from '../reusable/Spinner';
 import { breezGetBuyBitcoinUrl } from '../../api/breez';
 
-const screenDimensions = Dimensions.get('screen');
+const windowDimensions = Dimensions.get('window');
+
+const PADDING = 64;
 
 const BuyBitcoin = () => {
-  const [statusBarHeight, setStatusBarHeight] = React.useState(0);
   const [provider, setProvider] = React.useState<BuyBitcoinProvider>();
   const [url, setUrl] = React.useState<string>();
 
@@ -24,12 +25,6 @@ const BuyBitcoin = () => {
     }
     return false;
   });
-
-  React.useEffect(() => {
-    if (StatusBar.currentHeight) {
-      setStatusBarHeight(StatusBar.currentHeight);
-    }
-  }, [StatusBar.currentHeight]);
 
   React.useEffect(() => {
     if (provider && !url) {
@@ -56,10 +51,9 @@ const BuyBitcoin = () => {
 
   return (
     <View
-      className="w-full"
+      className="w-full bg-white"
       style={{
-        marginTop: statusBarHeight,
-        height: screenDimensions.height - statusBarHeight - 32,
+        height: windowDimensions.height - PADDING,
       }}>
       <WebView
         className="w-full h-full"

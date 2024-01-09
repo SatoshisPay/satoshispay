@@ -1,11 +1,18 @@
 # Changelog
 
 - [Changelog](#changelog)
+  - [0.2.3](#023)
   - [0.2.2](#022)
   - [0.2.1](#021)
   - [0.2.0](#020)
   - [0.1.2](#012)
   - [0.1.1](#011)
+
+## 0.2.3
+
+Released on 09/01/2024
+
+- Bump breez SDK to 0.2.12 which fixes some issues <https://github.com/breez/breez-sdk/releases/tag/0.2.12>
 
 ## 0.2.2
 

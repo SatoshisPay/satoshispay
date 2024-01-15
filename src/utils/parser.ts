@@ -7,11 +7,12 @@ export const isBtcAddress = (address: string): boolean => {
 };
 
 export const isBolt11 = (bolt11: string): boolean => {
-  return (
-    bolt11.match(
-      /^(lnbc[0-9A-Za-z]*[02468BDFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz])$/,
-    ) !== null
-  );
+  try {
+    decodeBolt11(bolt11);
+    return true;
+  } catch (_) {
+    return false;
+  }
 };
 
 export const parseBolt11Amount = (bolt11: string): Decimal | undefined => {

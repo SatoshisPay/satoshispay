@@ -1,6 +1,7 @@
 # Changelog
 
 - [Changelog](#changelog)
+  - [0.2.5](#025)
   - [0.2.4](#024)
   - [0.2.3](#023)
   - [0.2.2](#022)
@@ -8,6 +9,12 @@
   - [0.2.0](#020)
   - [0.1.2](#012)
   - [0.1.1](#011)
+
+## 0.2.5
+
+Released on 17/01/2024
+
+- Added possibility to retrieve application logs
 
 ## 0.2.4
 

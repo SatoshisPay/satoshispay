@@ -28,8 +28,11 @@ import {
   inProgressSwap,
   BuyBitcoinProvider,
   buyBitcoin,
+  LogEntry,
+  setLogStream,
 } from '@breeztech/react-native-breez-sdk';
 import * as bip39 from 'bip39';
+import RingBuffer from 'ringbufferjs';
 import Decimal from 'decimal.js';
 import RNFS from 'react-native-fs';
 import { DEVICE_KEY, DEVICE_CERT } from '@env';
@@ -38,6 +41,9 @@ import { getLnNodeMnemonic } from '../database/keystore';
 import { finalizeOrder, getOrderByPaymentHash } from '../database/database';
 import Order, { OrderStatus } from '../data/order';
 import { convertStringToBytes } from '../utils/conversion';
+
+export const LOG_BUFFER = new RingBuffer(1024 * 64);
+var LOG_INITIALIZED = false;
 
 export interface Withdrawals {
   pendingSwaps: ReverseSwapInfo[];
@@ -59,7 +65,20 @@ const onBreezEvent = (event: BreezEvent) => {
   }
 };
 
+const logStream = (entry: LogEntry) => {
+  LOG_INITIALIZED = true;
+  if (entry.level === 'TRACE') {
+    return;
+  }
+  const line = `[${entry.level}]: ${entry.line}`;
+  console.log(line);
+  LOG_BUFFER.enq(line);
+};
+
 export const breezConnect = async () => {
+  if (!LOG_INITIALIZED) {
+    setLogStream(logStream).catch(e => console.error(e));
+  }
   const mnemonic = await getLnNodeMnemonic();
   const seed = await bip39.mnemonicToSeed(mnemonic);
   const seedNumeric = [];

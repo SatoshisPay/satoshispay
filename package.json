@@ -1,6 +1,6 @@
 {
   "name": "satoshispay",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "license": "Apache-2.0",
   "scripts": {
     "android": "react-native run-android",
@@ -49,6 +49,7 @@
     "react-native-uuid": "^2.0.1",
     "react-native-vision-camera": "^3.6.12",
     "react-native-webview": "^13.6.3",
+    "ringbufferjs": "^2.0.0",
     "stream-browserify": "^3.0.0",
     "text-encoding": "^0.7.0",
     "yarn": "^1.22.21"
@@ -67,6 +68,7 @@
     "@types/react-native-get-random-values": "^1.8.2",
     "@types/react-native-sqlite-storage": "^6.0.5",
     "@types/react-test-renderer": "^18.0.7",
+    "@types/ringbufferjs": "^1.1.2",
     "babel-jest": "^29.7.0",
     "babel-plugin-rewrite-require": "^1.14.5",
     "eslint": "^8.56",

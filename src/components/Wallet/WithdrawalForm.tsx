@@ -47,7 +47,7 @@ const WithdrawalForm = ({
   setError,
   onWithdraw,
 }: Props) => {
-  const [network, setNetwork] = React.useState<Network>(Network.BTC); // ['btc', 'ln']
+  const [network, setNetwork] = React.useState<Network>(Network.LN); // ['btc', 'ln']
   const [recipient, setRecipient] = React.useState<string>(''); // address or invoice
   const [satsAmount, setSatsAmount] = React.useState<string>('');
   const [euroAmount, setEuroAmount] = React.useState<string>('');
@@ -360,7 +360,7 @@ const WithdrawalForm = ({
         <View className="w-full flex flex-row items-center bg-gray-50 border border-gray-300 h-min relative">
           <TextInput
             className="text-text text-sm rounded-lg focus:ring-brand focus:border-brand p-4 focus-visible:outline-none w-5/6 mr-[20px]"
-            placeholder={'bc1...'}
+            placeholder={network === Network.BTC ? 'bc1...' : 'lnbc...'}
             onChangeText={setRecipient}
             defaultValue={recipient}
           />

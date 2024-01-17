@@ -6,6 +6,7 @@ import MenuButton from './Menu/MenuButton';
 import {
   AlertTriangle,
   Edit,
+  FileText,
   Info,
   MapPin,
   ShoppingCart,
@@ -40,7 +41,11 @@ const Menu = ({ onPageChange }: Props) => (
       icon={<Edit className="text-brandAlt" />}
       text="Backup Frase Segreta"
     />
-
+    <MenuButton
+      onClick={() => onPageChange(SettingsPage.LOG)}
+      icon={<FileText className="text-brandAlt" />}
+      text="Log applicazione"
+    />
     <MenuButton
       icon={<AlertTriangle className="text-brandAlt" />}
       onClick={() => onPageChange(SettingsPage.RESTORE_APP)}

@@ -12,6 +12,7 @@ import AppInfo from '../components/Settings/AppInfo';
 import BackupPhrase from '../components/Settings/BackupPhrase';
 import BtcMap from '../components/Settings/BtcMap';
 import BuyBitcoin from '../components/Settings/BuyBitcoin';
+import Log from '../components/Settings/Log';
 
 export enum SettingsPage {
   MENU,
@@ -19,6 +20,7 @@ export enum SettingsPage {
   BACKUP_PHRASE,
   BTC_MAP,
   BUY_BITCOIN,
+  LOG,
   RESTORE_APP,
 }
 
@@ -63,6 +65,7 @@ const Settings = ({ navigation }: Props) => {
       {page === SettingsPage.BACKUP_PHRASE ? <BackupPhrase /> : null}
       {page === SettingsPage.BTC_MAP ? <BtcMap /> : null}
       {page === SettingsPage.BUY_BITCOIN ? <BuyBitcoin /> : null}
+      {page === SettingsPage.LOG ? <Log /> : null}
       {page === SettingsPage.RESTORE_APP ? (
         <RestoreApp onRestore={onAppRestored} setError={setError} />
       ) : null}

@@ -103,6 +103,20 @@ SatoshisPay is powered by these awesome projects:
 
 ![app-screen-wallet](assets/app-screen-wallet.webp)
 
+## Prevent committing the storage password
+
+For deployers, lock file containing secrets:
+
+```sh
+git update-index --assume-unchanged android/gradle.properties
+```
+
+Release lock:
+
+```sh
+git update-index --no-assume-unchanged android/gradle.properties
+```
+
 ## License
 
 Licensed under [Apache License, Version 2.0](/LICENSE).

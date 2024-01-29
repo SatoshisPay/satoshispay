@@ -1256,10 +1256,10 @@
     "@noble/hashes" "^1.1.5"
     "@noble/secp256k1" "^1.7.1"
 
-"@breeztech/react-native-breez-sdk@^0.2.12":
-  version "0.2.12"
-  resolved "https://registry.yarnpkg.com/@breeztech/react-native-breez-sdk/-/react-native-breez-sdk-0.2.12.tgz#6cc7360eea8f91a8945edb2ab413ac20913e7e8d"
-  integrity sha512-aNWvZDaRbtOjbIQVhfzix1hTy1SPPxIUtsy9+O7hiQDJKMLQFu0931lSB9W4X5GhSRR6PGgctkvNDR1B0uao8g==
+"@breeztech/react-native-breez-sdk@^0.2.15":
+  version "0.2.15"
+  resolved "https://registry.yarnpkg.com/@breeztech/react-native-breez-sdk/-/react-native-breez-sdk-0.2.15.tgz#0a415747e94b08f0dbbca8aae23f2d4231881db3"
+  integrity sha512-VxT4wdZCyDrhZBe6heHJKUJc1nbVJ4Y0qbOm1B+LJa6JOq0YDooUFnbtHMq1PHQ3xviwuM1pCzAco0orWqnvDA==
 
 "@craftzdog/react-native-buffer@^6.0.5":
   version "6.0.5"

@@ -30,6 +30,8 @@ import {
   buyBitcoin,
   LogEntry,
   setLogStream,
+  prepareRedeemOnchainFunds,
+  redeemOnchainFunds,
 } from '@breeztech/react-native-breez-sdk';
 import * as bip39 from 'bip39';
 import RingBuffer from 'ringbufferjs';
@@ -289,4 +291,57 @@ export const breezGetBuyBitcoinUrl = async (
   });
 
   return response.url;
+};
+
+/**
+ * @description redeem funds from a closed channel automatically by sending to the swap address
+ */
+export const breezRedeemClosedChannelFunds = async (): Promise<
+  | {
+      txId: string;
+      sats: number;
+    }
+  | false
+> => {
+  const info = await nodeInfo();
+  console.log('redeemable funds: ', info.onchainBalanceMsat);
+  const satsAmount = info.onchainBalanceMsat / 1000;
+  if (satsAmount === 0) {
+    return false;
+  }
+  // get minimum sendable amount
+  const minAmount = (
+    await fetchReverseSwapFees({
+      sendAmountSat: satsAmount,
+    })
+  ).min;
+
+  if (satsAmount < minAmount) {
+    console.log(
+      'redeemable funds',
+      satsAmount,
+      'are less than minimum amount:',
+      minAmount,
+    );
+    return false;
+  }
+
+  const fees = await breezGetRecommendedFees();
+
+  const onChainAddress = (await receiveOnchain({})).bitcoinAddress;
+  await prepareRedeemOnchainFunds({
+    toAddress: onChainAddress,
+    satPerVbyte: fees.hourFee,
+  });
+
+  const redeemOnChainFundsResponse = await redeemOnchainFunds({
+    toAddress: onChainAddress,
+    satPerVbyte: fees.hourFee,
+  });
+
+  const txid = redeemOnChainFundsResponse.txid;
+  // convert txid to hex representation
+  const hexTxid = Buffer.from(txid).toString('hex');
+
+  return { txId: hexTxid, sats: satsAmount };
 };

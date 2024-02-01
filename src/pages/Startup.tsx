@@ -2,7 +2,7 @@ import React from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Image, Text, View } from 'react-native';
 
-import { breezConnect } from '../api/breez';
+import { breezConnect, breezRedeemClosedChannelFunds } from '../api/breez';
 import Page, { RootStackParamList } from './pages';
 import Activity from '../components/reusable/Activity';
 import Spinner from '../components/reusable/Spinner';
@@ -10,12 +10,49 @@ import { isLnNodeMnemonicSet } from '../database/keystore';
 import Alerts from '../components/reusable/Alerts';
 import Button from '../components/reusable/Button';
 import { RefreshCcw } from 'react-native-feather';
+import SuccessModal from '../components/shared/SuccessModal';
 
 type Props = NativeStackScreenProps<RootStackParamList, Page.STARTUP>;
 
 const Startup = ({ navigation }: Props) => {
   const [error, setError] = React.useState<string>();
   const [isConnecting, setIsConnecting] = React.useState<boolean>(false);
+  const [isRedeeming, setIsRedeeming] = React.useState<boolean>(false);
+  const [redeemTx, setRedeemTx] = React.useState<{
+    txId: string;
+    sats: number;
+  }>();
+
+  const onRedeemSuccessClose = () => {
+    navigation.reset({
+      index: 0,
+      routes: [{ name: Page.HOME }],
+    });
+  };
+
+  const redeemClosedChannelFunds = () => {
+    console.log('Redeeming closed channel funds...');
+    breezRedeemClosedChannelFunds()
+      .then(maybeTxId => {
+        if (!maybeTxId) {
+          setIsRedeeming(false);
+          navigation.reset({
+            index: 0,
+            routes: [{ name: Page.HOME }],
+          });
+        } else {
+          setIsRedeeming(false);
+          setRedeemTx(maybeTxId);
+        }
+      })
+      .catch(e => {
+        console.error(e.message);
+        setError(
+          `Impossibile riscattare i fondi dei canali chiusi. Riprova più tardi: ${e.message}`,
+        );
+        setIsRedeeming(false);
+      });
+  };
 
   const connectToLnNetwork = () => {
     setIsConnecting(true);
@@ -23,10 +60,7 @@ const Startup = ({ navigation }: Props) => {
     breezConnect()
       .then(() => {
         setIsConnecting(false);
-        navigation.reset({
-          index: 0,
-          routes: [{ name: Page.HOME }],
-        });
+        setIsRedeeming(true);
       })
       .catch(e => {
         console.error(e.message);
@@ -52,6 +86,12 @@ const Startup = ({ navigation }: Props) => {
       });
   }, []);
 
+  React.useEffect(() => {
+    if (isRedeeming) {
+      redeemClosedChannelFunds();
+    }
+  }, [isRedeeming]);
+
   const state = error ? (
     <View className="flex flex-col items-center justify-center py-4 px-8">
       <Alerts.Danger>
@@ -65,13 +105,21 @@ const Startup = ({ navigation }: Props) => {
   ) : (
     <Spinner size={64}>
       <Text className="text-brandAlt w-full px-4 text-md text-center">
-        Connessione a Lightning{'\n'}Network in corso...
+        {isConnecting
+          ? 'Connessione a Lightning\nNetwork in corso...'
+          : 'Rimborso dei fondi sui\ncanali chiusi in corso...'}
       </Text>
     </Spinner>
   );
 
   return (
     <Activity.Page className="bg-white h-full">
+      {redeemTx && (
+        <SuccessModal
+          message={`${redeemTx.sats} sats rimasti in attesa su dei canali chiusi, inviati sul tuo wallet Lightning: ${redeemTx.txId}. Dovrai attendere qualche minuto prima di vedere il saldo aggiornato.`}
+          onClick={onRedeemSuccessClose}
+        />
+      )}
       <View className="bg-white w-full h-screen flex flex-col items-center justify-center">
         <Image
           className="w-[200px] h-[200px] rounded-full"

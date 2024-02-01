@@ -1,6 +1,7 @@
 # Changelog
 
 - [Changelog](#changelog)
+  - [0.2.7](#027)
   - [0.2.6](#026)
   - [0.2.5](#025)
   - [0.2.4](#024)
@@ -10,6 +11,12 @@
   - [0.2.0](#020)
   - [0.1.2](#012)
   - [0.1.1](#011)
+
+## 0.2.7
+
+Released on 01/02/2024
+
+- Fixed an issue that funds pending by the channel closing were not redeemed to the app
 
 ## 0.2.6
 

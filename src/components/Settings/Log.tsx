@@ -3,7 +3,7 @@ import { View, Text, FlatList } from 'react-native';
 import Share from 'react-native-share';
 import RNFS from 'react-native-fs';
 
-import { LOG_BUFFER } from '../../api/breez';
+import { LOG_BUFFER } from '../../utils/log';
 import Button from '../reusable/Button';
 import { isAndroid } from '../../utils/device';
 import ErrorModal from '../shared/ErrorModal';

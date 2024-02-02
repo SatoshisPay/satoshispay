@@ -12,7 +12,7 @@ export const log = (level: string, ...args: any[]) => {
   LOG_BUFFER.enq(line);
 };
 
-export const debug = (...args: any[]) => log('DEBUG', args);
-export const info = (...args: any[]) => log('INFO', args);
-export const warn = (...args: any[]) => log('WARN', args);
-export const error = (...args: any[]) => log('ERROR', args);
+export const debug = (...args: any[]) => log('DEBUG', ...args);
+export const info = (...args: any[]) => log('INFO', ...args);
+export const warn = (...args: any[]) => log('WARN', ...args);
+export const error = (...args: any[]) => log('ERROR', ...args);

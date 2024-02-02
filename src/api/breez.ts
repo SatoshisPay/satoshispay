@@ -297,8 +297,8 @@ export const breezRedeemClosedChannelFunds = async (): Promise<
   | false
 > => {
   const nodeInformation = await nodeInfo();
-  info('redeemable funds: ', nodeInformation.onchainBalanceMsat);
   const satsAmount = nodeInformation.onchainBalanceMsat / 1000;
+  info('redeemable funds: ', satsAmount);
   if (satsAmount === 0) {
     return false;
   }

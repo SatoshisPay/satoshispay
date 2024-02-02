@@ -28,6 +28,7 @@ import QrScanner from '../reusable/QrScanner';
 import PinForm from '../reusable/PinForm';
 import NetworkPicker from './Withdrawal/NetworkPicker';
 import Input from '../reusable/Input';
+import { error } from '../../utils/log';
 
 interface Props {
   eurTicker?: Decimal;
@@ -82,7 +83,7 @@ const WithdrawalForm = ({
           setActiveCamera(false);
         })
         .catch(() => {
-          console.log('found invalid BIP21');
+          error('found invalid BIP21');
         });
     }
   };
@@ -184,10 +185,10 @@ const WithdrawalForm = ({
       insertedAt: new Date(),
     })
       .then(() => {
-        console.log('Withdrawal inserted');
+        error('Withdrawal inserted');
       })
       .catch(e => {
-        console.error(e);
+        error(e);
         setError('Impossibile inserire il prelievo nel database');
       });
   };
@@ -203,7 +204,7 @@ const WithdrawalForm = ({
         onWithdrawSuccess(id, fiatAmount, amountNumber);
       })
       .catch(e => {
-        console.error(e);
+        error(e);
         setError(e.message);
         setInProgress(false);
       });
@@ -221,7 +222,7 @@ const WithdrawalForm = ({
         onWithdrawSuccess(id, fiatAmount, amountNumber);
       })
       .catch(e => {
-        console.error(e);
+        error(e);
         setError(e.message);
         setInProgress(false);
       });
@@ -299,6 +300,13 @@ const WithdrawalForm = ({
 
   React.useEffect(() => {
     if (satsAmount) {
+      // set fiat amount
+      if ((euroAmount === '' || euroAmount === '0') && eurTicker) {
+        setEuroAmount(
+          convertSatsToEUR(eurTicker, new Decimal(satsAmount)).toFixed(2),
+        );
+      }
+
       const amountNumber = new Decimal(satsAmount);
       breezGetWithdrawLimits(amountNumber)
         .then(wLimits => {
@@ -309,7 +317,7 @@ const WithdrawalForm = ({
             max: new Decimal(500_000_000_000),
             min: new Decimal(50_000),
           });
-          console.log(e);
+          error(e);
         });
     }
   }, [satsAmount]);

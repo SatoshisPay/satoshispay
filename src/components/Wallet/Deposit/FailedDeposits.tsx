@@ -11,6 +11,7 @@ import Button from '../../reusable/Button';
 import FeePicker from '../../shared/FeePicker';
 import QrScanner from '../../reusable/QrScanner';
 import { refundDeposit } from '../../../database/database';
+import { error } from '../../../utils/log';
 
 interface Props {
   setError: (error: string) => void;
@@ -37,7 +38,7 @@ const FailedDeposits = ({ setError }: Props) => {
         setActiveCamera(false);
       })
       .catch(() => {
-        console.log('found invalid BIP21');
+        error('found invalid BIP21');
       });
   };
 
@@ -58,10 +59,10 @@ const FailedDeposits = ({ setError }: Props) => {
       breezRefundDeposit(refundAddress, swap, fee).then(() => {
         refundDeposit(swap)
           .then(() => {
-            console.log('Refunded deposit', swap);
+            error('Refunded deposit', swap);
           })
           .catch(() => {
-            console.error('Failed write refunded state to deposit', swap);
+            error('Failed write refunded state to deposit', swap);
           });
       });
     }

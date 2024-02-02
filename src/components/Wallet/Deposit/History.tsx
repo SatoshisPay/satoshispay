@@ -14,6 +14,7 @@ import {
   breezGetFailedDeposits,
   breezGetPendingDeposit,
 } from '../../../api/breez';
+import { error } from '../../../utils/log';
 
 const MAX_DEPOSITS_PER_PAGE = 10;
 
@@ -99,7 +100,7 @@ const History = ({ setError }: Props) => {
             setDepositsCount(count);
           })
           .catch(err => {
-            console.error(err.message);
+            error(err.message);
             setError('Impossibile ottenere il numero di depositi inseriti');
           });
       }
@@ -113,7 +114,7 @@ const History = ({ setError }: Props) => {
           setProcessedPendingDeposits(true);
         })
         .catch(e => {
-          console.error(e);
+          error(e);
           setProcessedPendingDeposits(true);
         });
     }

@@ -5,6 +5,7 @@ import { ArrowRight } from 'react-native-feather';
 import Button from './Button';
 import Alerts from './Alerts';
 import { verifyPin } from '../../database/keystore';
+import { error } from '../../utils/log';
 
 interface Props {
   onClose: () => void;
@@ -34,7 +35,7 @@ const PinForm = ({ onClose, onValidPin, visibile }: Props) => {
       })
       .catch(e => {
         setProcessing(false);
-        console.error(e);
+        error(e);
         setFormError('Impossibile verificare il PIN');
       });
   };

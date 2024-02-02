@@ -16,6 +16,7 @@ import {
 } from '../../database/database';
 import Withdrawal, { WithdrawalStatus } from '../../data/withdrawal';
 import PageSelector from '../reusable/PageSelector';
+import { error, info } from '../../utils/log';
 
 const MAX_WITHDRAWALS_PER_PAGE = 5;
 
@@ -77,10 +78,10 @@ const WithdrawalHistory = ({ setError }: Props) => {
       if (statusChanged) {
         updateWithdrawalStatus(withdrawal)
           .then(() => {
-            console.log('Withdrawal status updated to', withdrawal.status);
+            info('Withdrawal status updated to', withdrawal.status);
           })
           .catch(e => {
-            console.error(e);
+            error(e);
             setError(
               `Impossibile aggiornare lo stato del prelievo ${withdrawal.id}: ${e.message}`,
             );
@@ -97,7 +98,7 @@ const WithdrawalHistory = ({ setError }: Props) => {
           setWithdrawalsCount(count);
         })
         .catch(e => {
-          console.error(e);
+          error(e);
           setError(`Impossibile ottenere il numero di prelievi: ${e.message}`);
         });
     }
@@ -114,7 +115,7 @@ const WithdrawalHistory = ({ setError }: Props) => {
           handlePendingWithdrawals(pendingWithdrawals, pageWithdrawals);
         })
         .catch(e => {
-          console.error(e);
+          error(e);
           setError(
             `Impossibile ottenere i prelievi dalla pagina ${page}: ${e.message}`,
           );

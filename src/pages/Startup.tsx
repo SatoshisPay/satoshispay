@@ -11,6 +11,7 @@ import Alerts from '../components/reusable/Alerts';
 import Button from '../components/reusable/Button';
 import { RefreshCcw } from 'react-native-feather';
 import SuccessModal from '../components/shared/SuccessModal';
+import { info, error as logError, warn } from '../utils/log';
 
 type Props = NativeStackScreenProps<RootStackParamList, Page.STARTUP>;
 
@@ -23,47 +24,45 @@ const Startup = ({ navigation }: Props) => {
     sats: number;
   }>();
 
-  const onRedeemSuccessClose = () => {
+  const goHome = () => {
     navigation.reset({
       index: 0,
       routes: [{ name: Page.HOME }],
     });
   };
 
+  const onRedeemMessageClose = () => {
+    goHome();
+  };
+
   const redeemClosedChannelFunds = () => {
-    console.log('Redeeming closed channel funds...');
+    info('Redeeming closed channel funds...');
     breezRedeemClosedChannelFunds()
       .then(maybeTxId => {
         if (!maybeTxId) {
           setIsRedeeming(false);
-          navigation.reset({
-            index: 0,
-            routes: [{ name: Page.HOME }],
-          });
+          goHome();
         } else {
           setIsRedeeming(false);
           setRedeemTx(maybeTxId);
         }
       })
       .catch(e => {
-        console.error(e.message);
-        setError(
-          `Impossibile riscattare i fondi dei canali chiusi. Riprova più tardi: ${e.message}`,
-        );
-        setIsRedeeming(false);
+        logError(e.message);
+        goHome();
       });
   };
 
   const connectToLnNetwork = () => {
     setIsConnecting(true);
-    console.log('Connecting to LN network...');
+    info('Connecting to LN network...');
     breezConnect()
       .then(() => {
         setIsConnecting(false);
         setIsRedeeming(true);
       })
       .catch(e => {
-        console.error(e.message);
+        logError(e.message);
         setError(
           'Impossibile connettersi a Lightning Network, riprova più tardi',
         );
@@ -81,7 +80,7 @@ const Startup = ({ navigation }: Props) => {
         }
       })
       .catch(e => {
-        console.error(e.message);
+        warn(e.message);
         setError('Impossibile accedere al database');
       });
   }, []);
@@ -117,7 +116,7 @@ const Startup = ({ navigation }: Props) => {
       {redeemTx && (
         <SuccessModal
           message={`${redeemTx.sats} sats rimasti in attesa su dei canali chiusi, inviati sul tuo wallet Lightning: ${redeemTx.txId}. Dovrai attendere qualche minuto prima di vedere il saldo aggiornato.`}
-          onClick={onRedeemSuccessClose}
+          onClick={onRedeemMessageClose}
         />
       )}
       <View className="bg-white w-full h-screen flex flex-col items-center justify-center">

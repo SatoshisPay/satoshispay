@@ -7,6 +7,7 @@ import { useBackHandler } from '@react-native-community/hooks';
 import Providers from './BuyBitcoin/Providers';
 import Spinner from '../reusable/Spinner';
 import { breezGetBuyBitcoinUrl } from '../../api/breez';
+import { error } from '../../utils/log';
 
 const windowDimensions = Dimensions.get('window');
 
@@ -31,7 +32,7 @@ const BuyBitcoin = () => {
       breezGetBuyBitcoinUrl(provider)
         .then(setUrl)
         .catch(e => {
-          console.log(e);
+          error(e);
           setProvider(undefined);
         });
     }

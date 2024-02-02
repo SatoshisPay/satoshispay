@@ -1,6 +1,7 @@
 # Changelog
 
 - [Changelog](#changelog)
+  - [0.2.8](#028)
   - [0.2.7](#027)
   - [0.2.6](#026)
   - [0.2.5](#025)
@@ -11,6 +12,12 @@
   - [0.2.0](#020)
   - [0.1.2](#012)
   - [0.1.1](#011)
+
+## 0.2.8
+
+Released on 02/02/2024
+
+- Fixed issue that startup layout is blocked by failing redeem funds
 
 ## 0.2.7
 

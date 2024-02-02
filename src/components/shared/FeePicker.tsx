@@ -4,6 +4,7 @@ import { Picker } from '@react-native-picker/picker';
 import { RecommendedFees } from '@breeztech/react-native-breez-sdk';
 
 import { breezGetRecommendedFees } from '../../api/breez';
+import { error } from '../../utils/log';
 
 interface Props {
   className?: string;
@@ -21,7 +22,7 @@ const FeePicker = ({ className, onFeeChanged, fee, onError }: Props) => {
       breezGetRecommendedFees()
         .then(setRecommendedFees)
         .catch(e => {
-          console.error(e);
+          error(e);
           onError(`Errore nel caricamento delle fee: ${e.message}`);
         });
     }

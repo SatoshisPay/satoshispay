@@ -23,6 +23,7 @@ import { insertDeposit } from '../../../database/database';
 import { privateKeyToWIF } from '../../../utils/bitcoin';
 import { encryptSecret } from '../../../database/keystore';
 import Input from '../../reusable/Input';
+import { error } from '../../../utils/log';
 
 interface Props {
   eurTicker?: Decimal;
@@ -102,7 +103,7 @@ const Form = ({ eurTicker, onDeposit, setError }: Props) => {
         onDeposit();
       })
       .catch(e => {
-        console.error(e.message);
+        error(e.message);
         setError('Impossibile inserire il deposito nel database');
       });
   };

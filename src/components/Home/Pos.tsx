@@ -9,6 +9,7 @@ import { breezGetBalance } from '../../api/breez';
 import { getBTCEURTicker } from '../../api/ticker';
 import { convertEURToSats } from '../../utils/conversion';
 import Alerts from '../reusable/Alerts';
+import { error } from '../../utils/log';
 
 interface Props {
   amount: Decimal;
@@ -85,7 +86,7 @@ const Pos = ({ amount, setAmount, onSubmitted }: Props): JSX.Element => {
           setLnBalance(balance.lnBalance);
         })
         .catch(err => {
-          console.error(err);
+          error(err);
         });
     }
 
@@ -95,7 +96,7 @@ const Pos = ({ amount, setAmount, onSubmitted }: Props): JSX.Element => {
           setEurTicker(ticker);
         })
         .catch(err => {
-          console.error(err);
+          error(err);
         });
     }
   }, []);

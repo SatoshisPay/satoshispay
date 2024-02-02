@@ -7,6 +7,7 @@ import Button from '../reusable/Button';
 import Alerts from '../reusable/Alerts';
 import MnemonicForm from '../reusable/MnemonicForm';
 import Clipboard from '@react-native-clipboard/clipboard';
+import { warn } from '../../utils/log';
 
 interface Props {
   onConfirm: (mnemonic: string[]) => void;
@@ -53,7 +54,7 @@ const ImportWallet = ({ onConfirm, processing }: Props) => {
         setError(undefined);
       })
       .catch(e => {
-        console.error(e.message);
+        warn(e.message);
         setError("Errore durante l'accesso al clipboard");
       });
   };

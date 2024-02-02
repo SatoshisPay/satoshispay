@@ -1,6 +1,6 @@
 {
   "name": "satoshispay",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "license": "Apache-2.0",
   "scripts": {
     "android": "react-native run-android",

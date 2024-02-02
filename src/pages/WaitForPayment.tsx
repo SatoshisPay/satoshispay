@@ -13,6 +13,7 @@ import Activity from '../components/reusable/Activity';
 import { breezListPayments } from '../api/breez';
 import { PaymentDetailsVariant } from '@breeztech/react-native-breez-sdk';
 import Spinner from '../components/reusable/Spinner';
+import { warn } from '../utils/log';
 
 type Props = NativeStackScreenProps<RootStackParamList, Page.WAIT_FOR_PAYMENT>;
 
@@ -73,7 +74,7 @@ const WaitForPayment = ({ route, navigation }: Props) => {
                 }
               })
               .catch(e => {
-                console.error(e);
+                warn(e);
                 setError("impossibile controllare le transazioni per l'ordine");
               });
           } else {

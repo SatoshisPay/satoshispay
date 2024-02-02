@@ -26,6 +26,7 @@ import ErrorModal from '../components/shared/ErrorModal';
 import Activity from '../components/reusable/Activity';
 import { breezCreateInvoice } from '../api/breez';
 import Spinner from '../components/reusable/Spinner';
+import { info, warn } from '../utils/log';
 
 type Props = NativeStackScreenProps<RootStackParamList, Page.INVOICE>;
 
@@ -50,7 +51,7 @@ const Invoice = ({ route, navigation }: Props): JSX.Element => {
       })
       .catch(e => {
         setError('impossibile ottenere il cambio BTC attuale');
-        console.error(e);
+        warn(e);
       });
   }, [eurCharge]);
 
@@ -88,7 +89,7 @@ const Invoice = ({ route, navigation }: Props): JSX.Element => {
 
   React.useEffect(() => {
     if (order) {
-      console.log('inserting order', order.id);
+      info('inserting order', order.id);
       // register address / order into database
       if (route.params.orderType === OrderType.BTC && address) {
         insertAddressWithOrder(address, order)

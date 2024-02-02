@@ -34,17 +34,15 @@ import {
   redeemOnchainFunds,
 } from '@breeztech/react-native-breez-sdk';
 import * as bip39 from 'bip39';
-import RingBuffer from 'ringbufferjs';
 import Decimal from 'decimal.js';
 import RNFS from 'react-native-fs';
 import { DEVICE_KEY, DEVICE_CERT } from '@env';
-
 import { getLnNodeMnemonic } from '../database/keystore';
 import { finalizeOrder, getOrderByPaymentHash } from '../database/database';
 import Order, { OrderStatus } from '../data/order';
 import { convertStringToBytes } from '../utils/conversion';
+import { info, log, warn } from '../utils/log';
 
-export const LOG_BUFFER = new RingBuffer(1024 * 64);
 var LOG_INITIALIZED = false;
 
 export interface Withdrawals {
@@ -53,14 +51,14 @@ export interface Withdrawals {
 }
 
 const onBreezEvent = (event: BreezEvent) => {
-  console.log(`received event ${event.type}`);
+  info(`received event ${event.type}`);
   // Handle invoice paid
   if (event.type === BreezEventVariant.INVOICE_PAID) {
     getOrderByPaymentHash(event.details.paymentHash).then(order => {
       if (order) {
         order.status = OrderStatus.CONFIRMED;
         finalizeOrder(undefined, order, []).then(() => {
-          console.log(`order ${order.id} confirmed`);
+          info(`order ${order.id} confirmed`);
         });
       }
     });
@@ -69,12 +67,7 @@ const onBreezEvent = (event: BreezEvent) => {
 
 const logStream = (entry: LogEntry) => {
   LOG_INITIALIZED = true;
-  if (entry.level === 'TRACE') {
-    return;
-  }
-  const line = `[${entry.level}]: ${entry.line}`;
-  console.log(line);
-  LOG_BUFFER.enq(line);
+  log(entry.level, entry.line);
 };
 
 export const breezConnect = async () => {
@@ -303,9 +296,9 @@ export const breezRedeemClosedChannelFunds = async (): Promise<
     }
   | false
 > => {
-  const info = await nodeInfo();
-  console.log('redeemable funds: ', info.onchainBalanceMsat);
-  const satsAmount = info.onchainBalanceMsat / 1000;
+  const nodeInformation = await nodeInfo();
+  info('redeemable funds: ', nodeInformation.onchainBalanceMsat);
+  const satsAmount = nodeInformation.onchainBalanceMsat / 1000;
   if (satsAmount === 0) {
     return false;
   }
@@ -317,7 +310,7 @@ export const breezRedeemClosedChannelFunds = async (): Promise<
   ).min;
 
   if (satsAmount < minAmount) {
-    console.log(
+    warn(
       'redeemable funds',
       satsAmount,
       'are less than minimum amount:',

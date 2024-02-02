@@ -4,6 +4,7 @@ import Mnemonic from '../reusable/Mnemonic';
 import PinForm from '../reusable/PinForm';
 import { getLnNodeMnemonic } from '../../database/keystore';
 import Spinner from '../reusable/Spinner';
+import { error } from '../../utils/log';
 
 const BackupPhrase = () => {
   const [revealSecret, setRevealSecret] = React.useState<boolean>(false);
@@ -16,7 +17,7 @@ const BackupPhrase = () => {
           setMnemonic(secretPhrase.split(' '));
         })
         .catch(e => {
-          console.error(e);
+          error(e);
         });
     }
   }, [revealSecret]);

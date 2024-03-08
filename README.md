@@ -75,7 +75,7 @@ If you wish to support our project, please consider a donation
 
 [![bitcoin-donate](./assets/btc-donate.png)](https://explorer.btc.com/btc/address/bc1qql247l894ahqvd5affjk69mrf49dcnxg7c0l74)
 
-`bc1qql247l894ahqvd5affjk69mrf49dcnxg7c0l74`
+`bc1qma8r6pwr6nw7c0zeqlx4a86hmyax2l02ppmx23`
 
 ## The Lightning Node
 

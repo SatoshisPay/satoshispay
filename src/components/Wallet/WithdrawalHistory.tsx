@@ -130,9 +130,9 @@ const WithdrawalHistory = ({ setError }: Props) => {
         .then(wtds => {
           setPendingWithdrawals(wtds);
         })
-        .catch(error => {
+        .catch(e => {
           setError(
-            `Non è stato possibile verificare i prelievi in attesa: ${error.message}`,
+            `Non è stato possibile verificare i prelievi in attesa: ${e.message}`,
           );
         });
     }

@@ -1,7 +1,6 @@
 import RingBuffer from 'ringbufferjs';
 
 export const LOG_BUFFER = new RingBuffer(1024 * 64);
-var LOG_INITIALIZED = false;
 
 export const log = (level: string, ...args: any[]) => {
   if (level === 'TRACE') {

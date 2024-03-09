@@ -7,6 +7,8 @@ export const isBtcAddress = (address: string): boolean => {
 };
 
 export const isBolt11 = (bolt11: string): boolean => {
+  bolt11 = bolt11.toLowerCase().replace('lightning:', '');
+
   try {
     decodeBolt11(bolt11);
     return true;
@@ -16,6 +18,7 @@ export const isBolt11 = (bolt11: string): boolean => {
 };
 
 export const parseBolt11Amount = (bolt11: string): Decimal | undefined => {
+  bolt11 = bolt11.toLowerCase().replace('lightning:', '');
   const decodedBolt = decodeBolt11(bolt11);
   for (const section of decodedBolt.sections) {
     if (section.name === 'amount') {

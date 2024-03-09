@@ -27,3 +27,7 @@ jobs:
         uses: Borales/actions-yarn@v4.2.0
         with:
           cmd: lint
+      - name: Test
+        uses: Borales/actions-yarn@v4.2.0
+        with:
+          cmd: test

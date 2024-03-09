@@ -129,9 +129,9 @@ export interface Balance {
 }
 
 export const breezGetBalance = async (): Promise<Balance> => {
-  const info = await nodeInfo();
-  const lnBalance = info.channelsBalanceMsat;
-  const onChainBalance = info.onchainBalanceMsat;
+  const nInfo = await nodeInfo();
+  const lnBalance = nInfo.channelsBalanceMsat;
+  const onChainBalance = nInfo.onchainBalanceMsat;
 
   return {
     lnBalance: new Decimal(lnBalance).div(1000).round(),

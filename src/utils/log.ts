@@ -7,7 +7,7 @@ export const log = (level: string, ...args: any[]) => {
   if (level === 'TRACE') {
     return;
   }
-  const line = `[${level}]: ${args.join(' ')}`;
+  const line = `${new Date().toISOString()} [${level}]: ${args.join(' ')}`;
   console.log(line);
   LOG_BUFFER.enq(line);
 };
